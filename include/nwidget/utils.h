@@ -4,8 +4,7 @@
 #include <tuple>
 #include <type_traits>
 
-#include <QtVersion>
-#include <QtAssert>
+#include <QtGlobal>
 
 // clang-format off
 
