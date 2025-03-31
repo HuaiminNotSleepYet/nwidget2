@@ -27,7 +27,7 @@ constexpr bool writable = MetaProp::isWritable; // false
 
 using namespace nwidget;
 
-auto label   = MetaObject<>::from(new QSLabel);
+auto label   = MetaObject<>::from(new QLabel);
 auto slider1 = MetaObject<>::from(new QSlider);
 auto slider2 = MetaObject<>::from(new QSlider);
 
