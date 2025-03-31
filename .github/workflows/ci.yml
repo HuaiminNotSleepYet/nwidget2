@@ -21,20 +21,24 @@ jobs:
         arch: x64
 
     - name: Setup Qt
-      uses: jurplel/install-qt-action@v3
+      uses: alexkaratarakis/setup-qt@v1
       with:
         version: 6.6.0
-        dir: ${{ github.workspace }}/Qt
-        cached: true
+        host: windows
+        target: desktop
+        arch: win64_msvc2019_64
         modules: qtbase qttools qtdeclarative
 
     - name: Configure CMake
+      env:
+        QT_DIR: ${{ github.workspace }}/Qt/6.6.0/msvc2019_64
       run: |
-        cmake -B build -S . -G "Visual Studio 17 2022" -A x64 -DCMAKE_PREFIX_PATH="${{ github.workspace }}/Qt/6.6.0/msvc2019_64"
+        cmake -B build -S . -G "Visual Studio 17 2022" -A x64 -DCMAKE_PREFIX_PATH="$QT_DIR"
+        cmake --build build --target help
 
     - name: Build
       run: |
-        cmake --build build --config Release
+        cmake --build build --config Release --verbose
 
     - name: Run tests
       run: |
