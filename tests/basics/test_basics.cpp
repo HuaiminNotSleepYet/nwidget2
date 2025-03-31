@@ -1,14 +1,18 @@
 #include <QtTest>
 #include <filesystem>
 #include <fstream>
-#include <nwidget/metaobjects.h>
-#include <nwidget/binding.h>
-#include <nwidget/behavior.h>
-#include <nwidget/builders.h>
 #include <QWidget>
 #include <QSlider>
 #include <QLabel>
 #include <QCheckBox>
+#include <QFormLayout>
+#include <QVBoxLayout>
+#include <QHBoxLayout>
+
+#include <nwidget/metaobjects.h>
+#include <nwidget/binding.h>
+#include <nwidget/behavior.h>
+#include <nwidget/builders.h>
 
 namespace fs = std::filesystem;
 
@@ -42,50 +46,29 @@ private slots:
         constexpr bool writable = MetaProp::isWritable; // false
     }
 
-    // void test_property_binding() {
-    //     using namespace nwidget;
-        
-    //     auto label = MetaObject<>::from(new QSLabel);
-    //     auto slider = MetaObject<>::from(new QSlider);
-        
-    //     label->setText("0");
-    //     slider->setValue(50);
-        
-    //     label->text() = nw::asprintf("%d", slider->value());
-    //     QCOMPARE(label->text(), QString("50"));
-    // }
+    void test_property_binding() {
+        using namespace nwidget;
 
-    // void test_animation() {
-    //     using namespace nwidget;
+        QWidget* centralWidget = new QWidget();
+        QVBoxLayout* mainlayout = new QVBoxLayout(centralWidget);
         
-    //     auto widget = MetaObject<>::from(new QWidget);
-    //     auto checkbox = MetaObject<>::from(new QCheckBox);
-        
-    //     Behavior::on(widget->minimumWidth(),
-    //                new SpringAnimation<int>(spring{2}, damping{0.2}));
-                   
-    //     Behavior::animated(widget->minimumWidth()) = cond(checkbox->isChecked(), 300, 50);
-    //     QCOMPARE(widget->minimumWidth(), 50);
-        
-    //     checkbox->setChecked(true);
-    //     QTest::qWait(100); // Allow animation to start
-    //     QVERIFY(widget->minimumWidth() > 50);
-    // }
+        auto label = new QLabel;
+        auto slider = new QSlider;
 
-    // void test_declarative_ui() {
-    //     using namespace nwidget;
+        QLayout* layout = FormLayout{
+            {"Label", Label(label)},
+            {"Slider", Slider(Qt::Horizontal).range(0, 100).value(25)},
+        };
+
+        mainlayout->addLayout(layout);
+
+        label->setText("0");
+        slider->setValue(50);
         
-    //     QLayout* layout = FormLayout{
-    //         {"Label", LineEdit().text("Test")},
-    //         {"Slider", Slider(Qt::Horizontal).range(0, 100)},
-    //         {GridLayout{
-    //             {0, 0, PushButton("Button")}
-    //         }}
-    //     };
-        
-    //     QVERIFY(layout != nullptr);
-    //     QCOMPARE(layout->count(), 3);
-    // }
+        label->text() = nw::asprintf("%d", slider->value());
+        QCOMPARE(label->text(), QString("50"));
+    }
+
 };
 
 QTEST_MAIN(TestNGWidget2)
