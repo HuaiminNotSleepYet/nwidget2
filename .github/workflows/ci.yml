@@ -21,12 +21,14 @@ jobs:
         arch: x64
 
     - name: Setup Qt
-      uses: alexkaratarakis/setup-qt@v1
+      uses: jurplel/install-qt-action@v3
       with:
-        version: 6.6.0
-        host: windows
-        target: desktop
-        arch: win64_msvc2019_64
+        version: '6.6.0'
+        host: 'windows'
+        target: 'desktop' 
+        arch: 'win64_msvc2019_64'
+        dir: '${{ github.workspace }}/Qt'
+        cached: true
         modules: qtbase qttools qtdeclarative
 
     - name: Configure CMake
