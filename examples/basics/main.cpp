@@ -1,4 +1,4 @@
-#include "mainwindow.hpp"
+#include "mainwindow.h"
 #include <QApplication>
 #include <QScreen>
 
@@ -28,7 +28,6 @@ void centerOnScreen(QWidget *widget)
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    Q_INIT_RESOURCE(icons);
     
     MainWindow w;
     w.setWindowTitle("nwidget2 Demo Application");

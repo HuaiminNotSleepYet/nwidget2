@@ -1,7 +1,11 @@
+find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets
+    Test
+)
+
 add_executable(example_basics
     main.cpp
     mainwindow.cpp
-    mainwindow.hpp
+    mainwindow.h
 
     # ${WIN32_RESOURCES}
     # ${RESOURCES}
@@ -24,6 +28,8 @@ target_link_libraries(example_basics
     Qt6::Core
     Qt6::Gui
     Qt6::Widgets
+
+    nwidget::nwidget2
 )
 
 target_include_directories(example_basics

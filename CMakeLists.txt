@@ -7,6 +7,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 
 # option test_enable
 option(nwidget2_ENABLE_TEST "Enable test" ON)
+option(nwidget2_ENABLE_EXAMPLES "Enable examples" ON)
 
 add_library(nwidget INTERFACE)
 add_library(nwidget::nwidget2 ALIAS nwidget)
@@ -22,6 +23,11 @@ if (nwidget2_ENABLE_TEST)
 
     message(STATUS "Enable test")
     add_subdirectory(tests)
+endif()
+
+if (nwidget2_ENABLE_EXAMPLES)
+    message(STATUS "Enable examples")
+    add_subdirectory(examples)
 endif()
 
 include(GNUInstallDirs)
