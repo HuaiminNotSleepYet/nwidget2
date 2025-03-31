@@ -1,0 +1,42 @@
+name: CI
+
+on:
+  push:
+    branches: [ dev ]
+  pull_request:
+    branches: [ dev ]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: recursive
+
+    - name: Setup MSVC
+      uses: ilammy/msvc-dev-cmd@v1
+      with:
+        arch: x64
+
+    - name: Setup Qt
+      uses: jurplel/install-qt-action@v3
+      with:
+        version: 6.6.0
+        dir: ${{ github.workspace }}/Qt
+        cached: true
+        modules: qtbase qttools qtdeclarative
+
+    - name: Configure CMake
+      run: |
+        cmake -B build -S . -G "Visual Studio 17 2022" -A x64 -DCMAKE_PREFIX_PATH="${{ github.workspace }}/Qt/6.6.0/msvc2019_64"
+
+    - name: Build
+      run: |
+        cmake --build build --config Release
+
+    - name: Run tests
+      run: |
+        cd build
+        ctest -C Release --output-on-failure
