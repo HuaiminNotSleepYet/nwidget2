@@ -20,20 +20,28 @@ jobs:
       with:
         arch: x64
 
-    - name: Setup Qt
-      uses: jurplel/install-qt-action@v3
+    - name: Install Qt
+      uses: jurplel/install-qt-action@v4
       with:
-        version: '6.2.4'
+        version: '6.2.3'
         host: 'windows'
-        target: 'desktop' 
+        target: 'desktop'
         arch: 'win64_msvc2019_64'
         dir: '${{ github.workspace }}/Qt'
-        cached: true
-        modules: qtbase qttools qtdeclarative
+        install-deps: 'true'
+        modules: 'qtbase qttools qtdeclarative qt5compat'
+        archives: 'qtbase qtsvg'
+        cache: 'true'
+        cache-key-prefix: 'install-qt-action'
+        setup-python: 'true'
+        tools: 'tools_ifw'
+        set-env: 'true'
+        aqtversion: '==3.1.*'
+        py7zrversion: '==0.20.*'
 
     - name: Configure CMake
       env:
-        QT_DIR: ${{ github.workspace }}/Qt/6.6.0/msvc2019_64
+        QT_DIR: ${{ github.workspace }}/Qt/6.2.3/msvc2019_64
       run: |
         cmake -B build -S . -G "Visual Studio 17 2022" -A x64 -DCMAKE_PREFIX_PATH="$QT_DIR"
         cmake --build build --target help
