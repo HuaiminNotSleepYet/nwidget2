@@ -1,3 +1,7 @@
+find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets
+    Test
+)
+
 add_executable(test_basics
     test_basics.cpp
 )

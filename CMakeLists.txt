@@ -1,38 +1,20 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.12)
 
-project(nwidget2 LANGUAGES CXX)
-
-# set build type to release if not specified
-if (NOT CMAKE_BUILD_TYPE)
-    set(CMAKE_BUILD_TYPE "Release")
-endif()
+project(nwidget VERSION 0.1.0 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
-
-# Set output directories
-set(DEFAULT_CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
+set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 
 # option test_enable
 option(nwidget2_ENABLE_TEST "Enable test" ON)
 
-find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets
-    Core5Compat Charts Svg SvgWidgets OpenGL
-    Network QuickWidgets Quick QuickControls2
-    Test
-)
+add_library(nwidget INTERFACE)
+add_library(nwidget::nwidget2 ALIAS nwidget)
 
-add_library(nwidget2 INTERFACE)
-
-#Add an alias so that library can be used inside the build tree, e.g. when testing
-add_library(nwidget::nwidget2 ALIAS nwidget2)
-
-#Set target properties
-target_include_directories(nwidget2 INTERFACE
-    $<INSTALL_INTERFACE:include>
+target_include_directories(nwidget
+INTERFACE
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
 
 if (nwidget2_ENABLE_TEST)
@@ -41,3 +23,39 @@ if (nwidget2_ENABLE_TEST)
     message(STATUS "Enable test")
     add_subdirectory(tests)
 endif()
+
+include(GNUInstallDirs)
+
+install(TARGETS nwidget
+    EXPORT nwidget-targets
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+)
+
+include(CMakePackageConfigHelpers)
+
+write_basic_package_version_file(
+    ${PROJECT_BINARY_DIR}/nwidget-config-version.cmake
+    VERSION ${PROJECT_VERSION}
+    COMPATIBILITY SameMajorVersion
+)
+configure_package_config_file(
+    ${PROJECT_SOURCE_DIR}/cmake/nwidget-config.cmake.in
+    ${PROJECT_BINARY_DIR}/nwidget-config.cmake
+    INSTALL_DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/nwidget/cmake
+)
+
+install(EXPORT nwidget-targets
+    FILE nwidget-targets.cmake
+    NAMESPACE nwidget::
+    DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/nwidget/cmake
+)
+
+install(FILES
+    ${PROJECT_BINARY_DIR}/nwidget-config.cmake
+    ${PROJECT_BINARY_DIR}/nwidget-config-version.cmake
+    DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/nwidget/cmake
+)
+
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/nwidget DESTINATION include)
