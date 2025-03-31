@@ -20,6 +20,10 @@ jobs:
       with:
         arch: x64
 
+    - name: Check Qt Modules
+      run: |
+        python -m aqt list-qt windows desktop --modules 6.2.0 win64_msvc2019_64
+        
     - name: Install Qt
       uses: jurplel/install-qt-action@v4
       with:
