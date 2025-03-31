@@ -49,23 +49,11 @@ private slots:
     void test_property_binding() {
         using namespace nwidget;
 
-        QWidget* centralWidget = new QWidget();
-        QVBoxLayout* mainlayout = new QVBoxLayout(centralWidget);
-        
-        auto label = new QLabel;
-        auto slider = new QSlider;
+        auto label   = MetaObject<>::from(new QSLabel);
+        auto slider1 = MetaObject<>::from(new QSlider);
+        auto slider2 = MetaObject<>::from(new QSlider);
 
-        QLayout* layout = FormLayout{
-            {"Label", Label(label)},
-            {"Slider", Slider(Qt::Horizontal).range(0, 100).value(25)},
-        };
-
-        mainlayout->addLayout(layout);
-
-        label->setText("0");
-        slider->setValue(50);
-        
-        label->text() = nw::asprintf("%d", slider->value());
+        label.text() = nw::asprintf("%d", slider1.value() + slider2.value())
         QCOMPARE(label->text(), QString("50"));
     }
 
