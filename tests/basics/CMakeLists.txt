@@ -20,3 +20,6 @@ target_link_libraries(test_basics PRIVATE
 
     nwidget::nwidget2
 )
+
+# add test
+add_test(NAME test_basics COMMAND test_basics)
