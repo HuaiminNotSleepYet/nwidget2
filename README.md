@@ -27,11 +27,11 @@ constexpr bool writable = MetaProp::isWritable; // false
 
 using namespace nwidget;
 
-auto label   = MetaObject<>::from(new QSLabel);
+auto label   = MetaObject<>::from(new QLabel);
 auto slider1 = MetaObject<>::from(new QSlider);
 auto slider2 = MetaObject<>::from(new QSlider);
 
-label.text() = nw::asprintf("%d", slider1.value() + slider2.value())
+label.text() = nwidget::qasprintf("%d", slider1.value() + slider2.value());
 ```
 
 ![](./doc/img/property_binding.gif)
