@@ -52,7 +52,6 @@
 namespace nwidget {
 
 template <typename Action, typename... Args> class BindingExpr;
-;
 
 /* -------------------------------------------------- MetaProperty -------------------------------------------------- */
 
@@ -105,8 +104,6 @@ public:
 
     void reset() const { reset(o); }
 
-    operator T() const { return get(); }
-
     MetaProperty& operator=(const Type& val)
     {
         set(val);
@@ -134,6 +131,8 @@ public:
     // clang-format on
 
     template <typename... Ts> void bindTo(MetaProperty<Ts...> prop) const { makeBindingExpr(*this).bindTo(prop); }
+
+    void                           operator=(MetaProperty<C, I, T, G, S, N, R> prop) const { prop.bindTo(*this); }
     template <typename... Ts> void operator=(MetaProperty<Ts...> prop) const { makeBindingExpr(prop).bindTo(*this); }
     template <typename... Ts> void operator=(const BindingExpr<Ts...>& expr) const { expr.bindTo(*this); }
 
