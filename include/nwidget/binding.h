@@ -138,7 +138,7 @@ public:
 
     template <typename... T> auto bindTo(MetaProperty<T...> prop, Qt::ConnectionType type = Qt::AutoConnection) const
     {
-        return bindTo(prop.object(), prop, type, MetaProperty<T...>::Info::bindingName());
+        return bindTo(prop.object(), prop, MetaProperty<T...>::Info::bindingName(), type);
     }
 
     template <typename Func> auto bindTo(Func func) const
@@ -151,7 +151,7 @@ public:
 #else
             QStringLiteral("nwidget_binding_to_func");
 #endif
-        return bindTo(nullptr, func, Qt::DirectConnection, bindingName);
+        return bindTo(nullptr, func, bindingName, Qt::DirectConnection);
     }
 
     template <typename Class, typename Func>
@@ -165,17 +165,14 @@ public:
 #else
             QStringLiteral("nwidget_binding_to_func");
 #endif
-        return bindTo(receiver, func, Qt::DirectConnection, bindingName);
+        return bindTo(receiver, func, bindingName, Qt::DirectConnection);
     }
 
 private:
     std::tuple<Args...> args;
 
     template <typename Class, typename Func>
-    auto bindTo(Class*             receiver,
-                Func               func,
-                Qt::ConnectionType type = Qt::AutoConnection,
-                const QString& name     = {}) const
+    auto bindTo(Class* receiver, Func func, const QString& name, Qt::ConnectionType type = Qt::AutoConnection) const
     {
         static_assert(impl::binding::is_meta_property_v<Func>
                           || std::is_member_function_pointer_v<Func>
