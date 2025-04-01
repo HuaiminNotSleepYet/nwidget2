@@ -41,10 +41,9 @@ jobs:
 
     - name: Configure CMake
       env:
-        QT_DIR: ${{ github.workspace }}/Qt/6.2.0/msvc2019_64
+        QT_DIR: ${{ github.workspace }}/Qt/6.7.3/msvc2019_64
       run: |
         cmake -B build -S . -G "Visual Studio 17 2022" -A x64 -DCMAKE_PREFIX_PATH="$QT_DIR"
-        cmake --build build --target help
 
     - name: Build
       run: |
