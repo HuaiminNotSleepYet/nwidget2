@@ -272,10 +272,9 @@ struct ActionInvoke
     }
 };
 
-template <typename Class, typename MemFnRet, typename... MemFnArgs, typename... Args>
-auto invoke(MemFnRet (Class::*fn)(MemFnArgs...), Args&&... args)
+template <typename Class, typename Mem, typename... Args> auto invoke(Class obj, Mem fn, Args&&... args)
 {
-    return makeBindingExpr<ActionInvoke>(fn, std::forward<Args>(args)...);
+    return makeBindingExpr<ActionInvoke>(obj, fn, std::forward<Args>(args)...);
 }
 
 template <typename... Args> auto qasprintf(const char* cformat, const Args&... args)
