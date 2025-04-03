@@ -1,0 +1,51 @@
+name: test
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: recursive
+
+    - name: Setup MSVC
+      uses: ilammy/msvc-dev-cmd@v1
+      with:
+        arch: x64
+        
+    - name: Install Qt
+      uses: jurplel/install-qt-action@v4
+      with:
+        version: '6.8.0'
+        host: 'windows'
+        target: 'desktop'
+        arch: 'win64_msvc2022_64'
+        dir: '${{ github.workspace }}/Qt'
+        install-deps: 'true'
+        modules: ''
+        archives: 'qtbase qtsvg'
+        cache: 'true'
+        cache-key-prefix: 'install-qt-action'
+        setup-python: 'true'
+        tools: 'tools_ifw'
+        set-env: 'true'
+        aqtversion: '==3.1.*'
+        py7zrversion: '==0.20.*'
+
+    - name: Configure CMake
+      env:
+        QT_DIR: ${{ github.workspace }}/Qt/6.8.0/msvc2022_64
+      run: |
+        cmake -B build -S . -G "Visual Studio 17 2022" -A x64 -DCMAKE_PREFIX_PATH="$QT_DIR"
+
+    - name: Build
+      run: |
+        cmake --build build --config Release --verbose
+
+    - name: Run tests
+      run: |
+        cd build
+        ctest -C Release --output-on-failure

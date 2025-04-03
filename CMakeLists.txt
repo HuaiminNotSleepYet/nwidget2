@@ -5,6 +5,8 @@ project(nwidget VERSION 0.1.0 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 
+option(ENABLE_TEST "Enable test" ON)
+
 add_library(nwidget INTERFACE)
 
 target_include_directories(nwidget
@@ -48,3 +50,9 @@ install(FILES
 )
 
 install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/nwidget DESTINATION include)
+
+if (ENABLE_TEST)
+    message(STATUS "Enable test")
+    enable_testing()
+    add_subdirectory(tests)
+endif()
