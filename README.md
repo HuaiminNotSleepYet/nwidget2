@@ -31,7 +31,7 @@ auto label   = MetaObject<>::from(new QLabel);
 auto slider1 = MetaObject<>::from(new QSlider);
 auto slider2 = MetaObject<>::from(new QSlider);
 
-label.text() = nwidget::qasprintf("%d", slider1.value() + slider2.value());
+label.text() = nwidget::asprintf_("%d", slider1.value() + slider2.value());
 ```
 
 ![](./doc/img/property_binding.gif)

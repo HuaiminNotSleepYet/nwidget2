@@ -297,7 +297,7 @@ template<typename T, typename ...Args> auto constructor(Args&&... args) { return
 
 // clang-format on
 
-template <typename... Args> auto qasprintf(const char* cformat, const Args&... args)
+template <typename... Args> auto asprintf_(const char* cformat, const Args&... args)
 {
     return call(QString::asprintf, cformat, args...);
 }
