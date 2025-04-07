@@ -107,6 +107,10 @@ template <typename T> static void bind(QSignalMapper* binding, const T& v)
         impl::binding::bind1(binding, v);
 }
 
+struct ActionCall;
+struct ActionMember;
+struct ActionInvoke;
+
 } // namespace impl::binding
 
 template <typename Action = impl::binding::ActionEmpty, // struct { auto operator()(Args&&...) const { return ... } }
@@ -128,6 +132,19 @@ public:
     explicit BindingExpr(const Args&... args)
         : args(args...)
     {
+    }
+
+    template <typename F, typename... As> auto i(F f, As&&... args) const
+    {
+        if constexpr (std::is_member_object_pointer_v<F>)
+            return makeBindingExpr<impl::binding::ActionMember>(*this, f, std::forward<As>(args)...);
+        else if constexpr (std::is_member_function_pointer_v<F>)
+            return makeBindingExpr<impl::binding::ActionInvoke>(*this, f, std::forward<As>(args)...);
+    }
+
+    template <typename... As> auto operator()(As&&... args) const
+    {
+        return makeBindingExpr<impl::binding::ActionCall>(*this, std::forward<As>(args)...);
     }
 
     auto eval() const
@@ -224,29 +241,23 @@ private:
     }
 };
 
+namespace impl::binding {
+
 // clang-format off
-
-template<typename T> struct ActionConstructor { template<typename ...Args> T operator()(Args&&... args){ return T(std::forward<Args>(args)...); } };
-template<typename T, typename ...Args> auto constructor(Args&&... args) { return makeBindingExpr<ActionConstructor<T>>(std::forward<Args>(args)...); }
-
-struct ActionCall { template<typename F, typename ...Args> auto operator()(F func, Args&&... args) { return func(std::forward<Args>(args)...); } };
-template<typename F, typename ...Args> auto call(F func, Args&&... args) { return makeBindingExpr<ActionCall>(func, std::forward<Args>(args)...); }
-
-struct ActionCond { template<typename A, typename B, typename C> auto operator()(A&& a, B&& b, C&& c) { return a ? b : c; } };
-template<typename A, typename B, typename C> auto cond(const A& a, const B& b, const C& c) { return makeBindingExpr<ActionCond>(a, b, c); }
 
 template<typename To> struct ActionCast            { template<typename From> auto operator()(From&& from){ return (To)from;                   } };
 template<typename To> struct ActionStaticCast      { template<typename From> auto operator()(From&& from){ return static_cast<To>(from);      } };
 template<typename To> struct ActionReinterpretCast { template<typename From> auto operator()(From&& from){ return reinterpret_cast<To>(from); } };
-template<typename To, typename From> auto cast(From&& from)              { return makeBindingExpr<ActionCast           <To>>(std::forward<From>(from)); }
-template<typename To, typename From> auto static_cast_(From&& from)      { return makeBindingExpr<ActionStaticCast     <To>>(std::forward<From>(from)); }
-template<typename To, typename From> auto reinterpret_cast_(From&& from) { return makeBindingExpr<ActionReinterpretCast<To>>(std::forward<From>(from)); }
+
+template<typename T> struct ActionConstructor { template<typename ...Args> T operator()(Args&&... args){ return T(std::forward<Args>(args)...); } };
+struct ActionCond { template<typename A, typename B, typename C> auto operator()(A&& a, B&& b, C&& c) { return a ? b : c; } };
+struct ActionCall { template<typename F, typename ...Args> auto operator()(F func, Args&&... args) { return func(std::forward<Args>(args)...); } };
 
 // clang-format on
 
 struct ActionMember
 {
-    template <class Class, typename Mem> auto operator()(Class&& obj, Mem mem)
+    template <class Class, typename M> auto operator()(Class&& obj, M mem)
     {
         if constexpr (!std::is_pointer_v<Class>)
             return obj.*mem;
@@ -257,11 +268,9 @@ struct ActionMember
     }
 };
 
-template <typename Class, typename Mem> auto member(Mem(Class::* mem)) { return makeBindingExpr<ActionMember>(mem); }
-
 struct ActionInvoke
 {
-    template <class Class, typename Mem, typename... Args> auto operator()(Class&& obj, Mem fn, Args&&... args)
+    template <class Class, typename F, typename... Args> auto operator()(Class&& obj, F fn, Args&&... args)
     {
         if constexpr (!std::is_pointer_v<Class>)
             return (obj.*fn)(std::forward<Args>(args)...);
@@ -272,10 +281,21 @@ struct ActionInvoke
     }
 };
 
-template <typename Class, typename Mem, typename... Args> auto invoke(Class obj, Mem fn, Args&&... args)
-{
-    return makeBindingExpr<ActionInvoke>(obj, fn, std::forward<Args>(args)...);
-}
+} // namespace impl::binding
+
+// clang-format off
+
+template<typename To, typename From> auto cast(From&& from)              { return makeBindingExpr<impl::binding::ActionCast           <To>>(std::forward<From>(from)); }
+template<typename To, typename From> auto static_cast_(From&& from)      { return makeBindingExpr<impl::binding::ActionStaticCast     <To>>(std::forward<From>(from)); }
+template<typename To, typename From> auto reinterpret_cast_(From&& from) { return makeBindingExpr<impl::binding::ActionReinterpretCast<To>>(std::forward<From>(from)); }
+
+template<typename A, typename B, typename C> auto cond(const A& a, const B& b, const C& c) { return makeBindingExpr<impl::binding::ActionCond>(a, b, c); }
+
+template<typename F, typename ...Args> auto call(F func, Args&&... args) { return makeBindingExpr<impl::binding::ActionCall>(func, std::forward<Args>(args)...); }
+
+template<typename T, typename ...Args> auto constructor(Args&&... args) { return makeBindingExpr<impl::binding::ActionConstructor<T>>(std::forward<Args>(args)...); }
+
+// clang-format on
 
 template <typename... Args> auto qasprintf(const char* cformat, const Args&... args)
 {
