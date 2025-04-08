@@ -191,51 +191,46 @@ private:
     template <typename Class, typename Func>
     auto bindTo(Class* receiver, Func func, const QString& name, Qt::ConnectionType type = Qt::AutoConnection) const
     {
-        static_assert(impl::binding::is_meta_property_v<Func>
-                          || std::is_member_function_pointer_v<Func>
-                                 && (std::is_invocable_v<Func, Class*> || std::is_invocable_v<Func, Class*, Type>)
-                          || std::is_invocable_v<Func> || std::is_invocable_v<Func, Type>,
-                      "Invalid slot");
-
-        const auto call = [rece = receiver, func](const BindingExpr& expr)
+        auto slot = [e = *this, r = receiver, f = func]()
         {
+            // e, f maybe unused
+            Q_UNUSED(e);
+            Q_UNUSED(r);
             if constexpr (impl::binding::is_meta_property_v<Func>)
-                func.set(expr.eval());
-            else if constexpr (std::is_member_function_pointer_v<Func>) {
-                if constexpr (std::is_invocable_v<Func, Class*>)
-                    (rece->*func)();
-                else if constexpr (std::is_invocable_v<Func, Class*, Type>)
-                    (rece->*func)(expr.eval());
-            } else {
-                if constexpr (std::is_invocable_v<Func>)
-                    func();
-                else if constexpr (std::is_invocable_v<Func, Type>)
-                    func(expr.eval());
-            }
-        };
+                return [f, e]() { return f.set(e.eval()); };
+            else if constexpr (std::is_invocable_v<Func>)
+                return [f]() { return f(); };
+            else if constexpr (std::is_invocable_v<Func, Type>)
+                return [f, e]() { return f(e.eval()); };
+            else if constexpr (std::is_member_function_pointer_v<Func> && std::is_invocable_v<Func, Class*>)
+                return [r, f]() { return (r->*f)(); };
+            else if constexpr (std::is_member_function_pointer_v<Func> && std::is_invocable_v<Func, Class*, Type>)
+                return [r, f, e]() { return (r->*f)(e.eval()); };
+        }();
 
         QSignalMapper* binding = nullptr;
 
         if (receiver)
             binding = receiver->template findChild<QSignalMapper*>(name, Qt::FindDirectChildrenOnly);
 
-        if (binding) {
-            if (isObservable)
+        if (!isObservable) {
+            if (binding)
                 binding->disconnect();
-            else {
-                call(*this);
-                binding->deleteLater();
-                return *this;
-            }
+            slot();
+            return *this;
+        }
+
+        if (binding) {
+            binding->disconnect();
         } else {
             binding = new QSignalMapper(receiver);
             binding->setObjectName(name);
         }
 
         impl::binding::bind(binding, *this);
-        QObject::connect(binding, &QSignalMapper::mappedInt, binding, [call, expr = *this]() { call(expr); }, type);
+        QObject::connect(binding, &QSignalMapper::mappedInt, binding, slot, type);
 
-        call(*this);
+        slot();
 
         return *this;
     }
