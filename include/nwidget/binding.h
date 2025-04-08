@@ -169,7 +169,7 @@ public:
 #else
             QStringLiteral("nwidget_binding_to_func");
 #endif
-        return bindTo(nullptr, func, bindingName, Qt::DirectConnection);
+        return bindTo((QObject*)nullptr, func, bindingName, Qt::DirectConnection);
     }
 
     template <typename Class, typename Func>
