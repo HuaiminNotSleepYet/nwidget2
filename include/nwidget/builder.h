@@ -226,11 +226,11 @@ template <typename Iterator, typename Generator>
 auto ForEach(Iterator begin, Iterator end, Generator gen)
     -> std::enable_if_t<std::is_invocable_v<Generator>, BuilderItemGenerator<std::invoke_result_t<Generator>>>
 {
-    return [begin, end, gen]() mutable -> std::optional<decltype(gen(*begin))>
+    return [begin, end, gen]() mutable -> std::optional<decltype(gen())>
     {
         if (begin == end)
             return std::nullopt;
-        auto item = gen(*begin);
+        auto item = gen();
         ++begin;
         return item;
     };
