@@ -103,6 +103,9 @@ public:                                                                         
     }                                                                                                                  \
     Class* object() const { return self().o; }
 
+#define N_BEGIN_BUILDER_PROPERTY
+#define N_END_BUILDER_PROPERTY
+
 #define N_BUILDER_PROPERTY(NAME)                                                                                       \
 public:                                                                                                                \
     Self& NAME(const typename decltype(std::declval<::nwidget::MetaObject<Class>>().NAME())::Type& value)              \
@@ -112,6 +115,9 @@ public:                                                                         
         MetaProp::write(self().o, value);                                                                              \
         return self();                                                                                                 \
     }
+
+#define N_BEGIN_BUILDER_SETTER
+#define N_END_BUILDER_SETTER
 
 #define N_IMPL_ARGS_IMPL0_0()
 #define N_IMPL_ARGS_IMPL0_1(TYPE)      TYPE _0
@@ -145,6 +151,9 @@ public:                                                                         
                                                                         typename ::nwidget::impl::utils::mem_fn<decltype(&Class::SETTER)>::template arg<2>,\
                                                                         typename ::nwidget::impl::utils::mem_fn<decltype(&Class::SETTER)>::template arg<3>)
 // clang-format on
+
+#define N_BEGIN_BUILDER_SIGNAL
+#define N_END_BUILDER_SIGNAL
 
 #define N_BUILDER_SIGNAL(NAME, SIGNAL_)                                                                                \
     template <typename Func> Self& NAME(Func func, Qt::ConnectionType type = Qt::AutoConnection)                       \

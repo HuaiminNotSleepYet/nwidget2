@@ -173,6 +173,9 @@ using Reset  = void;
 
 // clang-format on
 
+#define N_BEGIN_PROPERTY
+#define N_END_PROPERTY
+
 #define N_PROPERTY(TYPE, NAME, ...)                                                                                    \
 public:                                                                                                                \
     auto NAME() const                                                                                                  \

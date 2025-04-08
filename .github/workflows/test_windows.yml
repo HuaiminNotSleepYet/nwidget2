@@ -1,6 +1,18 @@
-name: test
+name: test_windows
 
-on: [push, pull_request]
+on:
+  push:
+    paths:
+      - 'CMakeLists.txt'
+      - 'include/**'
+      - 'test/**'
+      - '.github/workflows/test_windows.yml'
+  pull_request:
+    paths:
+      - 'CMakeLists.txt'
+      - 'include/**'
+      - 'test/**'
+      - '.github/workflows/test_windows.yml'
 
 jobs:
   build:
@@ -19,21 +31,18 @@ jobs:
     - name: Install Qt
       uses: jurplel/install-qt-action@v4
       with:
-        version: '6.8.0'
-        host: 'windows'
-        target: 'desktop'
-        arch: 'win64_msvc2022_64'
-        dir: '${{ github.workspace }}/Qt'
-        install-deps: 'true'
-        modules: ''
-        archives: 'qtbase qtsvg'
-        cache: 'true'
-        cache-key-prefix: 'install-qt-action'
-        setup-python: 'true'
-        tools: 'tools_ifw'
-        set-env: 'true'
-        aqtversion: '==3.1.*'
-        py7zrversion: '==0.20.*'
+        version: 6.8.0
+        host: windows
+        target: desktop
+        arch: win64_msvc2022_64
+        dir: ${{ github.workspace }}/Qt
+        install-deps: true
+        modules:
+        archives:
+        cache: true
+        cache-key-prefix: 'qt6.8.0'
+        setup-python: false
+        set-env: true
 
     - name: Configure CMake
       env:

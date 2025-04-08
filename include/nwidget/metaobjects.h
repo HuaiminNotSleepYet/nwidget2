@@ -8,7 +8,9 @@ template <> class nwidget::MetaObject<QObject>
 {
     N_OBJECT(QObject)
 
+    N_BEGIN_PROPERTY
     N_PROPERTY(QString, objectName, N_READ objectName N_WRITE setObjectName N_NOTIFY objectNameChanged)
+    N_END_PROPERTY
 };
 #endif
 
@@ -17,6 +19,7 @@ template <> class nwidget::MetaObject<QAction> : public MetaObject<QObject>
 {
     N_OBJECT(QAction, QObject)
 
+    N_BEGIN_PROPERTY
     N_PROPERTY(bool, checkable, N_READ isCheckable N_WRITE setCheckable N_NOTIFY checkableChanged)
     N_PROPERTY(bool, checked, N_READ isChecked N_WRITE setChecked N_NOTIFY toggled)
     N_PROPERTY(bool, enabled, N_READ isEnabled N_WRITE setEnabled N_NOTIFY enabledChanged)
@@ -39,6 +42,7 @@ template <> class nwidget::MetaObject<QAction> : public MetaObject<QObject>
                shortcutVisibleInContextMenu,
                N_READ isShortcutVisibleInContextMenu N_WRITE setShortcutVisibleInContextMenu N_NOTIFY changed)
     N_PROPERTY(QAction::Priority, priority, N_READ priority N_WRITE setPriority N_NOTIFY changed)
+    N_END_PROPERTY
 };
 #endif
 
@@ -47,9 +51,11 @@ template <> class nwidget::MetaObject<QLayout> : public MetaObject<QObject>
 {
     N_OBJECT(QLayout, QObject)
 
+    N_BEGIN_PROPERTY
     N_PROPERTY(int, spacing, N_READ spacing N_WRITE setSpacing)
     N_PROPERTY(QMargins, contentsMargins, N_READ contentsMargins N_WRITE setContentsMargins)
     N_PROPERTY(QLayout::SizeConstraint, sizeConstraint, N_READ sizeConstraint N_WRITE setSizeConstraint)
+    N_END_PROPERTY
 };
 #endif
 
@@ -75,12 +81,14 @@ template <> class nwidget::MetaObject<QFormLayout> : public MetaObject<QLayout>
 {
     N_OBJECT(QFormLayout, QLayout)
 
+    N_BEGIN_PROPERTY
     N_PROPERTY(QFormLayout::FieldGrowthPolicy, fieldGrowthPolicy, N_READ fieldGrowthPolicy N_WRITE setFieldGrowthPolicy)
     N_PROPERTY(QFormLayout::RowWrapPolicy, rowWrapPolicy, N_READ rowWrapPolicy N_WRITE setRowWrapPolicy)
     N_PROPERTY(Qt::Alignment, labelAlignment, N_READ labelAlignment N_WRITE setLabelAlignment)
     N_PROPERTY(Qt::Alignment, formAlignment, N_READ formAlignment N_WRITE setFormAlignment)
     N_PROPERTY(int, horizontalSpacing, N_READ horizontalSpacing N_WRITE setHorizontalSpacing)
     N_PROPERTY(int, verticalSpacing, N_READ verticalSpacing N_WRITE setVerticalSpacing)
+    N_END_PROPERTY
 };
 #endif
 
@@ -89,8 +97,10 @@ template <> class nwidget::MetaObject<QGridLayout> : public MetaObject<QLayout>
 {
     N_OBJECT(QGridLayout, QLayout)
 
+    N_BEGIN_PROPERTY
     N_PROPERTY(int, horizontalSpacing, N_READ horizontalSpacing N_WRITE setHorizontalSpacing)
     N_PROPERTY(int, verticalSpacing, N_READ verticalSpacing N_WRITE setVerticalSpacing)
+    N_END_PROPERTY
 };
 #endif
 
@@ -99,9 +109,11 @@ template <> class nwidget::MetaObject<QStackedLayout> : public MetaObject<QLayou
 {
     N_OBJECT(QStackedLayout, QLayout)
 
+    N_BEGIN_PROPERTY
     N_PROPERTY(int, currentIndex, N_READ currentIndex N_WRITE setCurrentIndex N_NOTIFY currentChanged)
     N_PROPERTY(QStackedLayout::StackingMode, stackingMode, N_READ stackingMode N_WRITE setStackingMode)
     N_PROPERTY(int, count, N_READ count)
+    N_END_PROPERTY
 };
 #endif
 
@@ -112,6 +124,7 @@ template <> class nwidget::MetaObject<QWidget> : public MetaObject<QObject>
 {
     N_OBJECT(QWidget, QObject)
 
+    N_BEGIN_PROPERTY
     N_PROPERTY(bool, modal, N_READ isModal)
     N_PROPERTY(Qt::WindowModality, windowModality, N_READ windowModality N_WRITE setWindowModality)
     N_PROPERTY(bool, enabled, N_READ isEnabled N_WRITE setEnabled)
@@ -184,6 +197,7 @@ template <> class nwidget::MetaObject<QWidget> : public MetaObject<QObject>
     N_PROPERTY(QLocale, locale, N_READ locale N_WRITE setLocale)
     N_PROPERTY(QString, windowFilePath, N_READ windowFilePath N_WRITE setWindowFilePath)
     N_PROPERTY(Qt::InputMethodHints, inputMethodHints, N_READ inputMethodHints N_WRITE setInputMethodHints)
+    N_END_PROPERTY
 };
 #endif
 
@@ -192,6 +206,7 @@ template <> class nwidget::MetaObject<QAbstractButton> : public MetaObject<QWidg
 {
     N_OBJECT(QAbstractButton, QWidget)
 
+    N_BEGIN_PROPERTY
     N_PROPERTY(QString, text, N_READ text N_WRITE setText)
     N_PROPERTY(QIcon, icon, N_READ icon N_WRITE setIcon)
     N_PROPERTY(QSize, iconSize, N_READ iconSize N_WRITE setIconSize)
@@ -205,6 +220,7 @@ template <> class nwidget::MetaObject<QAbstractButton> : public MetaObject<QWidg
     N_PROPERTY(int, autoRepeatDelay, N_READ autoRepeatDelay N_WRITE setAutoRepeatDelay)
     N_PROPERTY(int, autoRepeatInterval, N_READ autoRepeatInterval N_WRITE setAutoRepeatInterval)
     N_PROPERTY(bool, down, N_READ isDown N_WRITE setDown)
+    N_END_PROPERTY
 };
 #endif
 
@@ -213,9 +229,11 @@ template <> class nwidget::MetaObject<QDialogButtonBox> : public MetaObject<QWid
 {
     N_OBJECT(QDialogButtonBox, QWidget)
 
+    N_BEGIN_PROPERTY
     N_PROPERTY(Qt::Orientation, orientation, N_READ orientation N_WRITE setOrientation)
     N_PROPERTY(QDialogButtonBox::StandardButtons, standardButtons, N_READ standardButtons N_WRITE setStandardButtons)
     N_PROPERTY(bool, centerButtons, N_READ centerButtons N_WRITE setCenterButtons)
+    N_END_PROPERTY
 };
 #endif
 
@@ -224,8 +242,10 @@ template <> class nwidget::MetaObject<QCheckBox> : public MetaObject<QAbstractBu
 {
     N_OBJECT(QCheckBox, QAbstractButton)
 
+    N_BEGIN_PROPERTY
     N_PROPERTY(bool, tristate, N_READ isTristate N_WRITE setTristate)
     N_PROPERTY(Qt::CheckState, checkState, N_READ checkState N_WRITE setCheckState)
+    N_END_PROPERTY
 };
 #endif
 
@@ -234,9 +254,11 @@ template <> class nwidget::MetaObject<QPushButton> : public MetaObject<QAbstract
 {
     N_OBJECT(QPushButton, QAbstractButton)
 
+    N_BEGIN_PROPERTY
     N_PROPERTY(bool, autoDefault, N_READ autoDefault N_WRITE setAutoDefault)
     N_PROPERTY(bool, default_, N_READ isDefault N_WRITE setDefault)
     N_PROPERTY(bool, flat, N_READ isFlat N_WRITE setFlat)
+    N_END_PROPERTY
 };
 #endif
 
@@ -245,8 +267,10 @@ template <> class nwidget::MetaObject<QCommandLinkButton> : public MetaObject<QP
 {
     N_OBJECT(QCommandLinkButton, QPushButton)
 
+    N_BEGIN_PROPERTY
     N_PROPERTY(QString, description, N_READ description N_WRITE setDescription)
     N_PROPERTY(bool, flat, N_READ isFlat N_WRITE setFlat)
+    N_END_PROPERTY
 };
 #endif
 
@@ -262,12 +286,14 @@ template <> class nwidget::MetaObject<QToolButton> : public MetaObject<QAbstract
 {
     N_OBJECT(QToolButton, QAbstractButton)
 
+    N_BEGIN_PROPERTY
 #if QT_CONFIG(menu)
     N_PROPERTY(QToolButton::ToolButtonPopupMode, popupMode, N_READ popupMode N_WRITE setPopupMode)
 #endif
     N_PROPERTY(Qt::ToolButtonStyle, toolButtonStyle, N_READ toolButtonStyle N_WRITE setToolButtonStyle)
     N_PROPERTY(bool, autoRaise, N_READ autoRaise N_WRITE setAutoRaise)
     N_PROPERTY(Qt::ArrowType, arrowType, N_READ arrowType N_WRITE setArrowType)
+    N_END_PROPERTY
 };
 #endif
 
@@ -276,12 +302,14 @@ template <> class nwidget::MetaObject<QFrame> : public MetaObject<QWidget>
 {
     N_OBJECT(QFrame, QWidget)
 
+    N_BEGIN_PROPERTY
     N_PROPERTY(QFrame::Shape, frameShape, N_READ frameShape N_WRITE setFrameShape)
     N_PROPERTY(QFrame::Shadow, frameShadow, N_READ frameShadow N_WRITE setFrameShadow)
     N_PROPERTY(int, lineWidth, N_READ lineWidth N_WRITE setLineWidth)
     N_PROPERTY(int, midLineWidth, N_READ midLineWidth N_WRITE setMidLineWidth)
     N_PROPERTY(int, frameWidth, N_READ frameWidth)
     N_PROPERTY(QRect, frameRect, N_READ frameRect N_WRITE setFrameRect)
+    N_END_PROPERTY
 };
 #endif
 
@@ -290,6 +318,7 @@ template <> class nwidget::MetaObject<QAbstractScrollArea> : public MetaObject<Q
 {
     N_OBJECT(QAbstractScrollArea, QFrame)
 
+    N_BEGIN_PROPERTY
     N_PROPERTY(Qt::ScrollBarPolicy,
                verticalScrollBarPolicy,
                N_READ verticalScrollBarPolicy N_WRITE setVerticalScrollBarPolicy)
@@ -299,6 +328,7 @@ template <> class nwidget::MetaObject<QAbstractScrollArea> : public MetaObject<Q
     N_PROPERTY(QAbstractScrollArea::SizeAdjustPolicy,
                sizeAdjustPolicy,
                N_READ sizeAdjustPolicy N_WRITE setSizeAdjustPolicy)
+    N_END_PROPERTY
 };
 #endif
 
@@ -307,6 +337,7 @@ template <> class nwidget::MetaObject<QAbstractItemView> : public MetaObject<QAb
 {
     N_OBJECT(QAbstractItemView, QAbstractScrollArea)
 
+    N_BEGIN_PROPERTY
     N_PROPERTY(bool, autoScroll, N_READ hasAutoScroll N_WRITE setAutoScroll)
     N_PROPERTY(int, autoScrollMargin, N_READ autoScrollMargin N_WRITE setAutoScrollMargin)
     N_PROPERTY(QAbstractItemView::EditTriggers, editTriggers, N_READ editTriggers N_WRITE setEditTriggers)
@@ -331,6 +362,7 @@ template <> class nwidget::MetaObject<QAbstractItemView> : public MetaObject<QAb
     N_PROPERTY(QAbstractItemView::ScrollMode,
                horizontalScrollMode,
                N_READ horizontalScrollMode N_WRITE setHorizontalScrollMode)
+    N_END_PROPERTY
 };
 #endif
 
@@ -339,6 +371,7 @@ template <> class nwidget::MetaObject<QHeaderView> : public MetaObject<QAbstract
 {
     N_OBJECT(QHeaderView, QAbstractItemView)
 
+    N_BEGIN_PROPERTY
     N_PROPERTY(bool, firstSectionMovable, N_READ isFirstSectionMovable N_WRITE setFirstSectionMovable)
     N_PROPERTY(bool, showSortIndicator, N_READ isSortIndicatorShown N_WRITE setSortIndicatorShown)
     N_PROPERTY(bool, highlightSections, N_READ highlightSections N_WRITE setHighlightSections)
@@ -351,6 +384,7 @@ template <> class nwidget::MetaObject<QHeaderView> : public MetaObject<QAbstract
     N_PROPERTY(bool,
                sortIndicatorClearable,
                N_READ isSortIndicatorClearable N_WRITE setSortIndicatorClearable N_NOTIFY sortIndicatorClearableChanged)
+    N_END_PROPERTY
 };
 #endif
 
@@ -359,6 +393,7 @@ template <> class nwidget::MetaObject<QListView> : public MetaObject<QAbstractIt
 {
     N_OBJECT(QListView, QAbstractItemView)
 
+    N_BEGIN_PROPERTY
     N_PROPERTY(QListView::Movement, movement, N_READ movement N_WRITE setMovement)
     N_PROPERTY(QListView::Flow, flow, N_READ flow N_WRITE setFlow)
     N_PROPERTY(bool, isWrapping, N_READ isWrapping N_WRITE setWrapping)
@@ -373,6 +408,7 @@ template <> class nwidget::MetaObject<QListView> : public MetaObject<QAbstractIt
     N_PROPERTY(bool, wordWrap, N_READ wordWrap N_WRITE setWordWrap)
     N_PROPERTY(bool, selectionRectVisible, N_READ isSelectionRectVisible N_WRITE setSelectionRectVisible)
     N_PROPERTY(Qt::Alignment, itemAlignment, N_READ itemAlignment N_WRITE setItemAlignment)
+    N_END_PROPERTY
 };
 #endif
 
@@ -381,9 +417,11 @@ template <> class nwidget::MetaObject<QListWidget> : public MetaObject<QListView
 {
     N_OBJECT(QListWidget, QListView)
 
+    N_BEGIN_PROPERTY
     N_PROPERTY(int, count, N_READ count)
     N_PROPERTY(int, currentRow, N_READ currentRow N_WRITE setCurrentRow N_NOTIFY currentRowChanged)
     N_PROPERTY(bool, sortingEnabled, N_READ isSortingEnabled N_WRITE setSortingEnabled)
+    N_END_PROPERTY
 };
 #endif
 
@@ -392,6 +430,7 @@ template <> class nwidget::MetaObject<QTableView> : public MetaObject<QAbstractI
 {
     N_OBJECT(QTableView, QAbstractItemView)
 
+    N_BEGIN_PROPERTY
     N_PROPERTY(bool, showGrid, N_READ showGrid N_WRITE setShowGrid)
     N_PROPERTY(Qt::PenStyle, gridStyle, N_READ gridStyle N_WRITE setGridStyle)
     N_PROPERTY(bool, sortingEnabled, N_READ isSortingEnabled N_WRITE setSortingEnabled)
@@ -399,6 +438,7 @@ template <> class nwidget::MetaObject<QTableView> : public MetaObject<QAbstractI
 #if QT_CONFIG(abstractbutton)
     N_PROPERTY(bool, cornerButtonEnabled, N_READ isCornerButtonEnabled N_WRITE setCornerButtonEnabled)
 #endif
+    N_END_PROPERTY
 };
 #endif
 
@@ -407,8 +447,10 @@ template <> class nwidget::MetaObject<QTableWidget> : public MetaObject<QAbstrac
 {
     N_OBJECT(QTableWidget, QAbstractItemView)
 
+    N_BEGIN_PROPERTY
     N_PROPERTY(int, rowCount, N_READ rowCount N_WRITE setRowCount)
     N_PROPERTY(int, columnCount, N_READ columnCount N_WRITE setColumnCount)
+    N_END_PROPERTY
 };
 #endif
 
@@ -417,6 +459,7 @@ template <> class nwidget::MetaObject<QTreeView> : public MetaObject<QAbstractIt
 {
     N_OBJECT(QTreeView, QAbstractItemView)
 
+    N_BEGIN_PROPERTY
     N_PROPERTY(int, autoExpandDelay, N_READ autoExpandDelay N_WRITE setAutoExpandDelay)
     N_PROPERTY(int, indentation, N_READ indentation N_WRITE setIndentation)
     N_PROPERTY(bool, rootIsDecorated, N_READ rootIsDecorated N_WRITE setRootIsDecorated)
@@ -428,6 +471,7 @@ template <> class nwidget::MetaObject<QTreeView> : public MetaObject<QAbstractIt
     N_PROPERTY(bool, wordWrap, N_READ wordWrap N_WRITE setWordWrap)
     N_PROPERTY(bool, headerHidden, N_READ isHeaderHidden N_WRITE setHeaderHidden)
     N_PROPERTY(bool, expandsOnDoubleClick, N_READ expandsOnDoubleClick N_WRITE setExpandsOnDoubleClick)
+    N_END_PROPERTY
 };
 #endif
 
@@ -436,8 +480,10 @@ template <> class nwidget::MetaObject<QTreeWidget> : public MetaObject<QAbstract
 {
     N_OBJECT(QTreeWidget, QAbstractItemView)
 
+    N_BEGIN_PROPERTY
     N_PROPERTY(int, columnCount, N_READ columnCount N_WRITE setColumnCount)
     N_PROPERTY(int, topLevelItemCount, N_READ topLevelItemCount)
+    N_END_PROPERTY
 };
 #endif
 
@@ -446,6 +492,7 @@ template <> class nwidget::MetaObject<QPlainTextEdit> : public MetaObject<QAbstr
 {
     N_OBJECT(QPlainTextEdit, QAbstractScrollArea)
 
+    N_BEGIN_PROPERTY
     N_PROPERTY(bool, tabChangesFocus, N_READ tabChangesFocus N_WRITE setTabChangesFocus)
     N_PROPERTY(QString, documentTitle, N_READ documentTitle N_WRITE setDocumentTitle)
     N_PROPERTY(bool, undoRedoEnabled, N_READ isUndoRedoEnabled N_WRITE setUndoRedoEnabled)
@@ -464,6 +511,7 @@ template <> class nwidget::MetaObject<QPlainTextEdit> : public MetaObject<QAbstr
     N_PROPERTY(bool, backgroundVisible, N_READ backgroundVisible N_WRITE setBackgroundVisible)
     N_PROPERTY(bool, centerOnScroll, N_READ centerOnScroll N_WRITE setCenterOnScroll)
     N_PROPERTY(QString, placeholderText, N_READ placeholderText N_WRITE setPlaceholderText)
+    N_END_PROPERTY
 };
 #endif
 
@@ -472,6 +520,7 @@ template <> class nwidget::MetaObject<QTextEdit> : public MetaObject<QAbstractSc
 {
     N_OBJECT(QTextEdit, QAbstractScrollArea)
 
+    N_BEGIN_PROPERTY
     N_PROPERTY(QTextEdit::AutoFormatting, autoFormatting, N_READ autoFormatting N_WRITE setAutoFormatting)
     N_PROPERTY(bool, tabChangesFocus, N_READ tabChangesFocus N_WRITE setTabChangesFocus)
     N_PROPERTY(QString, documentTitle, N_READ documentTitle N_WRITE setDocumentTitle)
@@ -492,6 +541,7 @@ template <> class nwidget::MetaObject<QTextEdit> : public MetaObject<QAbstractSc
                N_READ textInteractionFlags N_WRITE setTextInteractionFlags)
     N_PROPERTY(QTextDocument*, document, N_READ document N_WRITE setDocument)
     N_PROPERTY(QString, placeholderText, N_READ placeholderText N_WRITE setPlaceholderText)
+    N_END_PROPERTY
 };
 #endif
 
@@ -500,11 +550,13 @@ template <> class nwidget::MetaObject<QTextBrowser> : public MetaObject<QTextEdi
 {
     N_OBJECT(QTextBrowser, QTextEdit)
 
+    N_BEGIN_PROPERTY
     N_PROPERTY(QUrl, source, N_READ source N_WRITE setSource)
     N_PROPERTY(QTextDocument::ResourceType, sourceType, N_READ sourceType)
     N_PROPERTY(QStringList, searchPaths, N_READ searchPaths N_WRITE setSearchPaths)
     N_PROPERTY(bool, openExternalLinks, N_READ openExternalLinks N_WRITE setOpenExternalLinks)
     N_PROPERTY(bool, openLinks, N_READ openLinks N_WRITE setOpenLinks)
+    N_END_PROPERTY
 };
 #endif
 
@@ -513,8 +565,10 @@ template <> class nwidget::MetaObject<QToolBox> : public MetaObject<QFrame>
 {
     N_OBJECT(QToolBox, QFrame)
 
+    N_BEGIN_PROPERTY
     N_PROPERTY(int, currentIndex, N_READ currentIndex N_WRITE setCurrentIndex N_NOTIFY currentChanged)
     N_PROPERTY(int, count, N_READ count)
+    N_END_PROPERTY
 };
 #endif
 
@@ -523,10 +577,12 @@ template <> class nwidget::MetaObject<QSplitter> : public MetaObject<QFrame>
 {
     N_OBJECT(QSplitter, QFrame)
 
+    N_BEGIN_PROPERTY
     N_PROPERTY(Qt::Orientation, orientation, N_READ orientation N_WRITE setOrientation)
     N_PROPERTY(bool, opaqueResize, N_READ opaqueResize N_WRITE setOpaqueResize)
     N_PROPERTY(int, handleWidth, N_READ handleWidth N_WRITE setHandleWidth)
     N_PROPERTY(bool, childrenCollapsible, N_READ childrenCollapsible N_WRITE setChildrenCollapsible)
+    N_END_PROPERTY
 };
 #endif
 
@@ -535,6 +591,7 @@ template <> class nwidget::MetaObject<QAbstractSlider> : public MetaObject<QWidg
 {
     N_OBJECT(QAbstractSlider, QWidget)
 
+    N_BEGIN_PROPERTY
     N_PROPERTY(int, minimum, N_READ minimum N_WRITE setMinimum)
     N_PROPERTY(int, maximum, N_READ maximum N_WRITE setMaximum)
     N_PROPERTY(int, singleStep, N_READ singleStep N_WRITE setSingleStep)
@@ -545,6 +602,7 @@ template <> class nwidget::MetaObject<QAbstractSlider> : public MetaObject<QWidg
     N_PROPERTY(Qt::Orientation, orientation, N_READ orientation N_WRITE setOrientation)
     N_PROPERTY(bool, invertedAppearance, N_READ invertedAppearance N_WRITE setInvertedAppearance)
     N_PROPERTY(bool, invertedControls, N_READ invertedControls N_WRITE setInvertedControls)
+    N_END_PROPERTY
 };
 #endif
 
@@ -553,10 +611,12 @@ template <> class nwidget::MetaObject<QDial> : public MetaObject<QAbstractSlider
 {
     N_OBJECT(QDial, QAbstractSlider)
 
+    N_BEGIN_PROPERTY
     N_PROPERTY(bool, wrapping, N_READ wrapping N_WRITE setWrapping)
     N_PROPERTY(int, notchSize, N_READ notchSize)
     N_PROPERTY(qreal, notchTarget, N_READ notchTarget N_WRITE setNotchTarget)
     N_PROPERTY(bool, notchesVisible, N_READ notchesVisible N_WRITE setNotchesVisible)
+    N_END_PROPERTY
 };
 #endif
 
@@ -565,8 +625,10 @@ template <> class nwidget::MetaObject<QSlider> : public MetaObject<QAbstractSlid
 {
     N_OBJECT(QSlider, QAbstractSlider)
 
+    N_BEGIN_PROPERTY
     N_PROPERTY(QSlider::TickPosition, tickPosition, N_READ tickPosition N_WRITE setTickPosition)
     N_PROPERTY(int, tickInterval, N_READ tickInterval N_WRITE setTickInterval)
+    N_END_PROPERTY
 };
 #endif
 
@@ -582,6 +644,7 @@ template <> class nwidget::MetaObject<QAbstractSpinBox> : public MetaObject<QWid
 {
     N_OBJECT(QAbstractSpinBox, QWidget)
 
+    N_BEGIN_PROPERTY
     N_PROPERTY(bool, wrapping, N_READ wrapping N_WRITE setWrapping)
     N_PROPERTY(bool, frame, N_READ hasFrame N_WRITE setFrame)
     N_PROPERTY(Qt::Alignment, alignment, N_READ alignment N_WRITE setAlignment)
@@ -594,6 +657,7 @@ template <> class nwidget::MetaObject<QAbstractSpinBox> : public MetaObject<QWid
     N_PROPERTY(bool, acceptableInput, N_READ hasAcceptableInput)
     N_PROPERTY(bool, keyboardTracking, N_READ keyboardTracking N_WRITE setKeyboardTracking)
     N_PROPERTY(bool, showGroupSeparator, N_READ isGroupSeparatorShown N_WRITE setGroupSeparatorShown)
+    N_END_PROPERTY
 };
 #endif
 
@@ -602,6 +666,7 @@ template <> class nwidget::MetaObject<QDateTimeEdit> : public MetaObject<QAbstra
 {
     N_OBJECT(QDateTimeEdit, QAbstractSpinBox)
 
+    N_BEGIN_PROPERTY
     N_PROPERTY(QDateTime, dateTime, N_READ dateTime N_WRITE setDateTime N_NOTIFY dateTimeChanged)
     N_PROPERTY(QDate, date, N_READ date N_WRITE setDate N_NOTIFY dateChanged)
     N_PROPERTY(QTime, time, N_READ time N_WRITE setTime N_NOTIFY timeChanged)
@@ -624,20 +689,26 @@ template <> class nwidget::MetaObject<QDateTimeEdit> : public MetaObject<QAbstra
 
     N_UNTIL(6, 7, N_PROPERTY(Qt::TimeSpec, timeSpec, N_READ timeSpec N_WRITE setTimeSpec))
     N_SINCE(6, 7, N_PROPERTY(QTimeZone, timeZone, N_READ timeZone N_WRITE setTimeZone))
+
+    N_END_PROPERTY
 };
 
 template <> class nwidget::MetaObject<QDateEdit> : public MetaObject<QDateTimeEdit>
 {
     N_OBJECT(QDateEdit, QDateTimeEdit)
 
+    N_BEGIN_PROPERTY
     N_PROPERTY(QDate, date, N_READ date N_WRITE setDate N_NOTIFY userDateChanged)
+    N_END_PROPERTY
 };
 
 template <> class nwidget::MetaObject<QTimeEdit> : public MetaObject<QDateTimeEdit>
 {
     N_OBJECT(QTimeEdit, QDateTimeEdit)
 
+    N_BEGIN_PROPERTY
     N_PROPERTY(QTime, time, N_READ time N_WRITE setTime N_NOTIFY userTimeChanged)
+    N_END_PROPERTY
 };
 #endif
 
@@ -646,6 +717,7 @@ template <> class nwidget::MetaObject<QSpinBox> : public MetaObject<QAbstractSpi
 {
     N_OBJECT(QSpinBox, QAbstractSpinBox)
 
+    N_BEGIN_PROPERTY
     N_PROPERTY(QString, suffix, N_READ suffix N_WRITE setSuffix)
     N_PROPERTY(QString, prefix, N_READ prefix N_WRITE setPrefix)
     N_PROPERTY(QString, cleanText, N_READ cleanText)
@@ -655,12 +727,14 @@ template <> class nwidget::MetaObject<QSpinBox> : public MetaObject<QAbstractSpi
     N_PROPERTY(QSpinBox::StepType, stepType, N_READ stepType N_WRITE setStepType)
     N_PROPERTY(int, value, N_READ value N_WRITE setValue N_NOTIFY valueChanged)
     N_PROPERTY(int, displayIntegerBase, N_READ displayIntegerBase N_WRITE setDisplayIntegerBase)
+    N_END_PROPERTY
 };
 
 template <> class nwidget::MetaObject<QDoubleSpinBox> : public MetaObject<QAbstractSpinBox>
 {
     N_OBJECT(QDoubleSpinBox, QAbstractSpinBox)
 
+    N_BEGIN_PROPERTY
     N_PROPERTY(QString, suffix, N_READ suffix N_WRITE setSuffix)
     N_PROPERTY(QString, prefix, N_READ prefix N_WRITE setPrefix)
     N_PROPERTY(QString, cleanText, N_READ cleanText)
@@ -670,6 +744,7 @@ template <> class nwidget::MetaObject<QDoubleSpinBox> : public MetaObject<QAbstr
     N_PROPERTY(double, singleStep, N_READ singleStep N_WRITE setSingleStep)
     N_PROPERTY(QSpinBox::StepType, stepType, N_READ stepType N_WRITE setStepType)
     N_PROPERTY(double, value, N_READ value N_WRITE setValue N_NOTIFY valueChanged)
+    N_END_PROPERTY
 };
 #endif
 
@@ -678,6 +753,7 @@ template <> class nwidget::MetaObject<QComboBox> : public MetaObject<QWidget>
 {
     N_OBJECT(QComboBox, QWidget)
 
+    N_BEGIN_PROPERTY
     N_PROPERTY(bool, editable, N_READ isEditable N_WRITE setEditable)
     N_PROPERTY(int, count, N_READ count)
     N_PROPERTY(QString, currentText, N_READ currentText N_WRITE setCurrentText N_NOTIFY currentTextChanged)
@@ -693,6 +769,7 @@ template <> class nwidget::MetaObject<QComboBox> : public MetaObject<QWidget>
     N_PROPERTY(bool, duplicatesEnabled, N_READ duplicatesEnabled N_WRITE setDuplicatesEnabled)
     N_PROPERTY(bool, frame, N_READ hasFrame N_WRITE setFrame)
     N_PROPERTY(int, modelColumn, N_READ modelColumn N_WRITE setModelColumn)
+    N_END_PROPERTY
 };
 #endif
 
@@ -701,11 +778,13 @@ template <> class nwidget::MetaObject<QGroupBox> : public MetaObject<QWidget>
 {
     N_OBJECT(QGroupBox, QWidget)
 
+    N_BEGIN_PROPERTY
     N_PROPERTY(QString, title, N_READ title N_WRITE setTitle)
     N_PROPERTY(Qt::Alignment, alignment, N_READ alignment N_WRITE setAlignment)
     N_PROPERTY(bool, flat, N_READ isFlat N_WRITE setFlat)
     N_PROPERTY(bool, checkable, N_READ isCheckable N_WRITE setCheckable)
     N_PROPERTY(bool, checked, N_READ isChecked N_WRITE setChecked N_NOTIFY toggled)
+    N_END_PROPERTY
 };
 #endif
 
@@ -714,6 +793,7 @@ template <> class nwidget::MetaObject<QLabel> : public MetaObject<QWidget>
 {
     N_OBJECT(QLabel, QWidget)
 
+    N_BEGIN_PROPERTY
     N_PROPERTY(QString, text, N_READ text N_WRITE setText)
     N_PROPERTY(Qt::TextFormat, textFormat, N_READ textFormat N_WRITE setTextFormat)
     N_PROPERTY(QPixmap, pixmap, N_READ pixmap N_WRITE setPixmap)
@@ -726,6 +806,7 @@ template <> class nwidget::MetaObject<QLabel> : public MetaObject<QWidget>
     N_PROPERTY(Qt::TextInteractionFlags, InteractionFlags, N_READ textInteractionFlags N_WRITE setTextInteractionFlags)
     N_PROPERTY(bool, hasSelectedText, N_READ hasSelectedText)
     N_PROPERTY(QString, selectedText, N_READ selectedText)
+    N_END_PROPERTY
 };
 #endif
 
@@ -734,6 +815,7 @@ template <> class nwidget::MetaObject<QLineEdit> : public MetaObject<QWidget>
 {
     N_OBJECT(QLineEdit, QWidget)
 
+    N_BEGIN_PROPERTY
     N_PROPERTY(QString, inputMask, N_READ inputMask N_WRITE setInputMask)
     N_PROPERTY(QString, text, N_READ text N_WRITE setText N_NOTIFY textChanged)
     N_PROPERTY(int, maxLength, N_READ maxLength N_WRITE setMaxLength)
@@ -753,6 +835,7 @@ template <> class nwidget::MetaObject<QLineEdit> : public MetaObject<QWidget>
     N_PROPERTY(QString, placeholderText, N_READ placeholderText N_WRITE setPlaceholderText)
     N_PROPERTY(Qt::CursorMoveStyle, cursorMoveStyle, N_READ cursorMoveStyle N_WRITE setCursorMoveStyle)
     N_PROPERTY(bool, clearButtonEnabled, N_READ isClearButtonEnabled N_WRITE setClearButtonEnabled)
+    N_END_PROPERTY
 };
 #endif
 
@@ -761,11 +844,13 @@ template <> class nwidget::MetaObject<QMenu> : public MetaObject<QWidget>
 {
     N_OBJECT(QMenu, QWidget)
 
+    N_BEGIN_PROPERTY
     N_PROPERTY(bool, tearOffEnabled, N_READ isTearOffEnabled N_WRITE setTearOffEnabled)
     N_PROPERTY(QString, title, N_READ title N_WRITE setTitle)
     N_PROPERTY(QIcon, icon, N_READ icon N_WRITE setIcon)
     N_PROPERTY(bool, separatorsCollapsible, N_READ separatorsCollapsible N_WRITE setSeparatorsCollapsible)
     N_PROPERTY(bool, toolTipsVisible, N_READ toolTipsVisible N_WRITE setToolTipsVisible)
+    N_END_PROPERTY
 };
 #endif
 
@@ -774,8 +859,10 @@ template <> class nwidget::MetaObject<QMenuBar> : public MetaObject<QWidget>
 {
     N_OBJECT(QMenuBar, QWidget)
 
+    N_BEGIN_PROPERTY
     N_PROPERTY(bool, defaultUp, N_READ isDefaultUp N_WRITE setDefaultUp)
     N_PROPERTY(bool, nativeMenuBar, N_READ isNativeMenuBar N_WRITE setNativeMenuBar)
+    N_END_PROPERTY
 };
 #endif
 
@@ -784,6 +871,7 @@ template <> class nwidget::MetaObject<QProgressBar> : public MetaObject<QWidget>
 {
     N_OBJECT(QProgressBar, QWidget)
 
+    N_BEGIN_PROPERTY
     N_PROPERTY(int, minimum, N_READ minimum N_WRITE setMinimum)
     N_PROPERTY(int, maximum, N_READ maximum N_WRITE setMaximum)
     N_PROPERTY(QString, text, N_READ text)
@@ -794,6 +882,7 @@ template <> class nwidget::MetaObject<QProgressBar> : public MetaObject<QWidget>
     N_PROPERTY(bool, invertedAppearance, N_READ invertedAppearance N_WRITE setInvertedAppearance)
     N_PROPERTY(QProgressBar::Direction, textDirection, N_READ textDirection N_WRITE setTextDirection)
     N_PROPERTY(QString, format, N_READ format N_WRITE setFormat)
+    N_END_PROPERTY
 };
 #endif
 
@@ -802,6 +891,7 @@ template <> class nwidget::MetaObject<QTabBar> : public MetaObject<QWidget>
 {
     N_OBJECT(QTabBar, QWidget)
 
+    N_BEGIN_PROPERTY
     N_PROPERTY(QTabBar::Shape, shape, N_READ shape N_WRITE setShape)
     N_PROPERTY(int, currentIndex, N_READ currentIndex N_WRITE setCurrentIndex N_NOTIFY currentChanged)
     N_PROPERTY(int, count, N_READ count)
@@ -818,6 +908,7 @@ template <> class nwidget::MetaObject<QTabBar> : public MetaObject<QWidget>
     N_PROPERTY(bool, documentMode, N_READ documentMode N_WRITE setDocumentMode)
     N_PROPERTY(bool, autoHide, N_READ autoHide N_WRITE setAutoHide)
     N_PROPERTY(bool, changeCurrentOnDrag, N_READ changeCurrentOnDrag N_WRITE setChangeCurrentOnDrag)
+    N_END_PROPERTY
 };
 #endif
 
@@ -826,11 +917,13 @@ template <> class nwidget::MetaObject<QTabWidget> : public MetaObject<QWidget>
 {
     N_OBJECT(QTabWidget, QWidget)
 
+    N_BEGIN_PROPERTY
     N_PROPERTY(QTabWidget::TabPosition, tabPosition, N_READ tabPosition N_WRITE setTabPosition)
     N_PROPERTY(QTabWidget::TabShape, tabShape, N_READ tabShape N_WRITE setTabShape)
     N_PROPERTY(bool, documentMode, N_READ documentMode N_WRITE setDocumentMode)
     N_PROPERTY(bool, usesScrollButtons, N_READ usesScrollButtons N_WRITE setUsesScrollButtons)
     N_PROPERTY(bool, tabsClosable, N_READ tabsClosable N_WRITE setTabsClosable)
+    N_END_PROPERTY
 };
 #endif
 

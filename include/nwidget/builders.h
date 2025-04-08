@@ -15,14 +15,20 @@ template <typename Self> class Builder<QObject, Self> : public Builder<void, Sel
 {
     N_BUILDER(QObject)
 
+    N_BEGIN_BUILDER_PROPERTY
     N_BUILDER_PROPERTY(objectName)
+    N_END_BUILDER_PROPERTY
 
+    N_BEGIN_BUILDER_SETTER
     N_BUILDER_SETTERX(property, setProperty, const char*, const QVariant&)
     N_BUILDER_SETTERX(property, setProperty, const char*, QVariant&&)
     N_BUILDER_SETTER1(eventFilter, installEventFilter)
+    N_END_BUILDER_SETTER
 
+    N_BEGIN_BUILDER_SIGNAL
     N_BUILDER_SIGNAL(onDestroyed, destroyed)
     N_BUILDER_SIGNAL(onObjectNameChanged, objectNameChanged)
+    N_END_BUILDER_SIGNAL
 };
 
 using Object = Builder<QObject>;
@@ -33,8 +39,7 @@ template <typename Self> class Builder<QAction, Self> : public Builder<QObject, 
 {
     N_BUILDER(QAction)
 
-    explicit Builder(const QString& text) { self().text(text); }
-
+    N_BEGIN_BUILDER_PROPERTY
     N_BUILDER_PROPERTY(checkable)
     N_BUILDER_PROPERTY(checked)
     N_BUILDER_PROPERTY(enabled)
@@ -55,7 +60,9 @@ template <typename Self> class Builder<QAction, Self> : public Builder<QObject, 
     N_BUILDER_PROPERTY(iconVisibleInMenu)
     N_BUILDER_PROPERTY(shortcutVisibleInContextMenu)
     N_BUILDER_PROPERTY(priority)
+    N_END_BUILDER_PROPERTY
 
+    N_BEGIN_BUILDER_SIGNAL
     N_BUILDER_SIGNAL(onChanged, changed)
     N_BUILDER_SIGNAL(onEnabledChanged, enabledChanged)
     N_BUILDER_SIGNAL(onCheckableChanged, checkableChanged)
@@ -63,6 +70,9 @@ template <typename Self> class Builder<QAction, Self> : public Builder<QObject, 
     N_BUILDER_SIGNAL(onTriggered, triggered)
     N_BUILDER_SIGNAL(onHovered, hovered)
     N_BUILDER_SIGNAL(onToggled, toggled)
+    N_END_BUILDER_SIGNAL
+
+    explicit Builder(const QString& text) { self().text(text); }
 };
 
 using Action = Builder<QAction>;
@@ -126,11 +136,15 @@ template <typename Self> class Builder<QLayout, Self> : public Builder<QObject, 
 {
     N_BUILDER(QLayout)
 
+    N_BEGIN_BUILDER_PROPERTY
     N_BUILDER_PROPERTY(spacing)
     N_BUILDER_PROPERTY(contentsMargins)
     N_BUILDER_PROPERTY(sizeConstraint)
+    N_END_BUILDER_PROPERTY
 
+    N_BEGIN_BUILDER_SETTER
     N_BUILDER_SETTERX(contentsMargins, setContentsMargins, int, int, int, int)
+    N_END_BUILDER_SETTER
 };
 
 using Layout = Builder<QLayout>;
@@ -254,14 +268,16 @@ template <typename Self> class Builder<QFormLayout, Self> : public Builder<QLayo
 {
     N_BUILDER(QFormLayout)
 
-    Builder(std::initializer_list<FormLayoutItem> items) { self().addItems(items); }
-
+    N_BEGIN_BUILDER_PROPERTY
     N_BUILDER_PROPERTY(fieldGrowthPolicy)
     N_BUILDER_PROPERTY(rowWrapPolicy)
     N_BUILDER_PROPERTY(labelAlignment)
     N_BUILDER_PROPERTY(formAlignment)
     N_BUILDER_PROPERTY(horizontalSpacing)
     N_BUILDER_PROPERTY(verticalSpacing)
+    N_END_BUILDER_PROPERTY
+
+    Builder(std::initializer_list<FormLayoutItem> items) { self().addItems(items); }
 };
 
 using FormLayout = Builder<QFormLayout>;
@@ -303,18 +319,21 @@ template <typename Self> class Builder<QGridLayout, Self> : public Builder<QLayo
 {
     N_BUILDER(QGridLayout)
 
-public:
-    Builder(std::initializer_list<GridLayoutItem> items) { self().addItems(items); }
-
+    N_BEGIN_BUILDER_PROPERTY
     N_BUILDER_PROPERTY(horizontalSpacing)
     N_BUILDER_PROPERTY(verticalSpacing)
+    N_END_BUILDER_PROPERTY
 
+    N_BEGIN_BUILDER_SETTER
     N_BUILDER_SETTER2(rowStretch, setRowStretch)
     N_BUILDER_SETTER2(columnStretch, setColumnStretch)
     N_BUILDER_SETTER2(rowMinimumHeight, setRowMinimumHeight)
     N_BUILDER_SETTER2(columnMinimumWidth, setColumnMinimumWidth)
     N_BUILDER_SETTER1(originCorner, setOriginCorner)
     N_BUILDER_SETTER2(defaultPositioning, setDefaultPositioning)
+    N_END_BUILDER_SETTER
+
+    Builder(std::initializer_list<GridLayoutItem> items) { self().addItems(items); }
 };
 
 using GridLayout = Builder<QGridLayout>;
@@ -325,10 +344,14 @@ template <typename Self> class Builder<QStackedLayout, Self> : public Builder<QL
 {
     N_BUILDER(QStackedLayout)
 
+    N_BEGIN_BUILDER_PROPERTY
     N_BUILDER_PROPERTY(currentIndex)
     N_BUILDER_PROPERTY(stackingMode)
+    N_END_BUILDER_PROPERTY
 
+    N_BEGIN_BUILDER_SETTER
     N_BUILDER_SETTER1(currentWidget, setCurrentWidget)
+    N_END_BUILDER_SETTER
 };
 
 using StackedLayout = Builder<QStackedLayout>;
@@ -339,9 +362,8 @@ template <typename Self> class Builder<QWidget, Self> : public Builder<QObject, 
 {
     N_BUILDER(QWidget)
 
-    explicit Builder(QLayout* l) { self().layout(l); }
-
     // property
+    N_BEGIN_BUILDER_PROPERTY
     N_BUILDER_PROPERTY(windowModality)
     N_BUILDER_PROPERTY(enabled)
     N_BUILDER_PROPERTY(geometry)
@@ -396,8 +418,10 @@ template <typename Self> class Builder<QWidget, Self> : public Builder<QObject, 
     N_BUILDER_PROPERTY(locale)
     N_BUILDER_PROPERTY(windowFilePath)
     N_BUILDER_PROPERTY(inputMethodHints)
+    N_END_BUILDER_PROPERTY
 
     // setter
+    N_BEGIN_BUILDER_SETTER
     N_BUILDER_SETTER1(layout, setLayout)
     N_BUILDER_SETTER1(style, setStyle)
     N_BUILDER_SETTERX(minimumSize, setMinimumSize, int, int)
@@ -432,12 +456,18 @@ template <typename Self> class Builder<QWidget, Self> : public Builder<QObject, 
     N_BUILDER_SETTER1(asccessibleName, setAccessibleName)
     N_BUILDER_SETTER1(asccessibleDescription, setAccessibleDescription)
 #endif
+    N_END_BUILDER_SETTER
 
     // signal
+    N_BEGIN_BUILDER_SIGNAL
     N_BUILDER_SIGNAL(onWindowTitleChanged, windowTitleChanged)
     N_BUILDER_SIGNAL(onWindowIconChanged, windowIconChanged)
     N_BUILDER_SIGNAL(onWindowIconTextChanged, windowIconTextChanged)
     N_BUILDER_SIGNAL(onCustomContextMenuRequested, customContextMenuRequested)
+    N_END_BUILDER_SIGNAL
+
+    // constructor
+    explicit Builder(QLayout* l) { self().layout(l); }
 };
 
 using Widget = Builder<QWidget>;
@@ -448,6 +478,7 @@ template <typename Self> class Builder<QAbstractButton, Self> : public Builder<Q
 {
     N_BUILDER(QAbstractButton)
 
+    N_BEGIN_BUILDER_PROPERTY
     N_BUILDER_PROPERTY(text)
     N_BUILDER_PROPERTY(icon)
     N_BUILDER_PROPERTY(iconSize)
@@ -461,11 +492,14 @@ template <typename Self> class Builder<QAbstractButton, Self> : public Builder<Q
     N_BUILDER_PROPERTY(autoRepeatDelay)
     N_BUILDER_PROPERTY(autoRepeatInterval)
     N_BUILDER_PROPERTY(down)
+    N_END_BUILDER_PROPERTY
 
+    N_BEGIN_BUILDER_SIGNAL
     N_BUILDER_SIGNAL(onClicked, clicked)
     N_BUILDER_SIGNAL(onPressed, pressed)
     N_BUILDER_SIGNAL(onReleased, released)
     N_BUILDER_SIGNAL(onToggled, toggled)
+    N_END_BUILDER_SIGNAL
 };
 
 using AbstractButton = Builder<QAbstractButton>;
@@ -476,13 +510,17 @@ template <typename Self> class Builder<QCheckBox, Self> : public Builder<QAbstra
 {
     N_BUILDER(QCheckBox)
 
-    explicit Builder(const QString& text) { self().text(text); }
-
+    N_BEGIN_BUILDER_PROPERTY
     N_BUILDER_PROPERTY(tristate)
     N_BUILDER_PROPERTY(checkState)
+    N_END_BUILDER_PROPERTY
 
+    N_BEGIN_BUILDER_SIGNAL
     N_SINCE(6, 7, N_BUILDER_SIGNAL(onCheckStateChanged, checkStateChanged))
     N_UNTIL(6, 9, N_BUILDER_SIGNAL(onStateChanged, stateChanged))
+    N_END_BUILDER_SIGNAL
+
+    explicit Builder(const QString& text) { self().text(text); }
 };
 
 using CheckBox = Builder<QCheckBox>;
@@ -493,16 +531,20 @@ template <typename Self> class Builder<QDialogButtonBox, Self> : public Builder<
 {
     N_BUILDER(QDialogButtonBox)
 
-    explicit Builder(QDialogButtonBox::StandardButtons buttons) { self().standardButtons(buttons); }
-
+    N_BEGIN_BUILDER_PROPERTY
     N_BUILDER_PROPERTY(orientation)
     N_BUILDER_PROPERTY(standardButtons)
     N_BUILDER_PROPERTY(centerButtons)
+    N_END_BUILDER_PROPERTY
 
+    N_BEGIN_BUILDER_SIGNAL
     N_BUILDER_SIGNAL(onClicked, clicked)
     N_BUILDER_SIGNAL(onAccepted, accepted)
     N_BUILDER_SIGNAL(onHelpRequested, helpRequested)
     N_BUILDER_SIGNAL(onRejected, rejected)
+    N_END_BUILDER_SIGNAL
+
+    explicit Builder(QDialogButtonBox::StandardButtons buttons) { self().standardButtons(buttons); }
 };
 
 using DialogButtonBox = Builder<QDialogButtonBox>;
@@ -513,13 +555,17 @@ template <typename Self> class Builder<QPushButton, Self> : public Builder<QAbst
 {
     N_BUILDER(QPushButton)
 
-    explicit Builder(const QString& text) { self().text(text); }
-
+    N_BEGIN_BUILDER_PROPERTY
     N_BUILDER_PROPERTY(autoDefault)
     N_BUILDER_PROPERTY(default_)
     N_BUILDER_PROPERTY(flat)
+    N_END_BUILDER_PROPERTY
 
+    N_BEGIN_BUILDER_SETTER
     N_BUILDER_SETTER1(menu, setMenu)
+    N_END_BUILDER_SETTER
+
+    explicit Builder(const QString& text) { self().text(text); }
 };
 
 using PushButton = Builder<QPushButton>;
@@ -530,11 +576,11 @@ template <typename Self> class Builder<QCommandLinkButton, Self> : public Builde
 {
     N_BUILDER(QCommandLinkButton)
 
-    // clang-format off
-    explicit Builder(const QString& text, const QString& desc = {}) { self()/*.init( )*/.text(text).description(desc); }
-    // clang-format on
-
+    N_BEGIN_BUILDER_PROPERTY
     N_BUILDER_PROPERTY(description)
+    N_END_BUILDER_PROPERTY
+
+    explicit Builder(const QString& text, const QString& desc = {}) { self().text(text).description(desc); }
 };
 
 using CommandLinkButton = Builder<QCommandLinkButton>;
@@ -556,14 +602,18 @@ template <typename Self> class Builder<QToolButton, Self> : public Builder<QAbst
 {
     N_BUILDER(QToolButton)
 
+    N_BEGIN_BUILDER_PROPERTY
 #if QT_CONFIG(menu)
     N_BUILDER_PROPERTY(popupMode)
 #endif
     N_BUILDER_PROPERTY(toolButtonStyle)
     N_BUILDER_PROPERTY(autoRaise)
     N_BUILDER_PROPERTY(arrowType)
+    N_END_BUILDER_PROPERTY
 
+    N_BEGIN_BUILDER_SETTER
     N_BUILDER_SETTER1(menu, setMenu)
+    N_END_BUILDER_SETTER
 };
 
 using ToolButton = Builder<QToolButton>;
@@ -574,13 +624,17 @@ template <typename Self> class Builder<QFrame, Self> : public Builder<QWidget, S
 {
     N_BUILDER(QFrame)
 
+    N_BEGIN_BUILDER_PROPERTY
     N_BUILDER_PROPERTY(frameShape)
     N_BUILDER_PROPERTY(frameShadow)
     N_BUILDER_PROPERTY(lineWidth)
     N_BUILDER_PROPERTY(midLineWidth)
     N_BUILDER_PROPERTY(frameRect)
+    N_END_BUILDER_PROPERTY
 
+    N_BEGIN_BUILDER_SETTER
     N_BUILDER_SETTER1(frameStyle, setFrameStyle)
+    N_END_BUILDER_SETTER
 };
 #endif
 
@@ -589,9 +643,11 @@ template <typename Self> class Builder<QAbstractScrollArea, Self> : public Build
 {
     N_BUILDER(QAbstractScrollArea)
 
+    N_BEGIN_BUILDER_PROPERTY
     N_BUILDER_PROPERTY(verticalScrollBarPolicy)
     N_BUILDER_PROPERTY(horizontalScrollBarPolicy)
     N_BUILDER_PROPERTY(sizeAdjustPolicy)
+    N_END_BUILDER_PROPERTY
 };
 
 using AbstractScrollArea = Builder<QAbstractScrollArea>;
@@ -602,6 +658,7 @@ template <typename Self> class Builder<QAbstractItemView, Self> : public Builder
 {
     N_BUILDER(QAbstractItemView)
 
+    N_BEGIN_BUILDER_PROPERTY
     N_BUILDER_PROPERTY(autoScroll)
     N_BUILDER_PROPERTY(autoScrollMargin)
     N_BUILDER_PROPERTY(editTriggers)
@@ -620,8 +677,11 @@ template <typename Self> class Builder<QAbstractItemView, Self> : public Builder
     N_BUILDER_PROPERTY(textElideMode)
     N_BUILDER_PROPERTY(verticalScrollMode)
     N_BUILDER_PROPERTY(horizontalScrollMode)
+    N_END_BUILDER_PROPERTY
 
+    N_BEGIN_BUILDER_SETTER
     N_BUILDER_SETTER1(model, setModel)
+    N_END_BUILDER_SETTER
 };
 
 using AbstractItemView = Builder<QAbstractItemView>;
@@ -632,6 +692,7 @@ template <typename Self> class Builder<QHeaderView, Self> : public Builder<QAbst
 {
     N_BUILDER(QHeaderView)
 
+    N_BEGIN_BUILDER_PROPERTY
     N_BUILDER_PROPERTY(firstSectionMovable)
     N_BUILDER_PROPERTY(showSortIndicator)
     N_BUILDER_PROPERTY(highlightSections)
@@ -641,7 +702,9 @@ template <typename Self> class Builder<QHeaderView, Self> : public Builder<QAbst
     N_BUILDER_PROPERTY(maximumSectionSize)
     N_BUILDER_PROPERTY(defaultAlignment)
     N_BUILDER_PROPERTY(sortIndicatorClearable)
+    N_END_BUILDER_PROPERTY
 
+    N_BEGIN_BUILDER_SETTER
     N_BUILDER_SETTER1(hideSection, hideSection)
     N_BUILDER_SETTER1(showSection, showSection)
     N_BUILDER_SETTER1(sectionsMovable, setSectionsMovable)
@@ -655,7 +718,9 @@ template <typename Self> class Builder<QHeaderView, Self> : public Builder<QAbst
     N_BUILDER_SETTER1(offset, setOffset)
     N_BUILDER_SETTER1(offsetToSectionPosition, setOffsetToSectionPosition)
     N_BUILDER_SETTER0(offsetToLastSection, setOffsetToLastSection)
+    N_END_BUILDER_SETTER
 
+    N_BEGIN_BUILDER_SIGNAL
     N_BUILDER_SIGNAL(onSectionMoved, sectionMoved)
     N_BUILDER_SIGNAL(onSectionResized, sectionResized)
     N_BUILDER_SIGNAL(onSectionPressed, sectionPressed)
@@ -667,6 +732,7 @@ template <typename Self> class Builder<QHeaderView, Self> : public Builder<QAbst
     N_BUILDER_SIGNAL(onGeometriesChanged, geometriesChanged)
     N_BUILDER_SIGNAL(onSortIndicatorChanged, sortIndicatorChanged)
     N_BUILDER_SIGNAL(onSortIndicatorClearableChanged, sortIndicatorClearableChanged)
+    N_END_BUILDER_SIGNAL
 };
 
 using HeaderView = Builder<QHeaderView>;
@@ -677,6 +743,7 @@ template <typename Self> class Builder<QListView, Self> : public Builder<QAbstra
 {
     N_BUILDER(QListView)
 
+    N_BEGIN_BUILDER_PROPERTY
     N_BUILDER_PROPERTY(movement)
     N_BUILDER_PROPERTY(flow)
     N_BUILDER_PROPERTY(isWrapping)
@@ -691,11 +758,16 @@ template <typename Self> class Builder<QListView, Self> : public Builder<QAbstra
     N_BUILDER_PROPERTY(wordWrap)
     N_BUILDER_PROPERTY(selectionRectVisible)
     N_BUILDER_PROPERTY(itemAlignment)
+    N_END_BUILDER_PROPERTY
 
+    N_BEGIN_BUILDER_SETTER
     N_BUILDER_SETTER1(wrapping, setWrapping)
     N_BUILDER_SETTER2(rowHidden, setRowHidden)
+    N_END_BUILDER_SETTER
 
+    N_BEGIN_BUILDER_SIGNAL
     N_BUILDER_SIGNAL(onIndexsMoved, indexesMoved)
+    N_END_BUILDER_SIGNAL
 };
 
 using ListView = Builder<QListView>;
@@ -706,8 +778,10 @@ template <typename Self> class Builder<QListWidget, Self> : public Builder<QList
 {
     N_BUILDER(QListWidget)
 
+    N_BEGIN_BUILDER_PROPERTY
     N_BUILDER_PROPERTY(currentRow)
     N_BUILDER_PROPERTY(sortingEnabled)
+    N_END_BUILDER_PROPERTY
 };
 
 using ListWidget = Builder<QListWidget>;
@@ -718,6 +792,7 @@ template <typename Self> class Builder<QTableView, Self> : public Builder<QAbstr
 {
     N_BUILDER(QTableView)
 
+    N_BEGIN_BUILDER_PROPERTY
     N_BUILDER_PROPERTY(showGrid)
     N_BUILDER_PROPERTY(gridStyle)
     N_BUILDER_PROPERTY(sortingEnabled)
@@ -725,7 +800,9 @@ template <typename Self> class Builder<QTableView, Self> : public Builder<QAbstr
 #if QT_CONFIG(abstractbutton)
     N_BUILDER_PROPERTY(cornerButtonEnabled)
 #endif
+    N_END_BUILDER_PROPERTY
 
+    N_BEGIN_BUILDER_SETTER
     N_BUILDER_SETTER1(horizontalHeader, setHorizontalHeader)
     N_BUILDER_SETTER1(verticalHeader, setVerticalHeader)
     N_BUILDER_SETTER2(rowHeight, setRowHeight)
@@ -733,6 +810,7 @@ template <typename Self> class Builder<QTableView, Self> : public Builder<QAbstr
     N_BUILDER_SETTER2(rowHidden, setRowHidden)
     N_BUILDER_SETTER2(columnHidden, setColumnHidden)
     N_BUILDER_SETTER4(span, setSpan)
+    N_END_BUILDER_SETTER
 };
 
 using TableView = Builder<QTableView>;
@@ -743,9 +821,12 @@ template <typename Self> class Builder<QTableWidget, Self> : public Builder<QAbs
 {
     N_BUILDER(QTableWidget)
 
+    N_BEGIN_BUILDER_PROPERTY
     N_BUILDER_PROPERTY(rowCount)
     N_BUILDER_PROPERTY(columnCount)
+    N_END_BUILDER_PROPERTY
 
+    N_BEGIN_BUILDER_SETTER
     N_BUILDER_SETTER3(item, setItem)
     N_BUILDER_SETTER2(verticalHeaderItem, setVerticalHeaderItem)
     N_BUILDER_SETTER2(horizontalHeaderItem, setHorizontalHeaderItem)
@@ -759,7 +840,9 @@ template <typename Self> class Builder<QTableWidget, Self> : public Builder<QAbs
     N_BUILDER_SETTER3(cellWidget, setCellWidget)
     N_BUILDER_SETTER2(rangeSelected, setRangeSelected)
     N_BUILDER_SETTER1(itemPrototype, setItemPrototype)
+    N_END_BUILDER_SETTER
 
+    N_BEGIN_BUILDER_SIGNAL
     N_BUILDER_SIGNAL(onItemPressed, itemPressed)
     N_BUILDER_SIGNAL(onItemClicked, itemClicked)
     N_BUILDER_SIGNAL(onItemDoubleClicked, itemDoubleClicked)
@@ -774,6 +857,7 @@ template <typename Self> class Builder<QTableWidget, Self> : public Builder<QAbs
     N_BUILDER_SIGNAL(onCellActivated, cellActivated)
     N_BUILDER_SIGNAL(onCellEntered, cellEntered)
     N_BUILDER_SIGNAL(onCellChanged, cellChanged)
+    N_END_BUILDER_SIGNAL
 };
 
 using TableWidget = Builder<QTableWidget>;
@@ -784,6 +868,7 @@ template <typename Self> class Builder<QTreeView, Self> : public Builder<QAbstra
 {
     N_BUILDER(QTreeView)
 
+    N_BEGIN_BUILDER_PROPERTY
     N_BUILDER_PROPERTY(autoExpandDelay)
     N_BUILDER_PROPERTY(indentation)
     N_BUILDER_PROPERTY(rootIsDecorated)
@@ -795,7 +880,9 @@ template <typename Self> class Builder<QTreeView, Self> : public Builder<QAbstra
     N_BUILDER_PROPERTY(wordWrap)
     N_BUILDER_PROPERTY(headerHidden)
     N_BUILDER_PROPERTY(expandsOnDoubleClick)
+    N_END_BUILDER_PROPERTY
 
+    N_BEGIN_BUILDER_SETTER
     N_BUILDER_SETTER1(header, setHeader)
     N_BUILDER_SETTER2(columnWidth, setColumnWidth)
     N_BUILDER_SETTER2(columnHidden, setColumnHidden)
@@ -804,9 +891,12 @@ template <typename Self> class Builder<QTreeView, Self> : public Builder<QAbstra
     N_BUILDER_SETTER3(firstColumnSpanned, setFirstColumnSpanned)
     N_BUILDER_SETTER2(expanded, setExpanded)
     N_BUILDER_SETTER1(treePosition, setTreePosition)
+    N_END_BUILDER_SETTER
 
+    N_BEGIN_BUILDER_SIGNAL
     N_BUILDER_SIGNAL(onExpanded, expanded)
     N_BUILDER_SIGNAL(onCollapsed, collapsed)
+    N_END_BUILDER_SIGNAL
 };
 
 using TreeView = Builder<QTreeView>;
@@ -817,6 +907,7 @@ template <typename Self> class Builder<QTreeWidget, Self> : public Builder<QAbst
 {
     N_BUILDER(QTreeWidget)
 
+    N_BEGIN_BUILDER_PROPERTY
     N_BUILDER_PROPERTY(columnCount)
 };
 
@@ -828,8 +919,7 @@ template <typename Self> class Builder<QPlainTextEdit, Self> : public Builder<QA
 {
     N_BUILDER(QPlainTextEdit)
 
-    explicit Builder(const QString& text) { self().plainText(text); }
-
+    N_BEGIN_BUILDER_PROPERTY
     N_BUILDER_PROPERTY(tabChangesFocus)
     N_BUILDER_PROPERTY(documentTitle)
     N_BUILDER_PROPERTY(undoRedoEnabled)
@@ -845,6 +935,9 @@ template <typename Self> class Builder<QPlainTextEdit, Self> : public Builder<QA
     N_BUILDER_PROPERTY(backgroundVisible)
     N_BUILDER_PROPERTY(centerOnScroll)
     N_BUILDER_PROPERTY(placeholderText)
+    N_END_BUILDER_PROPERTY
+
+    explicit Builder(const QString& text) { self().plainText(text); }
 };
 
 using PlainTextEdit = Builder<QPlainTextEdit>;
@@ -855,8 +948,7 @@ template <typename Self> class Builder<QTextEdit, Self> : public Builder<QAbstra
 {
     N_BUILDER(QTextEdit)
 
-    explicit Builder(const QString& text) { self().plainText(text); }
-
+    N_BEGIN_BUILDER_PROPERTY
     N_BUILDER_PROPERTY(autoFormatting)
     N_BUILDER_PROPERTY(tabChangesFocus)
     N_BUILDER_PROPERTY(documentTitle)
@@ -875,7 +967,9 @@ template <typename Self> class Builder<QTextEdit, Self> : public Builder<QAbstra
     N_BUILDER_PROPERTY(textInteractionFlags)
     N_BUILDER_PROPERTY(document)
     N_BUILDER_PROPERTY(placeholderText)
+    N_END_BUILDER_PROPERTY
 
+    N_BEGIN_BUILDER_SIGNAL
     N_BUILDER_SIGNAL(onTextChanged, textChanged)
     N_BUILDER_SIGNAL(onUndoAvailable, undoAvailable)
     N_BUILDER_SIGNAL(onRedoAvailable, redoAvailable)
@@ -883,6 +977,9 @@ template <typename Self> class Builder<QTextEdit, Self> : public Builder<QAbstra
     N_BUILDER_SIGNAL(onCopyAvailable, copyAvailable)
     N_BUILDER_SIGNAL(onSelectionChanged, selectionChanged)
     N_BUILDER_SIGNAL(onCursorPositionChanged, cursorPositionChanged)
+    N_END_BUILDER_SIGNAL
+
+    explicit Builder(const QString& text) { self().plainText(text); }
 };
 
 using TextEdit = Builder<QTextEdit>;
@@ -893,17 +990,21 @@ template <typename Self> class Builder<QTextBrowser, Self> : public Builder<QTex
 {
     N_BUILDER(QTextBrowser)
 
+    N_BEGIN_BUILDER_PROPERTY
     N_BUILDER_PROPERTY(source)
     N_BUILDER_PROPERTY(searchPaths)
     N_BUILDER_PROPERTY(openExternalLinks)
     N_BUILDER_PROPERTY(openLinks)
+    N_END_BUILDER_PROPERTY
 
+    N_BEGIN_BUILDER_SIGNAL
     N_BUILDER_SIGNAL(onBackwardAvailable, backwardAvailable)
     N_BUILDER_SIGNAL(onForwardAvailable, forwardAvailable)
     N_BUILDER_SIGNAL(onHistoryChanged, historyChanged)
     N_BUILDER_SIGNAL(onSourceChanged, sourceChanged)
     N_BUILDER_SIGNAL(onHighlighted, highlighted)
     N_BUILDER_SIGNAL(onAnchorClicked, anchorClicked)
+    N_END_BUILDER_SIGNAL
 };
 
 using TextBrowser = Builder<QTextBrowser>;
@@ -943,11 +1044,13 @@ template <typename Self> class Builder<QToolBox, Self> : public Builder<QFrame, 
 {
     N_BUILDER(QToolBox)
 
+    N_BEGIN_BUILDER_PROPERTY
+    N_BUILDER_PROPERTY(currentIndex)
+    N_END_BUILDER_SIGNAL
+
     Builder(std::initializer_list<ToolBoxItem> items) { self().addItems(items); }
 
     Self& items(std::initializer_list<ToolBoxItem> items) { return self().addItems(items); }
-
-    N_BUILDER_PROPERTY(currentIndex)
 };
 
 using ToolBox = Builder<QToolBox>;
@@ -978,10 +1081,12 @@ template <typename Self> class Builder<QSplitter, Self> : public Builder<QFrame,
 {
     N_BUILDER(QSplitter)
 
+    N_BEGIN_BUILDER_PROPERTY
     N_BUILDER_PROPERTY(orientation)
     N_BUILDER_PROPERTY(opaqueResize)
     N_BUILDER_PROPERTY(handleWidth)
     N_BUILDER_PROPERTY(childrenCollapsible)
+    N_END_BUILDER_PROPERTY
 };
 
 using Splitter = Builder<QSplitter>;
@@ -992,6 +1097,7 @@ template <typename Self> class Builder<QAbstractSlider, Self> : public Builder<Q
 {
     N_BUILDER(QAbstractSlider)
 
+    N_BEGIN_BUILDER_PROPERTY
     N_BUILDER_PROPERTY(minimum)
     N_BUILDER_PROPERTY(maximum)
     N_BUILDER_PROPERTY(singleStep)
@@ -1002,8 +1108,11 @@ template <typename Self> class Builder<QAbstractSlider, Self> : public Builder<Q
     N_BUILDER_PROPERTY(orientation)
     N_BUILDER_PROPERTY(invertedAppearance)
     N_BUILDER_PROPERTY(invertedControls)
+    N_END_BUILDER_PROPERTY
 
+    N_BEGIN_BUILDER_SETTER
     N_BUILDER_SETTER2(range, setRange)
+    N_END_BUILDER_SETTER
 };
 
 using AbstractSlider = Builder<QAbstractSlider>;
@@ -1014,11 +1123,15 @@ template <typename Self> class Builder<QDial, Self> : public Builder<QAbstractSl
 {
     N_BUILDER(QDial)
 
+    N_BEGIN_BUILDER_PROPERTY
     N_BUILDER_PROPERTY(wrapping)
     N_BUILDER_PROPERTY(notchTarget)
     N_BUILDER_PROPERTY(notchesVisible)
+    N_END_BUILDER_PROPERTY
 
+    N_BEGIN_BUILDER_SETTER
     N_BUILDER_SETTER1(orientation, setOrientation)
+    N_END_BUILDER_SETTER
 };
 
 using Dial = Builder<QDial>;
@@ -1029,10 +1142,12 @@ template <typename Self> class Builder<QSlider, Self> : public Builder<QAbstract
 {
     N_BUILDER(QSlider)
 
-    Builder(Qt::Orientation orientation) { self().orientation(orientation); }
-
+    N_BEGIN_BUILDER_PROPERTY
     N_BUILDER_PROPERTY(tickPosition)
     N_BUILDER_PROPERTY(tickInterval)
+    N_END_BUILDER_PROPERTY
+
+    Builder(Qt::Orientation orientation) { self().orientation(orientation); }
 };
 
 using Slider = Builder<QSlider>;
@@ -1054,6 +1169,7 @@ template <typename Self> class Builder<QAbstractSpinBox, Self> : public Builder<
 {
     N_BUILDER(QAbstractSpinBox)
 
+    N_BEGIN_BUILDER_PROPERTY
     N_BUILDER_PROPERTY(wrapping)
     N_BUILDER_PROPERTY(frame)
     N_BUILDER_PROPERTY(alignment)
@@ -1064,6 +1180,7 @@ template <typename Self> class Builder<QAbstractSpinBox, Self> : public Builder<
     N_BUILDER_PROPERTY(correctionMode)
     N_BUILDER_PROPERTY(keyboardTracking)
     N_BUILDER_PROPERTY(showGroupSeparator)
+    N_END_BUILDER_PROPERTY
 };
 
 using AbstractSpinBox = Builder<QAbstractSpinBox>;
@@ -1074,6 +1191,7 @@ template <typename Self> class Builder<QDateTimeEdit, Self> : public Builder<QAb
 {
     N_BUILDER(QDateTimeEdit)
 
+    N_BEGIN_BUILDER_PROPERTY
     N_BUILDER_PROPERTY(dateTime)
     N_BUILDER_PROPERTY(date)
     N_BUILDER_PROPERTY(time)
@@ -1089,31 +1207,40 @@ template <typename Self> class Builder<QDateTimeEdit, Self> : public Builder<QAb
     N_BUILDER_PROPERTY(currentSectionIndex)
     N_UNTIL(6, 7, N_BUILDER_PROPERTY(timeSpec))
     N_SINCE(6, 7, N_BUILDER_PROPERTY(timeZone))
+    N_END_BUILDER_PROPERTY
 
+    N_BEGIN_BUILDER_SETTER
     N_BUILDER_SETTER1(calendar, setCalendar)
     N_BUILDER_SETTER2(dateTimeRange, setDateTimeRange)
     N_BUILDER_SETTER2(dateRange, setDateRange)
     N_BUILDER_SETTER2(timeRange, setTimeRange)
     N_BUILDER_SETTER1(calendarWidget, setCalendarWidget)
     N_BUILDER_SETTER1(selectedSection, setSelectedSection)
+    N_END_BUILDER_SETTER
 
+    N_BEGIN_BUILDER_SIGNAL
     N_BUILDER_SIGNAL(onDateTimeChanged, dateTimeChanged)
     N_BUILDER_SIGNAL(onTimeChanged, timeChanged)
     N_BUILDER_SIGNAL(onDateChanged, dateChanged)
+    N_END_BUILDER_SIGNAL
 };
 
 template <typename Self> class Builder<QDateEdit, Self> : public Builder<QDateTimeEdit, Self>
 {
     N_BUILDER(QDateEdit)
 
+    N_BEGIN_BUILDER_PROPERTY
     N_BUILDER_PROPERTY(date)
+    N_END_BUILDER_PROPERTY
 };
 
 template <typename Self> class Builder<QTimeEdit, Self> : public Builder<QDateTimeEdit, Self>
 {
     N_BUILDER(QTimeEdit)
 
+    N_BEGIN_BUILDER_PROPERTY
     N_BUILDER_PROPERTY(time)
+    N_END_BUILDER_PROPERTY
 };
 
 using DateTimeEdit = Builder<QDateTimeEdit>;
@@ -1126,6 +1253,7 @@ template <typename Self> class Builder<QSpinBox, Self> : public Builder<QAbstrac
 {
     N_BUILDER(QSpinBox)
 
+    N_BEGIN_BUILDER_PROPERTY
     N_BUILDER_PROPERTY(suffix)
     N_BUILDER_PROPERTY(prefix)
     N_BUILDER_PROPERTY(minimum)
@@ -1134,17 +1262,23 @@ template <typename Self> class Builder<QSpinBox, Self> : public Builder<QAbstrac
     N_BUILDER_PROPERTY(stepType)
     N_BUILDER_PROPERTY(value)
     N_BUILDER_PROPERTY(displayIntegerBase)
+    N_END_BUILDER_PROPERTY
 
+    N_BEGIN_BUILDER_SETTER
     N_BUILDER_SETTER2(range, setRange)
+    N_END_BUILDER_SETTER
 
+    N_BEGIN_BUILDER_SIGNAL
     N_BUILDER_SIGNAL(onValueChanged, valueChanged)
     N_BUILDER_SIGNAL(onTextChanged, textChanged)
+    N_END_BUILDER_SIGNAL
 };
 
 template <typename Self> class Builder<QDoubleSpinBox, Self> : public Builder<QAbstractSpinBox, Self>
 {
     N_BUILDER(QDoubleSpinBox)
 
+    N_BEGIN_BUILDER_PROPERTY
     N_BUILDER_PROPERTY(suffix)
     N_BUILDER_PROPERTY(prefix)
     N_BUILDER_PROPERTY(decimals)
@@ -1153,11 +1287,16 @@ template <typename Self> class Builder<QDoubleSpinBox, Self> : public Builder<QA
     N_BUILDER_PROPERTY(singleStep)
     N_BUILDER_PROPERTY(stepType)
     N_BUILDER_PROPERTY(value)
+    N_END_BUILDER_PROPERTY
 
+    N_BEGIN_BUILDER_SETTER
     N_BUILDER_SETTER2(range, setRange)
+    N_END_BUILDER_SETTER
 
+    N_BEGIN_BUILDER_SIGNAL
     N_BUILDER_SIGNAL(onValueChanged, valueChanged)
     N_BUILDER_SIGNAL(onTextChanged, textChanged)
+    N_END_BUILDER_SIGNAL
 };
 
 using SpinBox       = Builder<QSpinBox>;
@@ -1204,11 +1343,7 @@ template <typename Self> class Builder<QComboBox, Self> : public Builder<QWidget
 {
     N_BUILDER(QComboBox)
 
-    // clang-format off
-    Builder(const QStringList& items)                   { self()/*.init( )*/; object()->addItems(items); }
-    Builder(std::initializer_list<QComboBoxItem> items) { self()/*.init( )*/.addItems(items); }
-    // clang-format on
-
+    N_BEGIN_BUILDER_PROPERTY
     N_BUILDER_PROPERTY(editable)
     N_BUILDER_PROPERTY(currentText)
     N_BUILDER_PROPERTY(currentIndex)
@@ -1222,7 +1357,9 @@ template <typename Self> class Builder<QComboBox, Self> : public Builder<QWidget
     N_BUILDER_PROPERTY(duplicatesEnabled)
     N_BUILDER_PROPERTY(frame)
     N_BUILDER_PROPERTY(modelColumn)
+    N_END_BUILDER_PROPERTY
 
+    N_BEGIN_BUILDER_SIGNAL
     N_BUILDER_SIGNAL(onEditTextChanged, editTextChanged)
     N_BUILDER_SIGNAL(onActivated, activated)
     N_BUILDER_SIGNAL(onTextActivated, textActivated)
@@ -1230,6 +1367,12 @@ template <typename Self> class Builder<QComboBox, Self> : public Builder<QWidget
     N_BUILDER_SIGNAL(onTextHighlighted, textHighlighted)
     N_BUILDER_SIGNAL(onCurrentIndexChanged, currentIndexChanged)
     N_BUILDER_SIGNAL(onCurrentTextChanged, currentTextChanged)
+    N_END_BUILDER_SETTER
+
+    // clang-format off
+    Builder(const QStringList& items)                   { self(); object()->addItems(items); }
+    Builder(std::initializer_list<QComboBoxItem> items) { self().addItems(items); }
+    // clang-format on
 };
 
 using ComboBox = Builder<QComboBox>;
@@ -1240,17 +1383,19 @@ template <typename Self> class Builder<QGroupBox, Self> : public Builder<QWidget
 {
     N_BUILDER(QGroupBox)
 
-    // clang-format off
-    explicit
-    Builder(const QString& title)                  { self().init( ).title(title); }
-    Builder(const QString& title, QLayout* layout) { self().init( ).title(title).layout(layout); }
-    // clang-format on
-
+    N_BEGIN_BUILDER_PROPERTY
     N_BUILDER_PROPERTY(title)
     N_BUILDER_PROPERTY(alignment)
     N_BUILDER_PROPERTY(flat)
     N_BUILDER_PROPERTY(checkable)
     N_BUILDER_PROPERTY(checked)
+    N_END_BUILDER_PROPERTY
+
+    // clang-format off
+    explicit
+    Builder(const QString& title)                  { self().init( ).title(title); }
+    Builder(const QString& title, QLayout* layout) { self().init( ).title(title).layout(layout); }
+    // clang-format on
 };
 
 using GroupBox = Builder<QGroupBox>;
@@ -1261,8 +1406,7 @@ template <typename Self> class Builder<QLabel, Self> : public Builder<QWidget, S
 {
     N_BUILDER(QLabel)
 
-    explicit Builder(const QString& text) { self().text(text); }
-
+    N_BEGIN_BUILDER_PROPERTY
     N_BUILDER_PROPERTY(text)
     N_BUILDER_PROPERTY(textFormat)
     N_BUILDER_PROPERTY(pixmap)
@@ -1273,6 +1417,9 @@ template <typename Self> class Builder<QLabel, Self> : public Builder<QWidget, S
     N_BUILDER_PROPERTY(indent)
     N_BUILDER_PROPERTY(openExternalLinks)
     N_BUILDER_PROPERTY(InteractionFlags)
+    N_END_BUILDER_PROPERTY
+
+    explicit Builder(const QString& text) { self().text(text); }
 };
 
 using Label = Builder<QLabel>;
@@ -1283,8 +1430,7 @@ template <typename Self> class Builder<QLineEdit, Self> : public Builder<QWidget
 {
     N_BUILDER(QLineEdit)
 
-    explicit Builder(const QString& text) { self().text(text); }
-
+    N_BEGIN_BUILDER_PROPERTY
     N_BUILDER_PROPERTY(inputMask)
     N_BUILDER_PROPERTY(text)
     N_BUILDER_PROPERTY(maxLength)
@@ -1298,7 +1444,9 @@ template <typename Self> class Builder<QLineEdit, Self> : public Builder<QWidget
     N_BUILDER_PROPERTY(placeholderText)
     N_BUILDER_PROPERTY(cursorMoveStyle)
     N_BUILDER_PROPERTY(clearButtonEnabled)
+    N_END_BUILDER_PROPERTY
 
+    N_BEGIN_BUILDER_SETTER
     N_BUILDER_SETTER2(selection, setSelection)
     N_BUILDER_SETTERX(textMargins, setTextMargins, const QMargins&)
     N_BUILDER_SETTERX(textMargins, setTextMargins, int, int, int, int)
@@ -1308,7 +1456,9 @@ template <typename Self> class Builder<QLineEdit, Self> : public Builder<QWidget
 #if QT_CONFIG(completer)
     N_BUILDER_SETTER1(completer, setCompleter)
 #endif
+    N_END_BUILDER_SETTER
 
+    N_BEGIN_BUILDER_SIGNAL
     N_BUILDER_SIGNAL(onTextChanged, textChanged)
     N_BUILDER_SIGNAL(onTextEdited, textEdited)
     N_BUILDER_SIGNAL(onCursorPositionChanged, cursorPositionChanged)
@@ -1316,6 +1466,9 @@ template <typename Self> class Builder<QLineEdit, Self> : public Builder<QWidget
     N_BUILDER_SIGNAL(onEditingFinished, editingFinished)
     N_BUILDER_SIGNAL(onSelectionChanged, selectionChanged)
     N_BUILDER_SIGNAL(onInputRejected, inputRejected)
+    N_END_BUILDER_SIGNAL
+
+    explicit Builder(const QString& text) { self().text(text); }
 };
 
 using LineEdit = Builder<QLineEdit>;
@@ -1360,15 +1513,17 @@ template <typename Self> class Builder<QMenu, Self> : public Builder<QWidget, Se
 {
     N_BUILDER(QMenu)
 
-    Builder(std::initializer_list<MenuItem> items) { self().addItems(items); }
-
-    static auto Separator() { return MenuItem(MenuItem::separator::tag); }
-
+    N_BEGIN_BUILDER_PROPERTY
     N_BUILDER_PROPERTY(tearOffEnabled)
     N_BUILDER_PROPERTY(title)
     N_BUILDER_PROPERTY(icon)
     N_BUILDER_PROPERTY(separatorsCollapsible)
     N_BUILDER_PROPERTY(toolTipsVisible)
+    N_END_BUILDER_PROPERTY
+
+    Builder(std::initializer_list<MenuItem> items) { self().addItems(items); }
+
+    static auto Separator() { return MenuItem(MenuItem::separator::tag); }
 
     Self& items(std::initializer_list<MenuItem> items) { return self().addItems(items); }
 };
@@ -1404,8 +1559,10 @@ template <typename Self> class Builder<QMenuBar, Self> : public Builder<QWidget,
 {
     N_BUILDER(QMenuBar)
 
+    N_BEGIN_BUILDER_PROPERTY
     N_BUILDER_PROPERTY(defaultUp)
     N_BUILDER_PROPERTY(nativeMenuBar)
+    N_END_BUILDER_PROPERTY
 
     Self& items(std::initializer_list<MenuBarItem> items) { return self().addItems(items); }
 };
@@ -1418,6 +1575,7 @@ template <typename Self> class Builder<QProgressBar, Self> : public Builder<QWid
 {
     N_BUILDER(QProgressBar)
 
+    N_BEGIN_BUILDER_PROPERTY
     N_BUILDER_PROPERTY(minimum)
     N_BUILDER_PROPERTY(maximum)
     N_BUILDER_PROPERTY(value)
@@ -1427,10 +1585,15 @@ template <typename Self> class Builder<QProgressBar, Self> : public Builder<QWid
     N_BUILDER_PROPERTY(invertedAppearance)
     N_BUILDER_PROPERTY(textDirection)
     N_BUILDER_PROPERTY(format)
+    N_END_BUILDER_PROPERTY
 
+    N_BEGIN_BUILDER_SETTER
     N_BUILDER_SETTER2(range, setRange)
+    N_END_BUILDER_SETTER
 
+    N_BEGIN_BUILDER_SIGNAL
     N_BUILDER_SIGNAL(onValueChanged, valueChanged)
+    N_END_BUILDER_SIGNAL
 };
 
 using ProgressBar = Builder<QProgressBar>;
@@ -1468,6 +1631,7 @@ template <typename Self> class Builder<QTabBar, Self> : public Builder<QWidget, 
 {
     N_BUILDER(QTabBar)
 
+    N_BEGIN_BUILDER_PROPERTY
     N_BUILDER_PROPERTY(shape)
     N_BUILDER_PROPERTY(currentIndex)
     N_BUILDER_PROPERTY(drawBase)
@@ -1481,9 +1645,9 @@ template <typename Self> class Builder<QTabBar, Self> : public Builder<QWidget, 
     N_BUILDER_PROPERTY(documentMode)
     N_BUILDER_PROPERTY(autoHide)
     N_BUILDER_PROPERTY(changeCurrentOnDrag)
+    N_END_BUILDER_PROPERTY
 
-    Self& items(std::initializer_list<TabBarItem> items) { return self().addItems(items); }
-
+    N_BEGIN_BUILDER_SETTER
     N_BUILDER_SETTER2(tabEnabled, setTabEnabled)
     N_BUILDER_SETTER2(tabVisible, setTabVisible)
     N_BUILDER_SETTER2(tabTextColor, setTabTextColor)
@@ -1499,12 +1663,17 @@ template <typename Self> class Builder<QTabBar, Self> : public Builder<QWidget, 
 #if QT_CONFIG(accessibility)
     N_BUILDER_SETTER2(accessibleTabName, setAccessibleTabName)
 #endif
+    N_END_BUILDER_SETTER
 
+    N_BEGIN_BUILDER_SIGNAL
     N_BUILDER_SIGNAL(onCurrentChanged, currentChanged)
     N_BUILDER_SIGNAL(onTabCloseRequested, tabCloseRequested)
     N_BUILDER_SIGNAL(onTabMoved, tabMoved)
     N_BUILDER_SIGNAL(onTabBarClicked, tabBarClicked)
     N_BUILDER_SIGNAL(onTabBarDoubleClicked, tabBarDoubleClicked)
+    N_END_BUILDER_SIGNAL
+
+    Self& items(std::initializer_list<TabBarItem> items) { return self().addItems(items); }
 };
 
 using TabBar = Builder<QTabBar>;
@@ -1544,16 +1713,15 @@ template <typename Self> class Builder<QTabWidget, Self> : public Builder<QWidge
 {
     N_BUILDER(QTabWidget)
 
-    Builder(std::initializer_list<TabWidgetItem> items) { self().addItems(items); }
-
+    N_BEGIN_BUILDER_PROPERTY
     N_BUILDER_PROPERTY(tabPosition)
     N_BUILDER_PROPERTY(tabShape)
     N_BUILDER_PROPERTY(documentMode)
     N_BUILDER_PROPERTY(usesScrollButtons)
     N_BUILDER_PROPERTY(tabsClosable)
+    N_END_BUILDER_PROPERTY
 
-    Self& items(std::initializer_list<TabWidgetItem> items) { return self().addItems(items); }
-
+    N_BEGIN_BUILDER_SETTER
     N_BUILDER_SETTER2(tabEnabled, setTabEnabled)
     N_BUILDER_SETTER2(tabVisible, setTabVisible)
     N_BUILDER_SETTER2(tabText, setTabText)
@@ -1567,11 +1735,18 @@ template <typename Self> class Builder<QTabWidget, Self> : public Builder<QWidge
 #if QT_CONFIG(whatsthis)
     N_BUILDER_SETTER2(tabWhatsThis, setTabWhatsThis)
 #endif
+    N_END_BUILDER_SETTER
 
+    N_BEGIN_BUILDER_SIGNAL
     N_BUILDER_SIGNAL(onCurrentChanged, currentChanged)
     N_BUILDER_SIGNAL(onTabCloseRequested, tabCloseRequested)
     N_BUILDER_SIGNAL(onTabBarClicked, tabBarClicked)
     N_BUILDER_SIGNAL(onTabBarDoubleClicked, tabBarDoubleClicked)
+    N_END_BUILDER_SIGNAL
+
+    Builder(std::initializer_list<TabWidgetItem> items) { self().addItems(items); }
+
+    Self& items(std::initializer_list<TabWidgetItem> items) { return self().addItems(items); }
 };
 
 using TabWidget = Builder<QTabWidget>;
