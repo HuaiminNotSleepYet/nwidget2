@@ -94,7 +94,7 @@ template <typename... T> static void bind1(QSignalMapper* binding, MetaProperty<
     if constexpr (!MetaProp::hasNotifySignal)
         return;
     auto obj = prop.object();
-    QObject::connect(obj, &QObject::destroyed, binding, &QObject::deleteLater, Qt::UniqueConnection);
+    QObject::connect(obj, &QObject::destroyed, binding, [binding]() { delete binding; });
     QObject::connect(obj, MetaProp::notify(), binding, qOverload<>(&QSignalMapper::map), Qt::UniqueConnection);
     binding->setMapping(obj, 0);
 }
