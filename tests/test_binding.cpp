@@ -151,10 +151,9 @@ private slots:
 
         // complex expr
         {
-            // FIXME: s3.value() / (s4.value() + 15) without parentheses would cause ambiguity
-            auto expr1 = s1.value() + s2.value() * (s3.value() / (s4.value() + 15));
+            auto expr1 = s1.value() + s2.value() * s3.value() / (s4.value() + 15);
             auto expr2 = [&_s1, &_s2, &_s3, &_s4]()
-            { return _s1.value() + _s2.value() * (_s3.value() / (_s4.value() + 15)); };
+            { return _s1.value() + _s2.value() * _s3.value() / (_s4.value() + 15); };
 
             QCOMPARE(expr1.eval(), expr2());
 

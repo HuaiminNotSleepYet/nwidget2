@@ -308,51 +308,16 @@ template <typename... Args> auto asprintf_(const char* cformat, const Args&... a
     };                                                                                                                 \
     }                                                                                                                  \
                                                                                                                        \
-    /* MetaProperty OP T            */                                                                                 \
-    /* T            OP MetaProperty */                                                                                 \
-    /* MetaProperty OP MetaProperty */                                                                                 \
-    template <typename... L, typename R> auto operator OP(nwidget::MetaProperty<L...> l, R&& r)                        \
+    template <typename L,                                                                                              \
+              typename R,                                                                                              \
+              std::enable_if_t<nwidget::impl::binding::is_meta_property_v<std::decay_t<L>>                             \
+                                   || nwidget::impl::binding::is_meta_property_v<std::decay_t<R>>                      \
+                                   || nwidget::impl::binding::is_binding_expr_v<std::decay_t<L>>                       \
+                                   || nwidget::impl::binding::is_binding_expr_v<std::decay_t<R>>,                      \
+                               int> = 0>                                                                               \
+    auto operator OP(L&& l, R&& r)                                                                                     \
     {                                                                                                                  \
-        return nwidget::makeBindingExpr<nwidget::impl::binding::Action##NAME>(l, std::forward<R>(r));                  \
-    }                                                                                                                  \
-    template <typename L, typename... R> auto operator OP(L&& l, nwidget::MetaProperty<R...> r)                        \
-    {                                                                                                                  \
-        return nwidget::makeBindingExpr<nwidget::impl::binding::Action##NAME>(std::forward<L>(l), r);                  \
-    }                                                                                                                  \
-    template <typename... L, typename... R>                                                                            \
-    auto operator OP(nwidget::MetaProperty<L...> l, nwidget::MetaProperty<R...> r)                                     \
-    {                                                                                                                  \
-        return nwidget::makeBindingExpr<nwidget::impl::binding::Action##NAME>(l, r);                                   \
-    }                                                                                                                  \
-                                                                                                                       \
-    /* MetaProperty OP BindingExpr  */                                                                                 \
-    /* BindingExpr  OP MetaProperty */                                                                                 \
-    template <typename... L, typename... R>                                                                            \
-    auto operator OP(nwidget::MetaProperty<L...> l, const nwidget::BindingExpr<R...>& r)                               \
-    {                                                                                                                  \
-        return nwidget::makeBindingExpr<nwidget::impl::binding::Action##NAME>(l, r);                                   \
-    }                                                                                                                  \
-    template <typename... L, typename... R>                                                                            \
-    auto operator OP(const nwidget::BindingExpr<L...>& l, nwidget::MetaProperty<R...> r)                               \
-    {                                                                                                                  \
-        return nwidget::makeBindingExpr<nwidget::impl::binding::Action##NAME>(l, r);                                   \
-    }                                                                                                                  \
-                                                                                                                       \
-    /* BindingExpr OP T           */                                                                                   \
-    /* T           OP BindingExpr */                                                                                   \
-    /* BindingExpr OP BindingExpr */                                                                                   \
-    template <typename... L, typename R> auto operator OP(const nwidget::BindingExpr<L...>& l, R&& r)                  \
-    {                                                                                                                  \
-        return nwidget::makeBindingExpr<nwidget::impl::binding::Action##NAME>(std::move(l), std::forward<R>(r));       \
-    }                                                                                                                  \
-    template <typename L, typename... R> auto operator OP(L&& l, const nwidget::BindingExpr<R...>& r)                  \
-    {                                                                                                                  \
-        return nwidget::makeBindingExpr<nwidget::impl::binding::Action##NAME>(std::forward<L>(l), r);                  \
-    }                                                                                                                  \
-    template <typename... L, typename... R>                                                                            \
-    auto operator OP(const nwidget::BindingExpr<L...>& l, const nwidget::BindingExpr<R...>& r)                         \
-    {                                                                                                                  \
-        return nwidget::makeBindingExpr<nwidget::impl::binding::Action##NAME>(l, r);                                   \
+        return nwidget::makeBindingExpr<nwidget::impl::binding::Action##NAME>(std::forward<L>(l), std::forward<R>(r)); \
     }
 
 N_IMPL_ACTION_BE(Add, +)
@@ -383,14 +348,14 @@ N_IMPL_ACTION_BE(BitRShift, >>)
         template <typename T> auto operator()(T&& val) { return OP val; }                                              \
     };                                                                                                                 \
     }                                                                                                                  \
-    template <typename... T> auto operator OP(nwidget::MetaProperty<T...> v)                                           \
+                                                                                                                       \
+    template <typename T,                                                                                              \
+              std::enable_if_t<nwidget::impl::binding::is_meta_property_v<std::decay_t<T>>                             \
+                                   || nwidget::impl::binding::is_binding_expr_v<std::decay_t<T>>,                      \
+                               int> = 0>                                                                               \
+    auto operator OP(T&& val)                                                                                          \
     {                                                                                                                  \
-        return nwidget::makeBindingExpr<nwidget::impl::binding::Action##NAME>(v);                                      \
-    }                                                                                                                  \
-    template <typename... T> auto operator OP(nwidget::BindingExpr<T...>&& expr)                                       \
-    {                                                                                                                  \
-        using namespace nwidget::impl::binding;                                                                        \
-        return nwidget::makeBindingExpr<nwidget::impl::binding::Action##NAME>(std::move(expr));                        \
+        return nwidget::makeBindingExpr<nwidget::impl::binding::Action##NAME>(std::forward<T>(val));                   \
     }
 
 N_IMPL_ACTION_UE(Plus, +)
