@@ -1113,6 +1113,14 @@ template <typename Self> class Builder<QAbstractSlider, Self> : public Builder<Q
     N_BEGIN_BUILDER_SETTER
     N_BUILDER_SETTER2(range, setRange)
     N_END_BUILDER_SETTER
+
+    N_BEGIN_BUILDER_SIGNAL
+    N_BUILDER_SIGNAL(onValueChanged, valueChanged)
+    N_BUILDER_SIGNAL(onRangeChanged, rangeChanged)
+    N_BUILDER_SIGNAL(onSliderMoved, sliderMoved)
+    N_BUILDER_SIGNAL(onSliderPressed, sliderPressed)
+    N_BUILDER_SIGNAL(onSliderReleased, sliderReleased)
+    N_END_BUILDER_SIGNAL
 };
 
 using AbstractSlider = Builder<QAbstractSlider>;
