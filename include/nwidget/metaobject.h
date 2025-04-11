@@ -96,6 +96,11 @@ public:
         Q_ASSERT(o);
     }
 
+    MetaProperty(const MetaProperty&)            = default;
+    MetaProperty(MetaProperty&&)                 = default;
+    MetaProperty& operator=(const MetaProperty&) = default;
+    MetaProperty& operator=(MetaProperty&&)      = default;
+
     Class* object() const { return o; }
 
     T get() const { return read(o); }
@@ -104,11 +109,7 @@ public:
 
     void reset() const { reset(o); }
 
-    MetaProperty& operator=(const Type& val)
-    {
-        set(val);
-        return *this;
-    }
+    void operator=(const Type& val) { set(val); }
 
     // clang-format off
 
