@@ -96,10 +96,8 @@ public:
         Q_ASSERT(o);
     }
 
-    MetaProperty(const MetaProperty&)            = default;
-    MetaProperty(MetaProperty&&)                 = default;
-    MetaProperty& operator=(const MetaProperty&) = default;
-    MetaProperty& operator=(MetaProperty&&)      = default;
+    MetaProperty(const MetaProperty&) = default;
+    MetaProperty(MetaProperty&&)      = default;
 
     Class* object() const { return o; }
 
@@ -108,8 +106,6 @@ public:
     void set(const T& val) const { write(o, val); }
 
     void reset() const { reset(o); }
-
-    void operator=(const Type& val) { set(val); }
 
     // clang-format off
 
@@ -133,8 +129,11 @@ public:
 
     template <typename... Ts> void bindTo(MetaProperty<Ts...> prop) const { makeBindingExpr(*this).bindTo(prop); }
 
-    void                           operator=(MetaProperty<C, I, T, G, S, N, R> prop) const { prop.bindTo(*this); }
-    template <typename... Ts> void operator=(MetaProperty<Ts...> prop) const { makeBindingExpr(prop).bindTo(*this); }
+    // The return behavior of operator= is undetermined, currently we let it return void
+    void                           operator=(const Type& val) { set(val); }
+    void                           operator=(const MetaProperty& prop) { prop.bindTo(*this); }
+    void                           operator=(MetaProperty&& prop) { prop.bindTo(*this); }
+    template <typename... Ts> void operator=(MetaProperty<Ts...> prop) const { prop.bindTo(*this); }
     template <typename... Ts> void operator=(const BindingExpr<Ts...>& expr) const { expr.bindTo(*this); }
 
     template <typename... Args> auto operator()(Args&&... args) const
