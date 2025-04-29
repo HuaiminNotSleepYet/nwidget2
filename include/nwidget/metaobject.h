@@ -159,10 +159,10 @@ using Notify = void;
 using Reset  = void;
 }
 
-#define N_IMPL_READ(FUNC)   struct Getter { auto operator()(const Class* o)  const { return o->FUNC(); } };
-#define N_IMPL_WRITE(FUNC)  struct Setter { void operator()(Class* o, const Type& v) const { o->FUNC(v); } };
-#define N_IMPL_NOTIFY(FUNC) struct Notify { constexpr auto operator()()  const { return &Class::FUNC; } };
-#define N_IMPL_RESET(FUNC)  struct Reset  { void operator()(Class* o) const { o->FUNC(); } };
+#define N_IMPL_READ(FUNC)   struct Getter { auto operator()(const _C* o)  const { return o->FUNC(); } };
+#define N_IMPL_WRITE(FUNC)  struct Setter { void operator()(_C* o, const _T& v) const { o->FUNC(v); } };
+#define N_IMPL_NOTIFY(FUNC) struct Notify { constexpr auto operator()()  const { return &_C::FUNC; } };
+#define N_IMPL_RESET(FUNC)  struct Reset  { void operator()(_C* o) const { o->FUNC(); } };
 
 #define N_IMPL_LEFT_PAREN (
 
@@ -176,22 +176,44 @@ using Reset  = void;
 #define N_BEGIN_PROPERTY
 #define N_END_PROPERTY
 
+#define N_METAPROPERTY(TYPENAME, CLASS, TYPE, NAME, ...)                                                               \
+    static const auto _create##TYPENAME = [](CLASS* o)                                                                 \
+    {                                                                                                                  \
+        using namespace ::nwidget::impl::metaobject;                                                                   \
+                                                                                                                       \
+        struct _I                                                                                                      \
+        {                                                                                                              \
+            static constexpr const char* name() { return #NAME; }                                                      \
+            static QString               bindingName() { return QStringLiteral("nwidget_binding_on_" #NAME); }         \
+        };                                                                                                             \
+                                                                                                                       \
+        using _C = CLASS;                                                                                              \
+        using _T = TYPE;                                                                                               \
+                                                                                                                       \
+        void(__VA_ARGS__);                                                                                             \
+                                                                                                                       \
+        return ::nwidget::MetaProperty<_C, _I, _T, Getter, Setter, Notify, Reset>{static_cast<_C*>(o)};                \
+    };                                                                                                                 \
+    using TYPENAME = std::decay_t<decltype(_create##TYPENAME(nullptr))>
+
 #define N_PROPERTY(TYPE, NAME, ...)                                                                                    \
 public:                                                                                                                \
     auto NAME() const                                                                                                  \
     {                                                                                                                  \
         using namespace ::nwidget::impl::metaobject;                                                                   \
                                                                                                                        \
-        using Type = TYPE;                                                                                             \
-        struct Info                                                                                                    \
+        struct _I                                                                                                      \
         {                                                                                                              \
             static constexpr const char* name() { return #NAME; }                                                      \
             static QString               bindingName() { return QStringLiteral("nwidget_binding_on_" #NAME); }         \
         };                                                                                                             \
                                                                                                                        \
+        using _C = Class;                                                                                              \
+        using _T = TYPE;                                                                                               \
+                                                                                                                       \
         void(__VA_ARGS__);                                                                                             \
                                                                                                                        \
-        return MetaProperty<Class, Info, Type, Getter, Setter, Notify, Reset>{static_cast<Class*>(this->o)};           \
+        return ::nwidget::MetaProperty<_C, _I, _T, Getter, Setter, Notify, Reset>{static_cast<_C*>(o)};                \
     }
 
 /* --------------------------------------------------- MetaObject --------------------------------------------------- */

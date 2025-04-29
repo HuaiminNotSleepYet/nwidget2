@@ -53,7 +53,7 @@ Behavior::on(rect.minimumWidth(),
                  spring{2},
                  damping{0.2}));
 
-Behavior::animated(rect.minimumWidth()) = cond(checkBox.checked(), 300, 50);
+cond(checkBox.checked(), 300, 50).bindTo(Behavior::animated(rect.minimumWidth()));
 ```
 
 ![](./doc/img/animation.gif)

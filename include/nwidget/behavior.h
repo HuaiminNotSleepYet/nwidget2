@@ -195,28 +195,15 @@ public:
     }
 
 public:
-    template <typename... Ts> static auto animated(MetaProperty<Ts...> prop)
+    template <typename MetaProp> static auto animated(Behavior* b, MetaProp p)
     {
-        using MetaProp = MetaProperty<Ts...>;
-        using Class    = typename MetaProp::Class;
+        return [b, p](const typename MetaProp::Type& v) { Behavior::set(b, p, v); };
+    }
 
-        struct Getter
-        {
-            auto operator()(const Class* o) const { return Behavior::get(MetaProp(const_cast<Class*>(o))); }
-        };
-
-        struct Setter
-        {
-            void operator()(Class* o, const typename MetaProp::Type& v) const { Behavior::set(MetaProp(o), v); }
-        };
-
-        return MetaProperty<typename MetaProp::Class,
-                            typename MetaProp::Info,
-                            typename MetaProp::Type,
-                            Getter,
-                            Setter,
-                            typename MetaProp::Notify,
-                            typename MetaProp::Reset>(prop.object());
+    template <typename MetaProp> static auto animated(MetaProp prop)
+    {
+        static_assert(std::is_base_of_v<QObject, typename MetaProp::Class>);
+        return animated(findOrCreateBehavior(prop.object()), prop);
     }
 
 protected:
