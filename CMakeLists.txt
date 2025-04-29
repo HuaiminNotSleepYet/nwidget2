@@ -51,6 +51,8 @@ install(FILES
 
 install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/nwidget DESTINATION include)
 
+add_subdirectory(examples)
+
 if (ENABLE_TEST)
     message(STATUS "Enable test")
     enable_testing()

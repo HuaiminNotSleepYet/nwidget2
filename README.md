@@ -34,7 +34,7 @@ auto slider2 = MetaObject<>::from(new QSlider);
 label.text() = nwidget::asprintf_("%d", slider1.value() + slider2.value());
 ```
 
-![](./doc/img/property_binding.gif)
+![](./docs/imgs/property_binding.gif)
 
 ## Animation
 
@@ -56,7 +56,7 @@ Behavior::on(rect.minimumWidth(),
 cond(checkBox.checked(), 300, 50).bindTo(Behavior::animated(rect.minimumWidth()));
 ```
 
-![](./doc/img/animation.gif)
+![](./docs/imgs/animation.gif)
 
 ## Declarative UI Syntax
 
@@ -76,7 +76,7 @@ QLayout* layout = FormLayout{
     }}};
 ```
 
-![](./doc/img/declarative_ui_syntax.png)
+![](./docs/imgs/declarative_ui_syntax.png)
 
 ## Header Files
 
@@ -88,6 +88,12 @@ QLayout* layout = FormLayout{
 | builders.h    | Builder specialization for Qt classes, include after Qt headers  |
 | metaobject.h  | Template Meta-Object System                                      |
 | metaobjects.h | Template specialization for Qt classes, include after Qt headers |
+
+## Examples
+
+[MCDayNightSwitchButton](./examples/MCDayNightSwitchButton)
+
+![](./docs/imgs/MCDayNightSwitchButton.gif)
 
 ## Special Thanks
 
