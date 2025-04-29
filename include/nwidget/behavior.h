@@ -3,26 +3,29 @@
  * @details
  * Create a behavior and attach it to a property:
  *      @code{.cpp}
- *      Behavior::on(MetaObject().property()   , new Animation);
- *      Behavior::on(MetaObject().property()   , new Animation, startValue);
- *      Behavior::on(obj, &MetaObject::property, new Animation);
- *      Behavior::on(obj, &MetaObject::property, new Animation, startValue);
+ *      Behavior::on(behavior, MetaObject().property(), Animation*);
+ *      Behavior::on(          MetaObject().property(), Animation*);
  *      @endcode
  *
  * Get/set properties and trigger animations:
  *      @code{.cpp}
- *      auto value = Behavior::get(MetaObject().property());
- *                 = Behavior::get(obj, &MetaObject::property);
+ *      auto value =
+ *      Behavior::get(behavior, obj, prop, default);
+ *      Behavior::get(          obj, prop, default);
+ *      Behavior::get(behavior, metaProp);
+ *      Behavior::get(          metaProp);
  *
- *      Behavior::set(MetaObject().property()   , value);
- *      Behavior::set(obj, &MetaObject::property, value);
+ *      Behavior::set(behavior, obj, prop, val);
+ *      Behavior::set(          obj, prop, val);
+ *      Behavior::set(behavior, metaProp, val);
+ *      Behavior::set(          metaProp, val);
  *      @endcode
  *
  * Work with property binding:
  *      @code{.cpp}
  *      bindingExpr.bindTo(
  *          Behavior::animated(
- *              MetaObject().property()));
+ *              metaProp));
  *      @endcode
  */
 
@@ -64,51 +67,131 @@ class Behavior : public QObject
     Q_DISABLE_COPY_MOVE(Behavior)
 
 public:
+    using type_erased_setter = void (*)(void* obj, const void* val);
+
+    template <typename Class, typename T, void (Class::*Setter)(T)> static type_erased_setter erase()
+    {
+        return [](void* o, const void* v) { (static_cast<Class*>(o)->*Setter)(*static_cast<const T*>(v)); };
+    }
+
+    template <typename Class, typename T, void (Class::*Setter)(const T&)> static type_erased_setter erase()
+    {
+        return [](void* o, const void* v) { (static_cast<Class*>(o)->*Setter)(*static_cast<const T*>(v)); };
+    }
+
+    template <typename MetaProp> static type_erased_setter erase()
+    {
+        return [](void* o, const void* v)
+        {
+            MetaProp::write(static_cast<typename MetaProp::Class*>(o), *static_cast<const typename MetaProp::Type*>(v));
+        };
+    }
+
+public:
+    static Behavior* create(QObject* parent) { return findOrCreateBehavior(parent); }
+
+    template <typename Anim>
+    static void on(Behavior* b, void* obj, type_erased_setter prop, Anim* anim, const typename Anim::Type& startValue)
+    {
+        Q_ASSERT(b);
+        bool oldAnim = false;
+        for (auto& [p, o, a] : b->animations) {
+            if (prop == p && obj == o) {
+                delete a;
+                a       = anim;
+                oldAnim = true;
+                break;
+            }
+        }
+        if (!oldAnim)
+            b->animations.append({prop, obj, anim});
+        anim->setStart(&startValue);
+        anim->setEnd(&startValue);
+    }
+
+    // Behavior::on(behavior, MetaObject().property(), Animation*);
+    // Behavior::on(          MetaObject().property(), Animation*);
+
+    template <typename MetaProp, typename Anim> static void on(Behavior* b, MetaProp prop, Anim* anim)
+    {
+        static_assert(MetaProp::isReadable);
+        static_assert(MetaProp::isWritable);
+        static_assert(std::is_base_of_v<Animation, Anim>);
+        static_assert(std::is_same_v<typename MetaProp::Type, typename Anim::Type>);
+        on(b, prop.object(), erase<MetaProp>(), anim, prop.get());
+    }
+
     template <typename MetaProp, typename Anim> static void on(MetaProp prop, Anim* anim)
     {
-        on<MetaProp, Anim>(prop.object(), anim);
+        static_assert(MetaProp::isReadable);
+        static_assert(MetaProp::isWritable);
+        static_assert(std::is_base_of_v<Animation, Anim>);
+        static_assert(std::is_same_v<typename MetaProp::Type, typename Anim::Type>);
+        on(findOrCreateBehavior(prop.object()), prop.object(), erase<MetaProp>(), anim, prop.get());
     }
 
-    template <typename MetaProp, typename Anim>
-    static void on(MetaProp prop, Anim* anim, const typename MetaProp::Type& startValue)
+public:
+    // Behavior::get(behavior, obj, prop, default);
+    // Behavior::get(          obj, prop, default);
+    // Behavior::set(behavior, obj, prop, val);
+    // Behavior::set(          obj, prop, val);
+
+    template <typename T>
+    static T get(const Behavior* behavior, void* obj, type_erased_setter prop, const T& default_ = {})
     {
-        on<MetaProp, Anim>(prop.object(), anim, startValue);
+        if (!behavior)
+            return default_;
+        for (auto& [p, o, a] : std::as_const(behavior->animations)) {
+            if (prop == p && obj == o)
+                return *static_cast<const T*>(a->current());
+        }
+        return default_;
     }
 
-    template <typename Class, typename MetaProp, typename Anim>
-    static void on(typename MetaProp::Class* obj, MetaProp (MetaObject<Class>::*)() const, Anim* anim)
+    template <typename T> static void set(Behavior* behavior, void* obj, type_erased_setter prop, const T& val)
     {
-        on<MetaProp, Anim>(obj, anim);
+        if (!behavior)
+            prop(obj, &val);
+        for (auto& [p, o, a] : std::as_const(behavior->animations)) {
+            if (prop == p && obj == o) {
+                a->setEnd(&val);
+                return;
+            }
+        }
+        prop(obj, &val);
     }
 
-    template <typename Class, typename MetaProp, typename Anim>
-    static void on(typename MetaProp::Class*      obj,
-                   MetaProp                       (MetaObject<Class>::*)() const,
-                   Anim*                          anim,
-                   const typename MetaProp::Type& startValue)
+    template <typename T> static T get(QObject* obj, type_erased_setter prop, const T& default_ = {})
     {
-        on<MetaProp, Anim>(obj, anim, startValue);
+        return get<T>(findBehavior(obj), obj, prop, default_);
     }
 
-    // getter / setter
-
-    template <typename MetaProp> static auto get(MetaProp prop) { return get<MetaProp>(prop.object()); }
-
-    template <typename Class, typename MetaProp>
-    static auto get(const typename MetaProp::Class* obj, MetaProp (MetaObject<Class>::*)() const)
+    template <typename T> static void set(QObject* obj, type_erased_setter prop, const T& val)
     {
-        return get<MetaProp>(obj);
+        set(findBehavior(obj), obj, prop, val);
+    }
+
+    // Behavior::get(behavior, metaProp);
+    // Behavior::get(          metaProp);
+
+    template <typename MetaProp> static auto get(const Behavior* behavior, MetaProp prop)
+    {
+        return get(findBehavior(prop.object()), prop.object(), erase<MetaProp>(), MetaProp::read(prop.object()));
+    }
+
+    template <typename MetaProp> static auto get(MetaProp prop) { return get(findBehavior(prop.object()), prop); }
+
+    // Behavior::set(behavior, metaProp, val);
+    // Behavior::set(          metaProp, val);
+
+    template <typename MetaProp> static void set(Behavior* b, MetaProp prop, const typename MetaProp::Type& val)
+    {
+        return set(b, prop.object(), erase<MetaProp>(), val);
     }
 
     template <typename MetaProp> static void set(MetaProp prop, const typename MetaProp::Type& val)
     {
-        set<MetaProp>(prop.object(), val);
-    }
-
-    template <typename Class, typename MetaProp>
-    static void set(typename MetaProp::Class* obj, MetaProp (MetaObject<Class>::*)() const, const typename MetaProp::Type& val)
-    {
-        set<MetaProp>(obj, val);
+        return set(findBehavior(prop.object()), prop, val);
     }
 
 public:
@@ -119,12 +202,12 @@ public:
 
         struct Getter
         {
-            auto operator()(const Class* o) const { return Behavior::get<MetaProp>(o); }
+            auto operator()(const Class* o) const { return Behavior::get(MetaProp(const_cast<Class*>(o))); }
         };
 
         struct Setter
         {
-            void operator()(Class* o, const typename MetaProp::Type& v) const { Behavior::set<MetaProp>(o, v); }
+            void operator()(Class* o, const typename MetaProp::Type& v) const { Behavior::set(MetaProp(o), v); }
         };
 
         return MetaProperty<typename MetaProp::Class,
@@ -140,30 +223,18 @@ protected:
     void timerEvent(QTimerEvent* event) override
     {
         constexpr int tick = 1000.0 / N_BEHAVIOR_ANIMATION_FPS;
-        for (auto it = animations.begin(); it != animations.end(); ++it) {
-            auto anim = it.value();
+
+        for (auto& [prop, obj, anim] : std::as_const(animations)) {
             if (anim->finished())
                 continue;
-            it.key()(parent(), anim->tick(tick));
+            prop(obj, anim->tick(tick));
         }
 
         QObject::timerEvent(event);
     }
 
 private:
-    using type_erased_getter = void* (*)(QObject* obj);
-    using type_erased_setter = void (*)(QObject* obj, const void* val);
-
-    template <typename MetaProp> static type_erased_setter erase()
-    {
-        static const auto fn = [](QObject* o, const void* v)
-        {
-            MetaProp::write(static_cast<typename MetaProp::Class*>(o), *static_cast<const typename MetaProp::Type*>(v));
-        };
-        return fn;
-    }
-
-    QMap<type_erased_setter, Animation*> animations;
+    QList<std::tuple<type_erased_setter, void*, Animation*>> animations;
 
     explicit Behavior(QObject* target)
         : QObject(target)
@@ -174,66 +245,21 @@ private:
         startTimer(1000.0 / N_BEHAVIOR_ANIMATION_FPS);
     }
 
-    virtual ~Behavior() { qDeleteAll(animations); }
-
-    template <typename MetaProp, typename Anim> static void on(typename MetaProp::Class* obj, Anim* anim)
+    virtual ~Behavior()
     {
-        static_assert(MetaProp::isReadable);
-        on<MetaProp>(obj, anim, MetaProp::read(obj));
+        for (auto& [_, __, anim] : std::as_const(animations))
+            delete anim;
     }
 
-    template <typename MetaProp, typename Anim>
-    static void on(typename MetaProp::Class* obj, Anim* anim, const typename MetaProp::Type& startValue)
+    static Behavior* findBehavior(QObject* obj)
     {
-        static_assert(MetaProp::isWritable);
-
-        static_assert(std::is_base_of_v<Animation, Anim>);
-        static_assert(std::is_same_v<typename MetaProp::Type, typename Anim::Type>);
-
-        auto p = erase<MetaProp>();
-        auto b =
-            static_cast<Behavior*>(obj->template findChild<QObject*>("nwidget::Behavior", Qt::FindDirectChildrenOnly));
-        if (!b)
-            b = new Behavior(obj);
-        auto a = b->animations.value(p);
-        if (a)
-            delete a;
-        b->animations[p] = anim;
-        anim->setStart(&startValue);
-        anim->setEnd(&startValue);
+        return static_cast<Behavior*>(obj->findChild<QObject*>("nwidget::Behavior", Qt::FindDirectChildrenOnly));
     }
 
-    template <typename MetaProp> static auto get(const typename MetaProp::Class* obj)
+    static Behavior* findOrCreateBehavior(QObject* obj)
     {
-        auto b =
-            static_cast<Behavior*>(obj->template findChild<QObject*>("nwidget::Behavior", Qt::FindDirectChildrenOnly));
-        return b ? b->get<MetaProp>() : MetaProp::read(obj);
-    }
-
-    template <typename MetaProp> static void set(typename MetaProp::Class* obj, const typename MetaProp::Type& val)
-    {
-        auto b =
-            static_cast<Behavior*>(obj->template findChild<QObject*>("nwidget::Behavior", Qt::FindDirectChildrenOnly));
-        if (b)
-            b->set<MetaProp>(val);
-        else
-            MetaProp::write(obj, val);
-    }
-
-    template <typename MetaProp> auto get() const
-    {
-        auto a = animations.value(erase<MetaProp>());
-        return a ? *static_cast<const typename MetaProp::Type*>(a->end())
-                 : MetaProp::read(static_cast<const typename MetaProp::Class*>(parent()));
-    }
-
-    template <typename MetaProp> void set(const typename MetaProp::Type& val)
-    {
-        auto a = animations.value(erase<MetaProp>());
-        if (a)
-            a->setEnd(&val);
-        else
-            MetaProp::write(static_cast<typename MetaProp::Class*>(parent()), val);
+        auto b = findBehavior(obj);
+        return b ? b : new Behavior(obj);
     }
 };
 
