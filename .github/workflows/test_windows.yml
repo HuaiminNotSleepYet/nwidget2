@@ -18,7 +18,16 @@ on:
 
 jobs:
   build:
-    runs-on: windows-latest
+    strategy:
+      matrix:
+        os: [windows-latest]
+        qt_ver: [6.4.3, 6.8.0]
+        include:
+          - qt_ver: 6.4.3
+            qt_arch: win64_msvc2019_64
+          - qt_ver: 6.8.0
+            qt_arch: win64_msvc2022_64
+    runs-on: ${{ matrix.os }}
 
     steps:
     - uses: actions/checkout@v4
@@ -37,24 +46,22 @@ jobs:
     - name: Install Qt
       uses: jurplel/install-qt-action@v4
       with:
-        version: 6.8.0
+        version: ${{ matrix.qt_ver }}
         host: windows
         target: desktop
-        arch: win64_msvc2022_64
+        arch: ${{ matrix.qt_arch }}
         dir: ${{ github.workspace }}/Qt
         install-deps: true
         modules:
         archives:
         cache: true
-        cache-key-prefix: 'qt6.8.0'
+        cache-key-prefix: qt${{ matrix.qt_ver }}_${{ matrix.qt_arch }}
         setup-python: false
         set-env: true
 
     - name: Configure CMake
-      env:
-        QT_DIR: ${{ github.workspace }}/Qt/6.8.0/msvc2022_64
       run: |
-        cmake -B build -S . -G "Visual Studio 17 2022" -A x64 -DCMAKE_PREFIX_PATH="$QT_DIR"
+        cmake -B build -S . -DCMAKE_C_COMPILER=cl -DCMAKE_CXX_COMPILER=cl -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=${{ github.workspace }}/Qt/${{ matrix.qt_ver }}/${{ matrix.qt_arch }}
 
     - name: Build
       run: |
