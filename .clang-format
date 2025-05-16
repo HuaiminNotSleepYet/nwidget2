@@ -1,0 +1,30 @@
+BasedOnStyle: LLVM
+
+AccessModifierOffset: -4
+AlignAfterOpenBracket: Align
+AlignConsecutiveAssignments:
+  Enabled: true
+AlignConsecutiveDeclarations:
+  Enabled: true
+  AlignFunctionPointers: true
+AlignConsecutiveMacros:
+  Enabled: true
+AlignConsecutiveShortCaseStatements:
+  AlignCaseColons: true
+  Enabled: true
+AllowShortCaseLabelsOnASingleLine: true
+BinPackArguments: false
+BinPackParameters: false
+BreakBeforeBinaryOperators: NonAssignment
+BreakBeforeBraces: Custom
+BreakConstructorInitializers: BeforeComma
+BraceWrapping:
+  AfterClass: true
+  AfterStruct: true
+  AfterFunction: true
+  BeforeLambdaBody: true
+ColumnLimit: 120
+IndentCaseLabels: false
+IndentWidth: 4
+PointerAlignment: Left
+TabWidth: 4
