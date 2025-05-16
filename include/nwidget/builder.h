@@ -140,16 +140,16 @@ public:                                                                         
 
 // clang-format off
 #define N_BUILDER_SETTER0(NAME, SETTER) N_BUILDER_SETTERX(NAME, SETTER)
-#define N_BUILDER_SETTER1(NAME, SETTER) N_BUILDER_SETTERX(NAME, SETTER, typename ::nwidget::impl::utils::mem_fn<decltype(&Class::SETTER)>::template arg<0>)
-#define N_BUILDER_SETTER2(NAME, SETTER) N_BUILDER_SETTERX(NAME, SETTER, typename ::nwidget::impl::utils::mem_fn<decltype(&Class::SETTER)>::template arg<0>,\
-                                                                        typename ::nwidget::impl::utils::mem_fn<decltype(&Class::SETTER)>::template arg<1>)
-#define N_BUILDER_SETTER3(NAME, SETTER) N_BUILDER_SETTERX(NAME, SETTER, typename ::nwidget::impl::utils::mem_fn<decltype(&Class::SETTER)>::template arg<0>,\
-                                                                        typename ::nwidget::impl::utils::mem_fn<decltype(&Class::SETTER)>::template arg<1>,\
-                                                                        typename ::nwidget::impl::utils::mem_fn<decltype(&Class::SETTER)>::template arg<2>)
-#define N_BUILDER_SETTER4(NAME, SETTER) N_BUILDER_SETTERX(NAME, SETTER, typename ::nwidget::impl::utils::mem_fn<decltype(&Class::SETTER)>::template arg<0>,\
-                                                                        typename ::nwidget::impl::utils::mem_fn<decltype(&Class::SETTER)>::template arg<1>,\
-                                                                        typename ::nwidget::impl::utils::mem_fn<decltype(&Class::SETTER)>::template arg<2>,\
-                                                                        typename ::nwidget::impl::utils::mem_fn<decltype(&Class::SETTER)>::template arg<3>)
+#define N_BUILDER_SETTER1(NAME, SETTER) N_BUILDER_SETTERX(NAME, SETTER, typename ::nwidget::impl::mem_fn<decltype(&Class::SETTER)>::template arg<0>)
+#define N_BUILDER_SETTER2(NAME, SETTER) N_BUILDER_SETTERX(NAME, SETTER, typename ::nwidget::impl::mem_fn<decltype(&Class::SETTER)>::template arg<0>,\
+                                                                        typename ::nwidget::impl::mem_fn<decltype(&Class::SETTER)>::template arg<1>)
+#define N_BUILDER_SETTER3(NAME, SETTER) N_BUILDER_SETTERX(NAME, SETTER, typename ::nwidget::impl::mem_fn<decltype(&Class::SETTER)>::template arg<0>,\
+                                                                        typename ::nwidget::impl::mem_fn<decltype(&Class::SETTER)>::template arg<1>,\
+                                                                        typename ::nwidget::impl::mem_fn<decltype(&Class::SETTER)>::template arg<2>)
+#define N_BUILDER_SETTER4(NAME, SETTER) N_BUILDER_SETTERX(NAME, SETTER, typename ::nwidget::impl::mem_fn<decltype(&Class::SETTER)>::template arg<0>,\
+                                                                        typename ::nwidget::impl::mem_fn<decltype(&Class::SETTER)>::template arg<1>,\
+                                                                        typename ::nwidget::impl::mem_fn<decltype(&Class::SETTER)>::template arg<2>,\
+                                                                        typename ::nwidget::impl::mem_fn<decltype(&Class::SETTER)>::template arg<3>)
 // clang-format on
 
 #define N_BEGIN_BUILDER_SIGNAL

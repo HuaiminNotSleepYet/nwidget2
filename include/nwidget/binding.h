@@ -42,7 +42,7 @@ namespace nwidget {
 
 template <typename Action, typename... Args> class BindingExpr;
 
-namespace impl::binding {
+namespace impl {
 
 struct ActionEmpty
 {
@@ -85,7 +85,7 @@ template <typename T> inline static void bind(QSignalMapper* binding, const T& v
 
 template <typename... T> static void bind0(QSignalMapper* binding, const BindingExpr<T...>& expr)
 {
-    impl::utils::for_each([binding](const auto& arg) { impl::binding::bind(binding, arg); }, expr.args);
+    impl::for_each([binding](const auto& arg) { impl::bind(binding, arg); }, expr.args);
 }
 
 template <typename... T> static void bind1(QSignalMapper* binding, MetaProperty<T...> prop)
@@ -103,18 +103,18 @@ template <typename... T> static void bind1(QSignalMapper* binding, MetaProperty<
 template <typename T> static void bind(QSignalMapper* binding, const T& v)
 {
     if constexpr (is_binding_expr_v<T>)
-        impl::binding::bind0(binding, v);
+        impl::bind0(binding, v);
     else if constexpr (is_meta_property_v<T>)
-        impl::binding::bind1(binding, v);
+        impl::bind1(binding, v);
 }
 
 struct ActionCall;
 struct ActionMember;
 struct ActionInvoke;
 
-} // namespace impl::binding
+} // namespace impl
 
-template <typename Action = impl::binding::ActionEmpty, // struct { auto operator()(Args&&...) const { return ... } }
+template <typename Action = impl::ActionEmpty, // struct { auto operator()(Args&&...) const { return ... } }
           typename... Args>
 BindingExpr<Action, std::decay_t<Args>...> makeBindingExpr(Args&&... args)
 {
@@ -123,12 +123,12 @@ BindingExpr<Action, std::decay_t<Args>...> makeBindingExpr(Args&&... args)
 
 template <typename Action, typename... Args> class BindingExpr
 {
-    template <typename... T> friend void impl::binding::bind0(QSignalMapper*, const BindingExpr<T...>&);
+    template <typename... T> friend void impl::bind0(QSignalMapper*, const BindingExpr<T...>&);
 
 public:
-    using Type = decltype(Action{}(impl::binding::eval(std::declval<Args>())...));
+    using Type = decltype(Action{}(impl::eval(std::declval<Args>())...));
 
-    constexpr static bool isObservable = impl::binding::is_observable_v<BindingExpr<Action, Args...>>;
+    constexpr static bool isObservable = impl::is_observable_v<BindingExpr<Action, Args...>>;
 
     explicit BindingExpr(const Args&... args)
         : args(args...)
@@ -138,20 +138,19 @@ public:
     template <typename F, typename... As> auto i(F f, As&&... args) const
     {
         if constexpr (std::is_member_object_pointer_v<F>)
-            return makeBindingExpr<impl::binding::ActionMember>(*this, f, std::forward<As>(args)...);
+            return makeBindingExpr<impl::ActionMember>(*this, f, std::forward<As>(args)...);
         else if constexpr (std::is_member_function_pointer_v<F>)
-            return makeBindingExpr<impl::binding::ActionInvoke>(*this, f, std::forward<As>(args)...);
+            return makeBindingExpr<impl::ActionInvoke>(*this, f, std::forward<As>(args)...);
     }
 
     template <typename... As> auto operator()(As&&... args) const
     {
-        return makeBindingExpr<impl::binding::ActionCall>(*this, std::forward<As>(args)...);
+        return makeBindingExpr<impl::ActionCall>(*this, std::forward<As>(args)...);
     }
 
     auto eval() const
     {
-        return std::apply(Action{},
-                          impl::utils::for_each([](const auto& arg) { return impl::binding::eval(arg); }, args));
+        return std::apply(Action{}, impl::for_each([](const auto& arg) { return impl::eval(arg); }, args));
     }
 
     template <typename... T> auto bindTo(MetaProperty<T...> prop, Qt::ConnectionType type = Qt::AutoConnection) const
@@ -197,7 +196,7 @@ private:
             // e, f maybe unused
             Q_UNUSED(e);
             Q_UNUSED(r);
-            if constexpr (impl::binding::is_meta_property_v<Func>)
+            if constexpr (impl::is_meta_property_v<Func>)
                 return [f, e]() { return f.set(e.eval()); };
             else if constexpr (std::is_invocable_v<Func>)
                 return [f]() { return f(); };
@@ -228,7 +227,7 @@ private:
             binding->setObjectName(name);
         }
 
-        impl::binding::bind(binding, *this);
+        impl::bind(binding, *this);
         QObject::connect(binding, &QSignalMapper::mappedInt, binding, slot, type);
 
         slot();
@@ -237,7 +236,7 @@ private:
     }
 };
 
-namespace impl::binding {
+namespace impl {
 
 // clang-format off
 
@@ -277,19 +276,19 @@ struct ActionInvoke
     }
 };
 
-} // namespace impl::binding
+} // namespace impl
 
 // clang-format off
 
-template<typename To, typename From> auto cast(From&& from)              { return makeBindingExpr<impl::binding::ActionCast           <To>>(std::forward<From>(from)); }
-template<typename To, typename From> auto static_cast_(From&& from)      { return makeBindingExpr<impl::binding::ActionStaticCast     <To>>(std::forward<From>(from)); }
-template<typename To, typename From> auto reinterpret_cast_(From&& from) { return makeBindingExpr<impl::binding::ActionReinterpretCast<To>>(std::forward<From>(from)); }
+template<typename To, typename From> auto cast(From&& from)              { return makeBindingExpr<impl::ActionCast           <To>>(std::forward<From>(from)); }
+template<typename To, typename From> auto static_cast_(From&& from)      { return makeBindingExpr<impl::ActionStaticCast     <To>>(std::forward<From>(from)); }
+template<typename To, typename From> auto reinterpret_cast_(From&& from) { return makeBindingExpr<impl::ActionReinterpretCast<To>>(std::forward<From>(from)); }
 
-template<typename A, typename B, typename C> auto cond(const A& a, const B& b, const C& c) { return makeBindingExpr<impl::binding::ActionCond>(a, b, c); }
+template<typename A, typename B, typename C> auto cond(const A& a, const B& b, const C& c) { return makeBindingExpr<impl::ActionCond>(a, b, c); }
 
-template<typename F, typename ...Args> auto call(F func, Args&&... args) { return makeBindingExpr<impl::binding::ActionCall>(func, std::forward<Args>(args)...); }
+template<typename F, typename ...Args> auto call(F func, Args&&... args) { return makeBindingExpr<impl::ActionCall>(func, std::forward<Args>(args)...); }
 
-template<typename T, typename ...Args> auto constructor(Args&&... args) { return makeBindingExpr<impl::binding::ActionConstructor<T>>(std::forward<Args>(args)...); }
+template<typename T, typename ...Args> auto constructor(Args&&... args) { return makeBindingExpr<impl::ActionConstructor<T>>(std::forward<Args>(args)...); }
 
 // clang-format on
 
@@ -301,7 +300,7 @@ template <typename... Args> auto asprintf_(const char* cformat, const Args&... a
 } // namespace nwidget
 
 #define N_IMPL_ACTION_BE(NAME, OP)                                                                                     \
-    namespace nwidget::impl::binding {                                                                                 \
+    namespace nwidget::impl {                                                                                          \
     struct Action##NAME                                                                                                \
     {                                                                                                                  \
         template <typename L, typename R> auto operator()(L&& l, R&& r) const { return l OP r; }                       \
@@ -310,14 +309,14 @@ template <typename... Args> auto asprintf_(const char* cformat, const Args&... a
                                                                                                                        \
     template <typename L,                                                                                              \
               typename R,                                                                                              \
-              std::enable_if_t<nwidget::impl::binding::is_meta_property_v<std::decay_t<L>>                             \
-                                   || nwidget::impl::binding::is_meta_property_v<std::decay_t<R>>                      \
-                                   || nwidget::impl::binding::is_binding_expr_v<std::decay_t<L>>                       \
-                                   || nwidget::impl::binding::is_binding_expr_v<std::decay_t<R>>,                      \
+              std::enable_if_t<nwidget::impl::is_meta_property_v<std::decay_t<L>>                                      \
+                                   || nwidget::impl::is_meta_property_v<std::decay_t<R>>                               \
+                                   || nwidget::impl::is_binding_expr_v<std::decay_t<L>>                                \
+                                   || nwidget::impl::is_binding_expr_v<std::decay_t<R>>,                               \
                                int> = 0>                                                                               \
     auto operator OP(L&& l, R&& r)                                                                                     \
     {                                                                                                                  \
-        return nwidget::makeBindingExpr<nwidget::impl::binding::Action##NAME>(std::forward<L>(l), std::forward<R>(r)); \
+        return nwidget::makeBindingExpr<nwidget::impl::Action##NAME>(std::forward<L>(l), std::forward<R>(r));          \
     }
 
 N_IMPL_ACTION_BE(Add, +)
@@ -342,7 +341,7 @@ N_IMPL_ACTION_BE(BitLShift, <<)
 N_IMPL_ACTION_BE(BitRShift, >>)
 
 #define N_IMPL_ACTION_UE(NAME, OP)                                                                                     \
-    namespace nwidget::impl::binding {                                                                                 \
+    namespace nwidget::impl {                                                                                          \
     struct Action##NAME                                                                                                \
     {                                                                                                                  \
         template <typename T> auto operator()(T&& val) { return OP val; }                                              \
@@ -350,12 +349,12 @@ N_IMPL_ACTION_BE(BitRShift, >>)
     }                                                                                                                  \
                                                                                                                        \
     template <typename T,                                                                                              \
-              std::enable_if_t<nwidget::impl::binding::is_meta_property_v<std::decay_t<T>>                             \
-                                   || nwidget::impl::binding::is_binding_expr_v<std::decay_t<T>>,                      \
+              std::enable_if_t<nwidget::impl::is_meta_property_v<std::decay_t<T>>                                      \
+                                   || nwidget::impl::is_binding_expr_v<std::decay_t<T>>,                               \
                                int> = 0>                                                                               \
     auto operator OP(T&& val)                                                                                          \
     {                                                                                                                  \
-        return nwidget::makeBindingExpr<nwidget::impl::binding::Action##NAME>(std::forward<T>(val));                   \
+        return nwidget::makeBindingExpr<nwidget::impl::Action##NAME>(std::forward<T>(val));                            \
     }
 
 N_IMPL_ACTION_UE(Plus, +)

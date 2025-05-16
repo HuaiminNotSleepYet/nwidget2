@@ -152,7 +152,7 @@ private:
 
 // clang-format off
 
-namespace impl::metaobject {
+namespace impl {
 using Getter = void;
 using Setter = void;
 using Notify = void;
@@ -179,7 +179,7 @@ using Reset  = void;
 #define N_METAPROPERTY(TYPENAME, CLASS, TYPE, NAME, ...)                                                               \
     static const auto _create##TYPENAME = [](CLASS* o)                                                                 \
     {                                                                                                                  \
-        using namespace ::nwidget::impl::metaobject;                                                                   \
+        using namespace ::nwidget::impl;                                                                               \
                                                                                                                        \
         struct _I                                                                                                      \
         {                                                                                                              \
@@ -200,7 +200,7 @@ using Reset  = void;
 public:                                                                                                                \
     auto NAME() const                                                                                                  \
     {                                                                                                                  \
-        using namespace ::nwidget::impl::metaobject;                                                                   \
+        using namespace ::nwidget::impl;                                                                               \
                                                                                                                        \
         struct _I                                                                                                      \
         {                                                                                                              \

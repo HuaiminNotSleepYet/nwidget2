@@ -27,7 +27,7 @@
 
 // clang-format on
 
-namespace nwidget::impl::utils {
+namespace nwidget::impl {
 
 template <std::size_t I = 0, typename F, typename... Ts> constexpr auto for_each(F func, const std::tuple<Ts...>& tuple)
 {
@@ -66,7 +66,7 @@ template <typename C, typename R, typename... T> struct mem_fn<R (C::*)(T...) co
     template <std::size_t i> using arg = std::tuple_element_t<i, std::tuple<T...>>;
 };
 
-} // namespace nwidget::impl::utils
+} // namespace nwidget::impl
 
 /* -------------------------------------------------- Version Check ------------------------------------------------- */
 

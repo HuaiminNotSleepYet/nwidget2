@@ -56,19 +56,19 @@ private slots:
 
         using Expr1 = decltype(MetaObj().value());
         static_assert(std::is_same_v<Expr1::Type, int>);
-        static_assert(impl::binding::is_observable_v<Expr1>);
+        static_assert(impl::is_observable_v<Expr1>);
 
         using Expr2 = decltype(MetaObj().value() + MetaObj().value());
         static_assert(std::is_same_v<Expr2::Type, int>);
-        static_assert(impl::binding::is_observable_v<Expr2>);
+        static_assert(impl::is_observable_v<Expr2>);
 
         using Expr3 = decltype(MetaObj().x());
         static_assert(std::is_same_v<Expr3::Type, int>);
-        static_assert(!impl::binding::is_observable_v<Expr3>);
+        static_assert(!impl::is_observable_v<Expr3>);
 
         using Expr4 = decltype(MetaObj().value() + MetaObj().x());
         static_assert(std::is_same_v<Expr4::Type, int>);
-        static_assert(impl::binding::is_observable_v<Expr4>);
+        static_assert(impl::is_observable_v<Expr4>);
     }
 
     void testExpr()
