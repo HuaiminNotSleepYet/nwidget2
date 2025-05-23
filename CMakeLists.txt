@@ -39,7 +39,6 @@ configure_package_config_file(
 
 install(EXPORT nwidget-targets
     FILE nwidget-targets.cmake
-    NAMESPACE nwidget::
     DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/nwidget/cmake
 )
 
