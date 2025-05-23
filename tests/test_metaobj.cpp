@@ -29,6 +29,25 @@
 
 #include <nwidget/metaobjects.h>
 
+class NoDeclaredClass : public QPushButton
+{
+public:
+    using QPushButton::QPushButton;
+};
+
+class DeclaredClass : public QPushButton
+{
+public:
+    using QPushButton::QPushButton;
+};
+
+template <> class nwidget::MetaObject<DeclaredClass> : public nwidget::MetaObject<QPushButton>
+{
+    N_OBJECT(DeclaredClass, QPushButton)
+};
+
+N_DECLARE_METAOBJECT(DeclaredClass)
+
 /* ------------------------------------------- Create Test For MetaObject ------------------------------------------- */
 
 #undef NWIDGET_METAOBJECTS_H
@@ -118,6 +137,14 @@ class TestMetaObj : public QObject
     Q_OBJECT
 
 private slots:
+    void testUtils()
+    {
+        static_assert(
+            std::is_same_v<MetaObject<QPushButton>, decltype(MetaObject<>::from(std::declval<NoDeclaredClass*>()))>);
+        static_assert(
+            std::is_same_v<MetaObject<DeclaredClass>, decltype(MetaObject<>::from(std::declval<DeclaredClass*>()))>);
+    }
+
     void testMetaObject()
     {
         test::TestMetaObject<QObject>::run();

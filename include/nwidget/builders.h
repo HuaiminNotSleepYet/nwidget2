@@ -8,10 +8,14 @@ class QWidget;
 class QLayout;
 class QLayoutItem;
 
-namespace nwidget {
+#define N_IMPL_DECLARE_BUILDER(TYPE)                                                                                   \
+    N_DECLARE_BUILDER(Q##TYPE)                                                                                         \
+    namespace nwidget {                                                                                                \
+    using TYPE = nwidget::Builder<Q##TYPE>;                                                                            \
+    }
 
 #ifdef QOBJECT_H
-template <typename Self> class Builder<QObject, Self> : public Builder<void, Self>
+template <typename Self> class nwidget::Builder<QObject, Self> : public nwidget::Builder<void, Self>
 {
     N_BUILDER(QObject)
 
@@ -31,11 +35,11 @@ template <typename Self> class Builder<QObject, Self> : public Builder<void, Sel
     N_END_BUILDER_SIGNAL
 };
 
-using Object = Builder<QObject>;
+N_IMPL_DECLARE_BUILDER(Object)
 #endif
 
 #ifdef QACTION_H
-template <typename Self> class Builder<QAction, Self> : public Builder<QObject, Self>
+template <typename Self> class nwidget::Builder<QAction, Self> : public nwidget::Builder<QObject, Self>
 {
     N_BUILDER(QAction)
 
@@ -75,10 +79,11 @@ template <typename Self> class Builder<QAction, Self> : public Builder<QObject, 
     explicit Builder(const QString& text) { self().text(text); }
 };
 
-using Action = Builder<QAction>;
+N_IMPL_DECLARE_BUILDER(Action)
 #endif
 
 #ifdef QLAYOUT_H
+namespace nwidget {
 template <typename T> class LayoutItem : public BuilderItem<T>
 {
 public:
@@ -131,8 +136,9 @@ protected:
     {
     }
 };
+} // namespace nwidget
 
-template <typename Self> class Builder<QLayout, Self> : public Builder<QObject, Self>
+template <typename Self> class nwidget::Builder<QLayout, Self> : public nwidget::Builder<QObject, Self>
 {
     N_BUILDER(QLayout)
 
@@ -147,10 +153,11 @@ template <typename Self> class Builder<QLayout, Self> : public Builder<QObject, 
     N_END_BUILDER_SETTER
 };
 
-using Layout = Builder<QLayout>;
+N_IMPL_DECLARE_BUILDER(Layout)
 #endif
 
 #ifdef QBOXLAYOUT_H
+namespace nwidget {
 class BoxLayoutItem : public LayoutItem<QBoxLayout>
 {
 public:
@@ -214,8 +221,9 @@ private:
     } v;
     Qt::Alignment align;
 };
+} // namespace nwidget
 
-template <typename Self> class Builder<QBoxLayout, Self> : public Builder<QLayout, Self>
+template <typename Self> class nwidget::Builder<QBoxLayout, Self> : public nwidget::Builder<QLayout, Self>
 {
     N_BUILDER(QBoxLayout)
 
@@ -226,26 +234,27 @@ template <typename Self> class Builder<QBoxLayout, Self> : public Builder<QLayou
     // clang-format on
 };
 
-template <typename Self> class Builder<QHBoxLayout, Self> : public Builder<QBoxLayout, Self>
+template <typename Self> class nwidget::Builder<QHBoxLayout, Self> : public nwidget::Builder<QBoxLayout, Self>
 {
     N_BUILDER(QHBoxLayout)
 
     Builder(std::initializer_list<BoxLayoutItem> items) { self().addItems(items); }
 };
 
-template <typename Self> class Builder<QVBoxLayout, Self> : public Builder<QBoxLayout, Self>
+template <typename Self> class nwidget::Builder<QVBoxLayout, Self> : public nwidget::Builder<QBoxLayout, Self>
 {
     N_BUILDER(QVBoxLayout)
 
     Builder(std::initializer_list<BoxLayoutItem> items) { self().addItems(items); }
 };
 
-using BoxLayout  = Builder<QBoxLayout>;
-using HBoxLayout = Builder<QHBoxLayout>;
-using VBoxLayout = Builder<QVBoxLayout>;
+N_IMPL_DECLARE_BUILDER(BoxLayout)
+N_IMPL_DECLARE_BUILDER(HBoxLayout)
+N_IMPL_DECLARE_BUILDER(VBoxLayout)
 #endif
 
 #ifdef QFORMLAYOUT_H
+namespace nwidget {
 class FormLayoutItem : public LayoutItem<QFormLayout>
 {
 public:
@@ -263,8 +272,9 @@ private:
     QWidget* label = nullptr;
     void*    field = nullptr;
 };
+} // namespace nwidget
 
-template <typename Self> class Builder<QFormLayout, Self> : public Builder<QLayout, Self>
+template <typename Self> class nwidget::Builder<QFormLayout, Self> : public nwidget::Builder<QLayout, Self>
 {
     N_BUILDER(QFormLayout)
 
@@ -280,10 +290,11 @@ template <typename Self> class Builder<QFormLayout, Self> : public Builder<QLayo
     Builder(std::initializer_list<FormLayoutItem> items) { self().addItems(items); }
 };
 
-using FormLayout = Builder<QFormLayout>;
+N_IMPL_DECLARE_BUILDER(FormLayout)
 #endif
 
 #ifdef QGRIDLAYOUT_H
+namespace nwidget {
 class GridLayoutItem : public LayoutItem<QGridLayout>
 {
 public:
@@ -314,8 +325,9 @@ private:
     int           colSpan;
     Qt::Alignment align;
 };
+} // namespace nwidget
 
-template <typename Self> class Builder<QGridLayout, Self> : public Builder<QLayout, Self>
+template <typename Self> class nwidget::Builder<QGridLayout, Self> : public nwidget::Builder<QLayout, Self>
 {
     N_BUILDER(QGridLayout)
 
@@ -336,11 +348,11 @@ template <typename Self> class Builder<QGridLayout, Self> : public Builder<QLayo
     Builder(std::initializer_list<GridLayoutItem> items) { self().addItems(items); }
 };
 
-using GridLayout = Builder<QGridLayout>;
+N_IMPL_DECLARE_BUILDER(GridLayout)
 #endif
 
 #ifdef QSTACKEDLAYOUT_H
-template <typename Self> class Builder<QStackedLayout, Self> : public Builder<QLayout, Self>
+template <typename Self> class nwidget::Builder<QStackedLayout, Self> : public nwidget::Builder<QLayout, Self>
 {
     N_BUILDER(QStackedLayout)
 
@@ -354,11 +366,11 @@ template <typename Self> class Builder<QStackedLayout, Self> : public Builder<QL
     N_END_BUILDER_SETTER
 };
 
-using StackedLayout = Builder<QStackedLayout>;
+N_IMPL_DECLARE_BUILDER(StackedLayout)
 #endif
 
 #ifdef QWIDGET_H
-template <typename Self> class Builder<QWidget, Self> : public Builder<QObject, Self>
+template <typename Self> class nwidget::Builder<QWidget, Self> : public nwidget::Builder<QObject, Self>
 {
     N_BUILDER(QWidget)
 
@@ -470,11 +482,11 @@ template <typename Self> class Builder<QWidget, Self> : public Builder<QObject, 
     explicit Builder(QLayout* l) { self().layout(l); }
 };
 
-using Widget = Builder<QWidget>;
+N_IMPL_DECLARE_BUILDER(Widget)
 #endif
 
 #ifdef QABSTRACTBUTTON_H
-template <typename Self> class Builder<QAbstractButton, Self> : public Builder<QWidget, Self>
+template <typename Self> class nwidget::Builder<QAbstractButton, Self> : public nwidget::Builder<QWidget, Self>
 {
     N_BUILDER(QAbstractButton)
 
@@ -502,11 +514,11 @@ template <typename Self> class Builder<QAbstractButton, Self> : public Builder<Q
     N_END_BUILDER_SIGNAL
 };
 
-using AbstractButton = Builder<QAbstractButton>;
+N_IMPL_DECLARE_BUILDER(AbstractButton)
 #endif
 
 #ifdef QCHECKBOX_H
-template <typename Self> class Builder<QCheckBox, Self> : public Builder<QAbstractButton, Self>
+template <typename Self> class nwidget::Builder<QCheckBox, Self> : public nwidget::Builder<QAbstractButton, Self>
 {
     N_BUILDER(QCheckBox)
 
@@ -523,11 +535,11 @@ template <typename Self> class Builder<QCheckBox, Self> : public Builder<QAbstra
     explicit Builder(const QString& text) { self().text(text); }
 };
 
-using CheckBox = Builder<QCheckBox>;
+N_IMPL_DECLARE_BUILDER(CheckBox)
 #endif
 
 #ifdef QDIALOGBUTTONBOX_H
-template <typename Self> class Builder<QDialogButtonBox, Self> : public Builder<QWidget, Self>
+template <typename Self> class nwidget::Builder<QDialogButtonBox, Self> : public nwidget::Builder<QWidget, Self>
 {
     N_BUILDER(QDialogButtonBox)
 
@@ -547,11 +559,11 @@ template <typename Self> class Builder<QDialogButtonBox, Self> : public Builder<
     explicit Builder(QDialogButtonBox::StandardButtons buttons) { self().standardButtons(buttons); }
 };
 
-using DialogButtonBox = Builder<QDialogButtonBox>;
+N_IMPL_DECLARE_BUILDER(DialogButtonBox)
 #endif
 
 #ifdef QPUSHBUTTON_H
-template <typename Self> class Builder<QPushButton, Self> : public Builder<QAbstractButton, Self>
+template <typename Self> class nwidget::Builder<QPushButton, Self> : public nwidget::Builder<QAbstractButton, Self>
 {
     N_BUILDER(QPushButton)
 
@@ -568,11 +580,11 @@ template <typename Self> class Builder<QPushButton, Self> : public Builder<QAbst
     explicit Builder(const QString& text) { self().text(text); }
 };
 
-using PushButton = Builder<QPushButton>;
+N_IMPL_DECLARE_BUILDER(PushButton)
 #endif
 
 #ifdef QCOMMANDLINKBUTTON_H
-template <typename Self> class Builder<QCommandLinkButton, Self> : public Builder<QPushButton, Self>
+template <typename Self> class nwidget::Builder<QCommandLinkButton, Self> : public nwidget::Builder<QPushButton, Self>
 {
     N_BUILDER(QCommandLinkButton)
 
@@ -583,22 +595,22 @@ template <typename Self> class Builder<QCommandLinkButton, Self> : public Builde
     explicit Builder(const QString& text, const QString& desc = {}) { self().text(text).description(desc); }
 };
 
-using CommandLinkButton = Builder<QCommandLinkButton>;
+N_IMPL_DECLARE_BUILDER(CommandLinkButton)
 #endif
 
 #ifdef QRADIOBUTTON_H
-template <typename Self> class Builder<QRadioButton, Self> : public Builder<QAbstractButton, Self>
+template <typename Self> class nwidget::Builder<QRadioButton, Self> : public nwidget::Builder<QAbstractButton, Self>
 {
     N_BUILDER(QRadioButton)
 
     explicit Builder(const QString& text) { self().text(text); }
 };
 
-using RadioButton = Builder<QRadioButton>;
+N_IMPL_DECLARE_BUILDER(RadioButton)
 #endif
 
 #ifdef QTOOLBUTTON_H
-template <typename Self> class Builder<QToolButton, Self> : public Builder<QAbstractButton, Self>
+template <typename Self> class nwidget::Builder<QToolButton, Self> : public nwidget::Builder<QAbstractButton, Self>
 {
     N_BUILDER(QToolButton)
 
@@ -616,11 +628,11 @@ template <typename Self> class Builder<QToolButton, Self> : public Builder<QAbst
     N_END_BUILDER_SETTER
 };
 
-using ToolButton = Builder<QToolButton>;
+N_IMPL_DECLARE_BUILDER(ToolButton)
 #endif
 
 #ifdef QFRAME_H
-template <typename Self> class Builder<QFrame, Self> : public Builder<QWidget, Self>
+template <typename Self> class nwidget::Builder<QFrame, Self> : public nwidget::Builder<QWidget, Self>
 {
     N_BUILDER(QFrame)
 
@@ -636,10 +648,12 @@ template <typename Self> class Builder<QFrame, Self> : public Builder<QWidget, S
     N_BUILDER_SETTER1(frameStyle, setFrameStyle)
     N_END_BUILDER_SETTER
 };
+
+N_IMPL_DECLARE_BUILDER(Frame)
 #endif
 
 #ifdef QABSTRACTSCROLLAREA_H
-template <typename Self> class Builder<QAbstractScrollArea, Self> : public Builder<QFrame, Self>
+template <typename Self> class nwidget::Builder<QAbstractScrollArea, Self> : public nwidget::Builder<QFrame, Self>
 {
     N_BUILDER(QAbstractScrollArea)
 
@@ -650,11 +664,12 @@ template <typename Self> class Builder<QAbstractScrollArea, Self> : public Build
     N_END_BUILDER_PROPERTY
 };
 
-using AbstractScrollArea = Builder<QAbstractScrollArea>;
+N_IMPL_DECLARE_BUILDER(AbstractScrollArea)
 #endif
 
 #ifdef QABSTRACTITEMVIEW_H
-template <typename Self> class Builder<QAbstractItemView, Self> : public Builder<QAbstractScrollArea, Self>
+template <typename Self>
+class nwidget::Builder<QAbstractItemView, Self> : public nwidget::Builder<QAbstractScrollArea, Self>
 {
     N_BUILDER(QAbstractItemView)
 
@@ -684,11 +699,11 @@ template <typename Self> class Builder<QAbstractItemView, Self> : public Builder
     N_END_BUILDER_SETTER
 };
 
-using AbstractItemView = Builder<QAbstractItemView>;
+N_IMPL_DECLARE_BUILDER(AbstractItemView)
 #endif
 
 #ifdef QHEADERVIEW_H
-template <typename Self> class Builder<QHeaderView, Self> : public Builder<QAbstractItemView, Self>
+template <typename Self> class nwidget::Builder<QHeaderView, Self> : public nwidget::Builder<QAbstractItemView, Self>
 {
     N_BUILDER(QHeaderView)
 
@@ -735,11 +750,11 @@ template <typename Self> class Builder<QHeaderView, Self> : public Builder<QAbst
     N_END_BUILDER_SIGNAL
 };
 
-using HeaderView = Builder<QHeaderView>;
+N_IMPL_DECLARE_BUILDER(HeaderView)
 #endif
 
 #ifdef QLISTVIEW_H
-template <typename Self> class Builder<QListView, Self> : public Builder<QAbstractItemView, Self>
+template <typename Self> class nwidget::Builder<QListView, Self> : public nwidget::Builder<QAbstractItemView, Self>
 {
     N_BUILDER(QListView)
 
@@ -770,11 +785,11 @@ template <typename Self> class Builder<QListView, Self> : public Builder<QAbstra
     N_END_BUILDER_SIGNAL
 };
 
-using ListView = Builder<QListView>;
+N_IMPL_DECLARE_BUILDER(ListView)
 #endif
 
 #ifdef QLISTWIDGET_H
-template <typename Self> class Builder<QListWidget, Self> : public Builder<QListView, Self>
+template <typename Self> class nwidget::Builder<QListWidget, Self> : public nwidget::Builder<QListView, Self>
 {
     N_BUILDER(QListWidget)
 
@@ -784,11 +799,11 @@ template <typename Self> class Builder<QListWidget, Self> : public Builder<QList
     N_END_BUILDER_PROPERTY
 };
 
-using ListWidget = Builder<QListWidget>;
+N_IMPL_DECLARE_BUILDER(ListWidget)
 #endif
 
 #ifdef QTABLEVIEW_H
-template <typename Self> class Builder<QTableView, Self> : public Builder<QAbstractItemView, Self>
+template <typename Self> class nwidget::Builder<QTableView, Self> : public nwidget::Builder<QAbstractItemView, Self>
 {
     N_BUILDER(QTableView)
 
@@ -813,11 +828,11 @@ template <typename Self> class Builder<QTableView, Self> : public Builder<QAbstr
     N_END_BUILDER_SETTER
 };
 
-using TableView = Builder<QTableView>;
+N_IMPL_DECLARE_BUILDER(TableView)
 #endif
 
 #ifdef QTABLEWIDGET_H
-template <typename Self> class Builder<QTableWidget, Self> : public Builder<QAbstractItemView, Self>
+template <typename Self> class nwidget::Builder<QTableWidget, Self> : public nwidget::Builder<QAbstractItemView, Self>
 {
     N_BUILDER(QTableWidget)
 
@@ -860,11 +875,11 @@ template <typename Self> class Builder<QTableWidget, Self> : public Builder<QAbs
     N_END_BUILDER_SIGNAL
 };
 
-using TableWidget = Builder<QTableWidget>;
+N_IMPL_DECLARE_BUILDER(TableWidget)
 #endif
 
 #ifdef QTREEVIEW_H
-template <typename Self> class Builder<QTreeView, Self> : public Builder<QAbstractItemView, Self>
+template <typename Self> class nwidget::Builder<QTreeView, Self> : public nwidget::Builder<QAbstractItemView, Self>
 {
     N_BUILDER(QTreeView)
 
@@ -899,11 +914,11 @@ template <typename Self> class Builder<QTreeView, Self> : public Builder<QAbstra
     N_END_BUILDER_SIGNAL
 };
 
-using TreeView = Builder<QTreeView>;
+N_IMPL_DECLARE_BUILDER(TreeView)
 #endif
 
 #ifdef QTREEWIDGET_H
-template <typename Self> class Builder<QTreeWidget, Self> : public Builder<QAbstractItemView, Self>
+template <typename Self> class nwidget::Builder<QTreeWidget, Self> : public nwidget::Builder<QAbstractItemView, Self>
 {
     N_BUILDER(QTreeWidget)
 
@@ -911,11 +926,12 @@ template <typename Self> class Builder<QTreeWidget, Self> : public Builder<QAbst
     N_BUILDER_PROPERTY(columnCount)
 };
 
-using TreeWidget = Builder<QTreeWidget>;
+N_IMPL_DECLARE_BUILDER(TreeWidget)
 #endif
 
 #ifdef QPLAINTEXTEDIT_H
-template <typename Self> class Builder<QPlainTextEdit, Self> : public Builder<QAbstractScrollArea, Self>
+template <typename Self>
+class nwidget::Builder<QPlainTextEdit, Self> : public nwidget::Builder<QAbstractScrollArea, Self>
 {
     N_BUILDER(QPlainTextEdit)
 
@@ -940,11 +956,11 @@ template <typename Self> class Builder<QPlainTextEdit, Self> : public Builder<QA
     explicit Builder(const QString& text) { self().plainText(text); }
 };
 
-using PlainTextEdit = Builder<QPlainTextEdit>;
+N_IMPL_DECLARE_BUILDER(PlainTextEdit)
 #endif
 
 #ifdef QTEXTEDIT_H
-template <typename Self> class Builder<QTextEdit, Self> : public Builder<QAbstractScrollArea, Self>
+template <typename Self> class nwidget::Builder<QTextEdit, Self> : public nwidget::Builder<QAbstractScrollArea, Self>
 {
     N_BUILDER(QTextEdit)
 
@@ -982,11 +998,11 @@ template <typename Self> class Builder<QTextEdit, Self> : public Builder<QAbstra
     explicit Builder(const QString& text) { self().plainText(text); }
 };
 
-using TextEdit = Builder<QTextEdit>;
+N_IMPL_DECLARE_BUILDER(TextEdit)
 #endif
 
 #ifdef QTEXTBROWSER_H
-template <typename Self> class Builder<QTextBrowser, Self> : public Builder<QTextEdit, Self>
+template <typename Self> class nwidget::Builder<QTextBrowser, Self> : public nwidget::Builder<QTextEdit, Self>
 {
     N_BUILDER(QTextBrowser)
 
@@ -1007,10 +1023,11 @@ template <typename Self> class Builder<QTextBrowser, Self> : public Builder<QTex
     N_END_BUILDER_SIGNAL
 };
 
-using TextBrowser = Builder<QTextBrowser>;
+N_IMPL_DECLARE_BUILDER(TextBrowser)
 #endif
 
 #ifdef QTOOLBOX_H
+namespace nwidget {
 class ToolBoxItem : public BuilderItem<QToolBox>
 {
 public:
@@ -1039,8 +1056,9 @@ private:
     QString  text;
     QWidget* widget;
 };
+} // namespace nwidget
 
-template <typename Self> class Builder<QToolBox, Self> : public Builder<QFrame, Self>
+template <typename Self> class nwidget::Builder<QToolBox, Self> : public nwidget::Builder<QFrame, Self>
 {
     N_BUILDER(QToolBox)
 
@@ -1053,10 +1071,11 @@ template <typename Self> class Builder<QToolBox, Self> : public Builder<QFrame, 
     Self& items(std::initializer_list<ToolBoxItem> items) { return self().addItems(items); }
 };
 
-using ToolBox = Builder<QToolBox>;
+N_IMPL_DECLARE_BUILDER(ToolBox)
 #endif
 
 #ifdef QSPLITTER_H
+namespace nwidget {
 class SplitterItem : public BuilderItem<QSplitter>
 {
 public:
@@ -1076,8 +1095,9 @@ public:
 private:
     QWidget* item;
 };
+} // namespace nwidget
 
-template <typename Self> class Builder<QSplitter, Self> : public Builder<QFrame, Self>
+template <typename Self> class nwidget::Builder<QSplitter, Self> : public nwidget::Builder<QFrame, Self>
 {
     N_BUILDER(QSplitter)
 
@@ -1089,11 +1109,11 @@ template <typename Self> class Builder<QSplitter, Self> : public Builder<QFrame,
     N_END_BUILDER_PROPERTY
 };
 
-using Splitter = Builder<QSplitter>;
+N_IMPL_DECLARE_BUILDER(Splitter)
 #endif
 
 #ifdef QABSTRACTSLIDER_H
-template <typename Self> class Builder<QAbstractSlider, Self> : public Builder<QWidget, Self>
+template <typename Self> class nwidget::Builder<QAbstractSlider, Self> : public nwidget::Builder<QWidget, Self>
 {
     N_BUILDER(QAbstractSlider)
 
@@ -1123,11 +1143,11 @@ template <typename Self> class Builder<QAbstractSlider, Self> : public Builder<Q
     N_END_BUILDER_SIGNAL
 };
 
-using AbstractSlider = Builder<QAbstractSlider>;
+N_IMPL_DECLARE_BUILDER(AbstractSlider)
 #endif
 
 #ifdef QDIAL_H
-template <typename Self> class Builder<QDial, Self> : public Builder<QAbstractSlider, Self>
+template <typename Self> class nwidget::Builder<QDial, Self> : public nwidget::Builder<QAbstractSlider, Self>
 {
     N_BUILDER(QDial)
 
@@ -1142,11 +1162,11 @@ template <typename Self> class Builder<QDial, Self> : public Builder<QAbstractSl
     N_END_BUILDER_SETTER
 };
 
-using Dial = Builder<QDial>;
+N_IMPL_DECLARE_BUILDER(Dial)
 #endif
 
 #ifdef QSLIDER_H
-template <typename Self> class Builder<QSlider, Self> : public Builder<QAbstractSlider, Self>
+template <typename Self> class nwidget::Builder<QSlider, Self> : public nwidget::Builder<QAbstractSlider, Self>
 {
     N_BUILDER(QSlider)
 
@@ -1158,22 +1178,22 @@ template <typename Self> class Builder<QSlider, Self> : public Builder<QAbstract
     Builder(Qt::Orientation orientation) { self().orientation(orientation); }
 };
 
-using Slider = Builder<QSlider>;
+N_IMPL_DECLARE_BUILDER(Slider)
 #endif
 
 #ifdef QSCROLLBAR_H
-template <typename Self> class Builder<QScrollBar, Self> : public Builder<QAbstractSlider, Self>
+template <typename Self> class nwidget::Builder<QScrollBar, Self> : public nwidget::Builder<QAbstractSlider, Self>
 {
     N_BUILDER(QScrollBar)
 
     Builder(Qt::Orientation orientation) { self().orientation(orientation); }
 };
 
-using ScrollBar = Builder<QScrollBar>;
+N_IMPL_DECLARE_BUILDER(ScrollBar)
 #endif
 
 #ifdef QABSTRACTSPINBOX_H
-template <typename Self> class Builder<QAbstractSpinBox, Self> : public Builder<QWidget, Self>
+template <typename Self> class nwidget::Builder<QAbstractSpinBox, Self> : public nwidget::Builder<QWidget, Self>
 {
     N_BUILDER(QAbstractSpinBox)
 
@@ -1191,11 +1211,11 @@ template <typename Self> class Builder<QAbstractSpinBox, Self> : public Builder<
     N_END_BUILDER_PROPERTY
 };
 
-using AbstractSpinBox = Builder<QAbstractSpinBox>;
+N_IMPL_DECLARE_BUILDER(AbstractSpinBox)
 #endif
 
 #ifdef QDATETIMEEDIT_H
-template <typename Self> class Builder<QDateTimeEdit, Self> : public Builder<QAbstractSpinBox, Self>
+template <typename Self> class nwidget::Builder<QDateTimeEdit, Self> : public nwidget::Builder<QAbstractSpinBox, Self>
 {
     N_BUILDER(QDateTimeEdit)
 
@@ -1233,7 +1253,7 @@ template <typename Self> class Builder<QDateTimeEdit, Self> : public Builder<QAb
     N_END_BUILDER_SIGNAL
 };
 
-template <typename Self> class Builder<QDateEdit, Self> : public Builder<QDateTimeEdit, Self>
+template <typename Self> class nwidget::Builder<QDateEdit, Self> : public nwidget::Builder<QDateTimeEdit, Self>
 {
     N_BUILDER(QDateEdit)
 
@@ -1242,7 +1262,7 @@ template <typename Self> class Builder<QDateEdit, Self> : public Builder<QDateTi
     N_END_BUILDER_PROPERTY
 };
 
-template <typename Self> class Builder<QTimeEdit, Self> : public Builder<QDateTimeEdit, Self>
+template <typename Self> class nwidget::Builder<QTimeEdit, Self> : public nwidget::Builder<QDateTimeEdit, Self>
 {
     N_BUILDER(QTimeEdit)
 
@@ -1251,13 +1271,13 @@ template <typename Self> class Builder<QTimeEdit, Self> : public Builder<QDateTi
     N_END_BUILDER_PROPERTY
 };
 
-using DateTimeEdit = Builder<QDateTimeEdit>;
-using DateEdit     = Builder<QDateEdit>;
-using TimeEdit     = Builder<QTimeEdit>;
+N_IMPL_DECLARE_BUILDER(DateTimeEdit)
+N_IMPL_DECLARE_BUILDER(DateEdit)
+N_IMPL_DECLARE_BUILDER(TimeEdit)
 #endif
 
 #ifdef QSPINBOX_H
-template <typename Self> class Builder<QSpinBox, Self> : public Builder<QAbstractSpinBox, Self>
+template <typename Self> class nwidget::Builder<QSpinBox, Self> : public nwidget::Builder<QAbstractSpinBox, Self>
 {
     N_BUILDER(QSpinBox)
 
@@ -1282,7 +1302,7 @@ template <typename Self> class Builder<QSpinBox, Self> : public Builder<QAbstrac
     N_END_BUILDER_SIGNAL
 };
 
-template <typename Self> class Builder<QDoubleSpinBox, Self> : public Builder<QAbstractSpinBox, Self>
+template <typename Self> class nwidget::Builder<QDoubleSpinBox, Self> : public nwidget::Builder<QAbstractSpinBox, Self>
 {
     N_BUILDER(QDoubleSpinBox)
 
@@ -1307,11 +1327,12 @@ template <typename Self> class Builder<QDoubleSpinBox, Self> : public Builder<QA
     N_END_BUILDER_SIGNAL
 };
 
-using SpinBox       = Builder<QSpinBox>;
-using DoubleSpinBox = Builder<QDoubleSpinBox>;
+N_IMPL_DECLARE_BUILDER(SpinBox)
+N_IMPL_DECLARE_BUILDER(DoubleSpinBox)
 #endif
 
 #ifdef QCOMBOBOX_H
+namespace nwidget {
 class QComboBoxItem : public BuilderItem<QComboBox>
 {
 public:
@@ -1346,8 +1367,9 @@ private:
     QString  text;
     QVariant data;
 };
+} // namespace nwidget
 
-template <typename Self> class Builder<QComboBox, Self> : public Builder<QWidget, Self>
+template <typename Self> class nwidget::Builder<QComboBox, Self> : public nwidget::Builder<QWidget, Self>
 {
     N_BUILDER(QComboBox)
 
@@ -1383,11 +1405,11 @@ template <typename Self> class Builder<QComboBox, Self> : public Builder<QWidget
     // clang-format on
 };
 
-using ComboBox = Builder<QComboBox>;
+N_IMPL_DECLARE_BUILDER(ComboBox)
 #endif
 
 #ifdef QGROUPBOX_H
-template <typename Self> class Builder<QGroupBox, Self> : public Builder<QWidget, Self>
+template <typename Self> class nwidget::Builder<QGroupBox, Self> : public nwidget::Builder<QWidget, Self>
 {
     N_BUILDER(QGroupBox)
 
@@ -1406,11 +1428,11 @@ template <typename Self> class Builder<QGroupBox, Self> : public Builder<QWidget
     // clang-format on
 };
 
-using GroupBox = Builder<QGroupBox>;
+N_IMPL_DECLARE_BUILDER(GroupBox)
 #endif
 
 #ifdef QLABEL_H
-template <typename Self> class Builder<QLabel, Self> : public Builder<QWidget, Self>
+template <typename Self> class nwidget::Builder<QLabel, Self> : public nwidget::Builder<QWidget, Self>
 {
     N_BUILDER(QLabel)
 
@@ -1430,11 +1452,11 @@ template <typename Self> class Builder<QLabel, Self> : public Builder<QWidget, S
     explicit Builder(const QString& text) { self().text(text); }
 };
 
-using Label = Builder<QLabel>;
+N_IMPL_DECLARE_BUILDER(Label)
 #endif
 
 #ifdef QLINEEDIT_H
-template <typename Self> class Builder<QLineEdit, Self> : public Builder<QWidget, Self>
+template <typename Self> class nwidget::Builder<QLineEdit, Self> : public Builder<QWidget, Self>
 {
     N_BUILDER(QLineEdit)
 
@@ -1479,10 +1501,11 @@ template <typename Self> class Builder<QLineEdit, Self> : public Builder<QWidget
     explicit Builder(const QString& text) { self().text(text); }
 };
 
-using LineEdit = Builder<QLineEdit>;
+N_IMPL_DECLARE_BUILDER(LineEdit)
 #endif
 
 #ifdef QMENU_H
+namespace nwidget {
 class MenuItem : public BuilderItem<QMenu>
 {
 public:
@@ -1516,8 +1539,9 @@ public:
 private:
     QObject* item;
 };
+} // namespace nwidget
 
-template <typename Self> class Builder<QMenu, Self> : public Builder<QWidget, Self>
+template <typename Self> class nwidget::Builder<QMenu, Self> : public nwidget::Builder<QWidget, Self>
 {
     N_BUILDER(QMenu)
 
@@ -1536,10 +1560,11 @@ template <typename Self> class Builder<QMenu, Self> : public Builder<QWidget, Se
     Self& items(std::initializer_list<MenuItem> items) { return self().addItems(items); }
 };
 
-using Menu = Builder<QMenu>;
+N_IMPL_DECLARE_BUILDER(Menu)
 #endif
 
 #ifdef QMENUBAR_H
+namespace nwidget {
 class MenuBarItem : public BuilderItem<QMenuBar>
 {
 public:
@@ -1562,8 +1587,9 @@ public:
 private:
     QObject* item;
 };
+} // namespace nwidget
 
-template <typename Self> class Builder<QMenuBar, Self> : public Builder<QWidget, Self>
+template <typename Self> class nwidget::Builder<QMenuBar, Self> : public nwidget::Builder<QWidget, Self>
 {
     N_BUILDER(QMenuBar)
 
@@ -1575,11 +1601,11 @@ template <typename Self> class Builder<QMenuBar, Self> : public Builder<QWidget,
     Self& items(std::initializer_list<MenuBarItem> items) { return self().addItems(items); }
 };
 
-using MenuBar = Builder<QMenuBar>;
+N_IMPL_DECLARE_BUILDER(MenuBar)
 #endif
 
 #ifdef QPROGRESSBAR_H
-template <typename Self> class Builder<QProgressBar, Self> : public Builder<QWidget, Self>
+template <typename Self> class nwidget::Builder<QProgressBar, Self> : public nwidget::Builder<QWidget, Self>
 {
     N_BUILDER(QProgressBar)
 
@@ -1604,10 +1630,11 @@ template <typename Self> class Builder<QProgressBar, Self> : public Builder<QWid
     N_END_BUILDER_SIGNAL
 };
 
-using ProgressBar = Builder<QProgressBar>;
+N_IMPL_DECLARE_BUILDER(ProgressBar)
 #endif
 
 #ifdef QTABBAR_H
+namespace nwidget {
 class TabBarItem : public BuilderItem<QTabBar>
 {
 public:
@@ -1634,8 +1661,9 @@ private:
     QIcon   icon;
     QString text;
 };
+} // namespace nwidget
 
-template <typename Self> class Builder<QTabBar, Self> : public Builder<QWidget, Self>
+template <typename Self> class nwidget::Builder<QTabBar, Self> : public nwidget::Builder<QWidget, Self>
 {
     N_BUILDER(QTabBar)
 
@@ -1684,10 +1712,11 @@ template <typename Self> class Builder<QTabBar, Self> : public Builder<QWidget, 
     Self& items(std::initializer_list<TabBarItem> items) { return self().addItems(items); }
 };
 
-using TabBar = Builder<QTabBar>;
+N_IMPL_DECLARE_BUILDER(TabBar)
 #endif
 
 #ifdef QTABWIDGET_H
+namespace nwidget {
 class TabWidgetItem : public BuilderItem<QTabWidget>
 {
 public:
@@ -1716,8 +1745,9 @@ private:
     QString  text;
     QWidget* page;
 };
+} // namespace nwidget
 
-template <typename Self> class Builder<QTabWidget, Self> : public Builder<QWidget, Self>
+template <typename Self> class nwidget::Builder<QTabWidget, Self> : public nwidget::Builder<QWidget, Self>
 {
     N_BUILDER(QTabWidget)
 
@@ -1757,9 +1787,7 @@ template <typename Self> class Builder<QTabWidget, Self> : public Builder<QWidge
     Self& items(std::initializer_list<TabWidgetItem> items) { return self().addItems(items); }
 };
 
-using TabWidget = Builder<QTabWidget>;
+N_IMPL_DECLARE_BUILDER(TabWidget)
 #endif
-
-} // namespace nwidget
 
 #endif // NWIDGET_BUILDERS_H

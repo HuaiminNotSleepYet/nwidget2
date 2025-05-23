@@ -262,21 +262,33 @@ public:                                                                         
 
 #define N_OBJECT(CLASS, ...) N_IMPL_CAT(N_IMPL_OBJECT_, N_IMPL_COUNT(__VA_ARGS__))(CLASS, __VA_ARGS__)
 
-/* ------------------------------------------------------ Utils ----------------------------------------------------- */
+#define N_DECLARE_METAOBJECT(TYPE) TYPE* nwidget_metaobject(TYPE* obj);
 
-template <> class MetaProperty<>
-{
-public:
-    template <typename Class, typename MetaProp> static MetaProp of(MetaProp (MetaObject<Class>::*)() const)
-    {
-        return {nullptr};
-    }
-};
+namespace impl {
+
+// clang-format off
+template <typename T, typename = void> struct has_metaobject_spec                                                  : std::false_type {};
+template <typename T>                  struct has_metaobject_spec<T, std::void_t<decltype(sizeof(MetaObject<T>))>> : std::true_type  {};
+template <typename T> constexpr bool has_metaobject_spec_v = has_metaobject_spec<T>::value;
+// clang-format on
+
+template <typename Class>
+using closest_declared_metaobject_class_t =
+    std::conditional_t<impl::has_metaobject_spec_v<Class>,
+                       Class,
+                       std::decay_t<decltype(*nwidget_metaobject(std::declval<Class*>()))>>;
+
+}; // namespace impl
+
+/* ------------------------------------------------------ Utils ----------------------------------------------------- */
 
 template <> class MetaObject<>
 {
 public:
-    template <typename Class> static auto from(Class* obj) { return MetaObject<Class>(obj); }
+    template <typename Class> static auto from(Class* obj)
+    {
+        return MetaObject<impl::closest_declared_metaobject_class_t<Class>>(obj);
+    }
 };
 
 } // namespace nwidget

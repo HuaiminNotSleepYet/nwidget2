@@ -34,6 +34,12 @@
 static bool compareObject(QObject* a, QObject* b);
 static bool compareLayout(QLayout* a, QLayout* b);
 
+class MySlider : public QSlider
+{
+public:
+    using QSlider::QSlider;
+};
+
 using namespace nwidget;
 
 class TestBuilder : public QObject
@@ -41,7 +47,7 @@ class TestBuilder : public QObject
     Q_OBJECT
 
 private slots:
-    void testBuilder()
+    void testBuilder1()
     {
         QSlider _s1;
 
@@ -53,6 +59,17 @@ private slots:
         QCOMPARE(_s1.maximum(), 114514);
         QCOMPARE(_s1.value(), 23);
         QCOMPARE(_s1.minimumSize(), QSize(14, 23));
+    }
+
+    void testBuilder2()
+    {
+        MySlider s1;
+        QSlider  s2;
+
+        Builder<MySlider>(&s1).objectName("qifei").range(0, 1919810).value(23).minimumSize(14, 23);
+        Builder<QSlider>(&s2).objectName("qifei").range(0, 1919810).value(23).minimumSize(14, 23);
+
+        QVERIFY(compareObject(&s1, &s2));
     }
 
     void testBoxLayout()

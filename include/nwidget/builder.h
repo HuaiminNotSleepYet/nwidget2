@@ -89,6 +89,8 @@ namespace nwidget {
 
 /* ----------------------------------------------------- Builder ---------------------------------------------------- */
 
+template <typename...> class Builder;
+
 #define N_BUILDER(CLASS)                                                                                               \
 private:                                                                                                               \
     Self&       self() { return *static_cast<Self*>(this); }                                                           \
@@ -168,7 +170,23 @@ public:                                                                         
         return self();                                                                                                 \
     }
 
-template <typename...> class Builder;
+#define N_DECLARE_BUILDER(TYPE) TYPE* nwidget_builder(TYPE* obj);
+
+namespace impl {
+
+// clang-format off
+template <typename T, typename = void> struct has_builder_spec                                                    : std::false_type {};
+template <typename T>                  struct has_builder_spec<T, std::void_t<decltype(sizeof(Builder<T, int>))>> : std::true_type  {};
+template <typename T> constexpr bool has_builder_spec_v = has_builder_spec<T>::value;
+// clang-format on
+
+template <typename Class>
+using closest_declared_builder_class_t =
+    std::conditional_t<impl::has_builder_spec_v<Class>,
+                       Class,
+                       std::decay_t<decltype(*nwidget_builder(std::declval<Class*>()))>>;
+
+}; // namespace impl
 
 template <typename Self> class Builder<void, Self>
 {
@@ -178,14 +196,14 @@ public:
     explicit Builder(void* o) { static_cast<Self*>(this)->o = static_cast<typename Self::Class*>(o); }
 };
 
-template <typename C> class Builder<C> : public Builder<C, Builder<C>>
+template <typename C> class Builder<C> : public Builder<impl::closest_declared_builder_class_t<C>, Builder<C>>
 {
     template <typename...> friend class Builder;
 
 public:
     using Class = C;
 
-    using Builder<Class, Builder<Class>>::Builder;
+    using Builder<impl::closest_declared_builder_class_t<C>, Builder<C>>::Builder;
 
     operator Class*() const { return this->o; }
 
