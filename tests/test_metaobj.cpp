@@ -140,9 +140,9 @@ private slots:
     void testUtils()
     {
         static_assert(
-            std::is_same_v<MetaObject<QPushButton>, decltype(MetaObject<>::from(std::declval<NoDeclaredClass*>()))>);
+            std::is_same_v<MetaObject<QPushButton>::Class, MetaObject<NoDeclaredClass>::Class>);
         static_assert(
-            std::is_same_v<MetaObject<DeclaredClass>, decltype(MetaObject<>::from(std::declval<DeclaredClass*>()))>);
+            std::is_same_v<MetaObject<DeclaredClass>::Class, MetaObject<DeclaredClass>::Class>);
     }
 
     void testMetaObject()
@@ -206,7 +206,7 @@ private slots:
 
             QCOMPARE(MetaObj::className, "QObject");
 
-            using MetaProp = decltype(MetaObj().objectName());
+            using MetaProp = decltype(std::declval<MetaObj>().objectName());
 
             static_assert(std::is_same_v<MetaProp::Type, QString>);
             static_assert(MetaProp::isReadable);
@@ -224,7 +224,7 @@ private slots:
 
             QCOMPARE(MetaObj::className, "QWidget");
 
-            using MetaProp = decltype(MetaObj().x());
+            using MetaProp = decltype(std::declval<MetaObj>().x());
 
             static_assert(std::is_same_v<MetaProp::Type, int>);
             static_assert(MetaProp::isReadable);

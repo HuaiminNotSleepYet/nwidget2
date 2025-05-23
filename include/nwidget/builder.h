@@ -92,6 +92,8 @@ namespace nwidget {
 template <typename...> class Builder;
 
 #define N_BUILDER(CLASS)                                                                                               \
+    static_assert(impl::has_metaobject_spec_v<CLASS>, "Class must be registered to the Template Meta-Object System");  \
+                                                                                                                       \
 private:                                                                                                               \
     Self&       self() { return *static_cast<Self*>(this); }                                                           \
     const Self& self() const { return *static_cast<const Self*>(this); }                                               \

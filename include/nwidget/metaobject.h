@@ -239,7 +239,6 @@ public:                                                                         
     N_IMPL_OBJECT(CLASS)                                                                                               \
 public:                                                                                                                \
     using Super = MetaObject<void>;                                                                                    \
-    MetaObject() { Q_ASSERT(false); };                                                                                 \
     MetaObject(Class* obj)                                                                                             \
         : o(obj)                                                                                                       \
     {                                                                                                                  \
@@ -253,7 +252,6 @@ protected:                                                                      
     N_IMPL_OBJECT(CLASS)                                                                                               \
 public:                                                                                                                \
     using Super = MetaObject<SUPER>;                                                                                   \
-    MetaObject() { Q_ASSERT(false); };                                                                                 \
     MetaObject(Class* obj)                                                                                             \
         : Super(obj)                                                                                                   \
     {                                                                                                                  \
@@ -280,15 +278,21 @@ using closest_declared_metaobject_class_t =
 
 }; // namespace impl
 
+template <typename C> class MetaObject<C> : public MetaObject<impl::closest_declared_metaobject_class_t<C>>
+{
+public:
+    MetaObject(C* obj)
+        : MetaObject<impl::closest_declared_metaobject_class_t<C>>(obj)
+    {
+    }
+};
+
 /* ------------------------------------------------------ Utils ----------------------------------------------------- */
 
 template <> class MetaObject<>
 {
 public:
-    template <typename Class> static auto from(Class* obj)
-    {
-        return MetaObject<impl::closest_declared_metaobject_class_t<Class>>(obj);
-    }
+    template <typename Class> static auto from(Class* obj) { return MetaObject<Class>(obj); }
 };
 
 } // namespace nwidget
