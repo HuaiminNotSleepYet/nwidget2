@@ -281,7 +281,7 @@ private slots:
 
             auto label = MetaObject<>::from(&_label);
 
-            auto expr1 = label.text().i(&QString::length) + 2;
+            auto expr1 = label.text().m(&QString::length) + 2;
             auto expr2 = [&_label]() { return _label.text().length() + 2; };
 
             QCOMPARE(expr1.eval(), expr2());
@@ -296,7 +296,7 @@ private slots:
 
         {
 
-            auto expr1 = obj.value().i(&MyValue::v) + 1;
+            auto expr1 = obj.value().m(&MyValue::v) + 1;
             auto expr2 = [&_obj]() { return _obj.value().v + 1; };
 
             QCOMPARE(expr1.eval(), expr2());
@@ -305,7 +305,7 @@ private slots:
             QCOMPARE(expr1.eval(), expr2());
         }
         {
-            auto exp1 = obj.value().i(&MyValue::foo) + 1;
+            auto exp1 = obj.value().m(&MyValue::foo) + 1;
             auto exp2 = [&_obj]() { return _obj.value().foo() + 1; };
 
             QCOMPARE(exp1.eval(), exp2());
@@ -318,7 +318,7 @@ private slots:
 
             auto s1 = MetaObject<>::from(&_s1);
 
-            auto expr1 = obj.value().i(&MyValue::baz, s1.value()) + 789;
+            auto expr1 = obj.value().m(&MyValue::baz, s1.value()) + 789;
             auto expr2 = [&_obj, &_s1]() { return _obj.value().baz(_s1.value()) + 789; };
 
             QCOMPARE(expr1.eval(), expr2());

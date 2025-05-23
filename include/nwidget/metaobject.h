@@ -141,9 +141,9 @@ public:
         return makeBindingExpr(*this)(std::forward<Args>(args)...);
     }
 
-    template <typename F, typename... Args> auto i(F f, Args&&... args) const
+    template <typename F, typename... Args> auto m(F f, Args&&... args) const
     {
-        return makeBindingExpr(*this).i(f, std::forward<Args>(args)...);
+        return makeBindingExpr(*this).m(f, std::forward<Args>(args)...);
     }
 
 private:

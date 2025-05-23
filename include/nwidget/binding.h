@@ -135,7 +135,7 @@ public:
     {
     }
 
-    template <typename F, typename... As> auto i(F f, As&&... args) const
+    template <typename F, typename... As> auto m(F f, As&&... args) const
     {
         if constexpr (std::is_member_object_pointer_v<F>)
             return makeBindingExpr<impl::ActionMember>(*this, f, std::forward<As>(args)...);
