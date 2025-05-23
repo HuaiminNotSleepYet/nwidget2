@@ -2,6 +2,8 @@
 
 nwidget is a `header-only` library that provides `property binding`, `animation`, `declarative syntax` extension for QWidget.
 
+[How to use](./docs/How-to-use.md)
+
 ## Template Meta-Object System
 
 ```cpp
