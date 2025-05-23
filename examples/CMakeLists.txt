@@ -1,1 +1,2 @@
+add_subdirectory(Gallery)
 add_subdirectory(MCDayNightSwitchButton)

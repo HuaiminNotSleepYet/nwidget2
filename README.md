@@ -91,6 +91,10 @@ QLayout* layout = FormLayout{
 
 ## Examples
 
+[Gallery](./examples/Gallery): [Widget Gallery](https://doc.qt.io/qt-6/qtwidgets-gallery-example.html) written with nwidget.
+
+![](./docs/imgs/Gallery.png)
+
 [MCDayNightSwitchButton](./examples/MCDayNightSwitchButton)
 
 ![](./docs/imgs/MCDayNightSwitchButton.gif)
