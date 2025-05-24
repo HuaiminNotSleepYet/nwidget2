@@ -1,6 +1,16 @@
 #ifndef NWIDGET_BUILDERS_H
 #define NWIDGET_BUILDERS_H
 
+#include <QBoxLayout>
+#include <QComboBox>
+#include <QFormLayout>
+#include <QGridLayout>
+#include <QMenuBar>
+#include <QSplitter>
+#include <QTabWidget>
+#include <QToolBar>
+#include <QToolBox>
+
 #include "builder.h"
 #include "metaobjects.h"
 
@@ -116,8 +126,8 @@ public:
     }
 
     template <typename Item>
-    LayoutItem(BuilderItemGenerator<Item> generator)
-        : BuilderItem<T>(generator)
+    LayoutItem(ItemGenerator<Item> g)
+        : BuilderItem<T>(this, g)
     {
     }
 
@@ -1053,6 +1063,12 @@ public:
     {
     }
 
+    template <typename Item>
+    ToolBoxItem(ItemGenerator<Item> g)
+        : BuilderItem(this, g)
+    {
+    }
+
 private:
     QIcon    icon;
     QString  text;
@@ -1089,6 +1105,12 @@ public:
                   splitter->addWidget(static_cast<QWidget*>(self->item));
               })
         , item(item)
+    {
+    }
+
+    template <typename Item>
+    SplitterItem(ItemGenerator<Item> g)
+        : BuilderItem(this, g)
     {
     }
 
@@ -1336,8 +1358,6 @@ namespace nwidget {
 class ComboBoxItem : public BuilderItem<QComboBox>
 {
 public:
-    using BuilderItem::BuilderItem;
-
     template <typename T>
     ComboBoxItem(T&& text)
         : ComboBoxItem({}, std::forward<T>(text), {})
@@ -1359,6 +1379,12 @@ public:
         , icon(icon)
         , text(text)
         , data(userData)
+    {
+    }
+
+    template <typename Item>
+    ComboBoxItem(ItemGenerator<Item> g)
+        : BuilderItem(this, g)
     {
     }
 
@@ -1515,6 +1541,7 @@ public:
         , item(action)
     {
     }
+
     MenuItem(QMenu* menu)
         : BuilderItem([](const BuilderItem* item, QMenu* m)
                       { m->addMenu(static_cast<QMenu*>(static_cast<const MenuItem*>(item)->item)); })
@@ -1531,6 +1558,12 @@ public:
     enum class separator { tag };
     MenuItem(separator)
         : BuilderItem([](const BuilderItem* item, QMenu* m) { m->addSeparator(); })
+    {
+    }
+
+    template <typename Item>
+    MenuItem(ItemGenerator<Item> g)
+        : BuilderItem(this, g)
     {
     }
 
@@ -1577,6 +1610,12 @@ public:
         : BuilderItem([](const BuilderItem* item, QMenuBar* m)
                       { m->addMenu(static_cast<QMenu*>(static_cast<const MenuBarItem*>(item)->item)); })
         , item(menu)
+    {
+    }
+
+    template <typename Item>
+    MenuBarItem(ItemGenerator<Item> g)
+        : BuilderItem(this, g)
     {
     }
 
@@ -1650,6 +1689,12 @@ public:
               })
         , icon(icon)
         , text(text)
+    {
+    }
+
+    template <typename Item>
+    TabBarItem(ItemGenerator<Item> g)
+        : BuilderItem(this, g)
     {
     }
 
@@ -1733,6 +1778,12 @@ public:
         , icon(icon)
         , text(text)
         , page(page)
+    {
+    }
+
+    template <typename Item>
+    TabWidgetItem(ItemGenerator<Item> g)
+        : BuilderItem(this, g)
     {
     }
 

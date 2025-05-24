@@ -238,7 +238,7 @@ private:
         return self();                                                                                                 \
     }
 
-template <typename Item> using BuilderItemGenerator = std::function<std::optional<Item>()>;
+template <typename Item> using ItemGenerator = std::function<std::optional<Item>()>;
 
 template <typename T> class BuilderItem
 {
@@ -247,19 +247,21 @@ template <typename T> class BuilderItem
 public:
     using Func = std::function<void(const BuilderItem*, T*)>;
 
-    template <typename Item> BuilderItem(BuilderItemGenerator<Item> gen)
-    {
-        func = [gen](const BuilderItem*, T* target)
-        {
-            while (auto item = gen())
-                item->func(&*item, target);
-        };
-    }
-
     virtual ~BuilderItem() = default;
 
 protected:
     explicit BuilderItem(Func f) { func = f; }
+
+    template <typename Derived, typename Item> BuilderItem(Derived* self, ItemGenerator<Item> gen)
+    {
+        func = [gen](const BuilderItem*, T* target)
+        {
+            while (auto item = gen()) {
+                Derived d = std::move(*item);
+                d.func(&d, target);
+            }
+        };
+    };
 
 private:
     Func func;
@@ -269,7 +271,7 @@ private:
 
 template <typename Iterator, typename Generator>
 auto ForEach(Iterator begin, Iterator end, Generator gen)
-    -> std::enable_if_t<std::is_invocable_v<Generator>, BuilderItemGenerator<std::invoke_result_t<Generator>>>
+    -> std::enable_if_t<std::is_invocable_v<Generator>, ItemGenerator<std::invoke_result_t<Generator>>>
 {
     return [begin, end, gen]() mutable -> std::optional<decltype(gen())>
     {
@@ -284,7 +286,7 @@ auto ForEach(Iterator begin, Iterator end, Generator gen)
 template <typename Iterator, typename Generator>
 auto ForEach(Iterator begin, Iterator end, Generator gen)
     -> std::enable_if_t<std::is_invocable_v<Generator, decltype(*begin)>,
-                        BuilderItemGenerator<std::invoke_result_t<Generator, decltype(*begin)>>>
+                        ItemGenerator<std::invoke_result_t<Generator, decltype(*begin)>>>
 {
     return [begin, end, gen]() mutable -> std::optional<decltype(gen(*begin))>
     {
@@ -299,7 +301,7 @@ auto ForEach(Iterator begin, Iterator end, Generator gen)
 template <typename Iterator, typename Generator>
 auto ForEach(Iterator begin, Iterator end, Generator gen)
     -> std::enable_if_t<std::is_invocable_v<Generator, int, decltype(*begin)>,
-                        BuilderItemGenerator<std::invoke_result_t<Generator, int, decltype(*begin)>>>
+                        ItemGenerator<std::invoke_result_t<Generator, int, decltype(*begin)>>>
 {
     return [index = (int)0, begin, end, gen]() mutable -> std::optional<decltype(gen(0, *begin))>
     {
@@ -314,7 +316,7 @@ auto ForEach(Iterator begin, Iterator end, Generator gen)
 
 template <typename T, typename Generator>
 auto ForEach(T begin, T end, Generator gen)
-    -> std::enable_if_t<std::is_integral_v<T>, BuilderItemGenerator<std::invoke_result_t<Generator, T>>>
+    -> std::enable_if_t<std::is_integral_v<T>, ItemGenerator<std::invoke_result_t<Generator, T>>>
 {
     struct iterator
     {
