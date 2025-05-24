@@ -53,7 +53,7 @@ private slots:
 
         auto s1 = Slider(&_s1).objectName("wuhu").range(0, 114514).value(23).minimumSize(14, 23);
 
-        QCOMPARE(s1.object(), &_s1);
+        QCOMPARE(s1.object_(), &_s1);
         QCOMPARE(_s1.objectName(), "wuhu");
         QCOMPARE(_s1.minimum(), 0);
         QCOMPARE(_s1.maximum(), 114514);

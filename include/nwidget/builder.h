@@ -105,7 +105,9 @@ public:                                                                         
         : Builder<typename MetaObject<Class>::Super::Class, Self>(o)                                                   \
     {                                                                                                                  \
     }                                                                                                                  \
-    Class* object() const { return self().o; }
+                                                                                                                       \
+    /* Add trailing underscore to avoid duplication with possible prop name. */                                        \
+    Class* object_() const { return self().o; }
 
 #define N_BEGIN_BUILDER_PROPERTY
 #define N_END_BUILDER_PROPERTY
@@ -148,7 +150,7 @@ public:                                                                         
 #define N_BUILDER_SETTERX(NAME, SETTER, ...)                                                                           \
     Self& NAME(N_IMPL_OVERLOAD(N_IMPL_ARGS_IMPL0_, __VA_ARGS__))                                                       \
     {                                                                                                                  \
-        object()->SETTER(N_IMPL_OVERLOAD(N_IMPL_ARGS_IMPL1_, __VA_ARGS__));                                            \
+        object_()->SETTER(N_IMPL_OVERLOAD(N_IMPL_ARGS_IMPL1_, __VA_ARGS__));                                           \
         return self();                                                                                                 \
     }
 
@@ -172,13 +174,13 @@ public:                                                                         
 #define N_BUILDER_SIGNAL(NAME, SIGNAL_)                                                                                \
     template <typename Func> Self& NAME(Func func, Qt::ConnectionType type = Qt::AutoConnection)                       \
     {                                                                                                                  \
-        QObject::connect(object(), &Class::SIGNAL_, func, type);                                                       \
+        QObject::connect(object_(), &Class::SIGNAL_, func, type);                                                      \
         return self();                                                                                                 \
     }                                                                                                                  \
     template <typename Rece, typename Func>                                                                            \
     Self& NAME(Rece* receiver, Func func, Qt::ConnectionType type = Qt::AutoConnection)                                \
     {                                                                                                                  \
-        QObject::connect(object(), &Class::SIGNAL_, receiver, func, type);                                             \
+        QObject::connect(object_(), &Class::SIGNAL_, receiver, func, type);                                            \
         return self();                                                                                                 \
     }
 
@@ -221,16 +223,20 @@ public:
 
 private:
     Class* o;
-
-    template <typename Items> Builder& addItems(const Items& items)
-    {
-        for (const auto& item : items)
-            item.func(&item, o);
-        return *this;
-    }
 };
 
 /* --------------------------------------------------- BuilderItem -------------------------------------------------- */
+
+#define N_ITEM_BUILDER(ITEM)                                                                                           \
+    explicit Builder(std::initializer_list<ITEM> items) { self().items_(items); }                                      \
+                                                                                                                       \
+    /* Add trailing underscore to avoid duplication with possible prop name. */                                        \
+    Self& items_(std::initializer_list<ITEM> items)                                                                    \
+    {                                                                                                                  \
+        for (const auto& item : items)                                                                                 \
+            item.func(&item, object_());                                                                               \
+        return self();                                                                                                 \
+    }
 
 template <typename Item> using BuilderItemGenerator = std::function<std::optional<Item>()>;
 

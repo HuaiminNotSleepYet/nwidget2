@@ -105,13 +105,13 @@ public:
 
     template <typename Class>
     LayoutItem(MetaObject<Class> metaobj)
-        : LayoutItem(metaobj.object())
+        : LayoutItem(metaobj.object_())
     {
     }
 
     template <typename Class>
     LayoutItem(Builder<Class> builder)
-        : LayoutItem(builder.object())
+        : LayoutItem(builder.object_())
     {
     }
 
@@ -227,6 +227,8 @@ template <typename Self> class nwidget::Builder<QBoxLayout, Self> : public nwidg
 {
     N_BUILDER(QBoxLayout)
 
+    N_ITEM_BUILDER(BoxLayoutItem)
+
     // clang-format off
     static auto Spacing(int v    ) { return BoxLayoutItem(BoxLayoutItem::spacing::tag, v); }
     static auto Stretch(int v = 0) { return BoxLayoutItem(BoxLayoutItem::stretch::tag, v); }
@@ -238,14 +240,14 @@ template <typename Self> class nwidget::Builder<QHBoxLayout, Self> : public nwid
 {
     N_BUILDER(QHBoxLayout)
 
-    Builder(std::initializer_list<BoxLayoutItem> items) { self().addItems(items); }
+    N_ITEM_BUILDER(BoxLayoutItem)
 };
 
 template <typename Self> class nwidget::Builder<QVBoxLayout, Self> : public nwidget::Builder<QBoxLayout, Self>
 {
     N_BUILDER(QVBoxLayout)
 
-    Builder(std::initializer_list<BoxLayoutItem> items) { self().addItems(items); }
+    N_ITEM_BUILDER(BoxLayoutItem)
 };
 
 N_IMPL_DECLARE_BUILDER(BoxLayout)
@@ -278,6 +280,8 @@ template <typename Self> class nwidget::Builder<QFormLayout, Self> : public nwid
 {
     N_BUILDER(QFormLayout)
 
+    N_ITEM_BUILDER(FormLayoutItem)
+
     N_BEGIN_BUILDER_PROPERTY
     N_BUILDER_PROPERTY(fieldGrowthPolicy)
     N_BUILDER_PROPERTY(rowWrapPolicy)
@@ -286,8 +290,6 @@ template <typename Self> class nwidget::Builder<QFormLayout, Self> : public nwid
     N_BUILDER_PROPERTY(horizontalSpacing)
     N_BUILDER_PROPERTY(verticalSpacing)
     N_END_BUILDER_PROPERTY
-
-    Builder(std::initializer_list<FormLayoutItem> items) { self().addItems(items); }
 };
 
 N_IMPL_DECLARE_BUILDER(FormLayout)
@@ -331,6 +333,8 @@ template <typename Self> class nwidget::Builder<QGridLayout, Self> : public nwid
 {
     N_BUILDER(QGridLayout)
 
+    N_ITEM_BUILDER(GridLayoutItem)
+
     N_BEGIN_BUILDER_PROPERTY
     N_BUILDER_PROPERTY(horizontalSpacing)
     N_BUILDER_PROPERTY(verticalSpacing)
@@ -344,8 +348,6 @@ template <typename Self> class nwidget::Builder<QGridLayout, Self> : public nwid
     N_BUILDER_SETTER1(originCorner, setOriginCorner)
     N_BUILDER_SETTER2(defaultPositioning, setDefaultPositioning)
     N_END_BUILDER_SETTER
-
-    Builder(std::initializer_list<GridLayoutItem> items) { self().addItems(items); }
 };
 
 N_IMPL_DECLARE_BUILDER(GridLayout)
@@ -1062,13 +1064,11 @@ template <typename Self> class nwidget::Builder<QToolBox, Self> : public nwidget
 {
     N_BUILDER(QToolBox)
 
+    N_ITEM_BUILDER(ToolBoxItem)
+
     N_BEGIN_BUILDER_PROPERTY
     N_BUILDER_PROPERTY(currentIndex)
     N_END_BUILDER_SIGNAL
-
-    Builder(std::initializer_list<ToolBoxItem> items) { self().addItems(items); }
-
-    Self& items(std::initializer_list<ToolBoxItem> items) { return self().addItems(items); }
 };
 
 N_IMPL_DECLARE_BUILDER(ToolBox)
@@ -1333,27 +1333,27 @@ N_IMPL_DECLARE_BUILDER(DoubleSpinBox)
 
 #ifdef QCOMBOBOX_H
 namespace nwidget {
-class QComboBoxItem : public BuilderItem<QComboBox>
+class ComboBoxItem : public BuilderItem<QComboBox>
 {
 public:
     using BuilderItem::BuilderItem;
 
     template <typename T>
-    QComboBoxItem(T&& text)
-        : QComboBoxItem({}, std::forward<T>(text), {})
+    ComboBoxItem(T&& text)
+        : ComboBoxItem({}, std::forward<T>(text), {})
     {
     }
 
-    QComboBoxItem(const QString& text, const QVariant& userData)
-        : QComboBoxItem({}, text, userData)
+    ComboBoxItem(const QString& text, const QVariant& userData)
+        : ComboBoxItem({}, text, userData)
     {
     }
 
-    QComboBoxItem(const QIcon& icon, const QString& text, const QVariant& userData = {})
+    ComboBoxItem(const QIcon& icon, const QString& text, const QVariant& userData = {})
         : BuilderItem(
               [](const BuilderItem* item, QComboBox* box)
               {
-                  auto self = static_cast<const QComboBoxItem*>(item);
+                  auto self = static_cast<const ComboBoxItem*>(item);
                   box->addItem(self->icon, self->text, self->data);
               })
         , icon(icon)
@@ -1372,6 +1372,9 @@ private:
 template <typename Self> class nwidget::Builder<QComboBox, Self> : public nwidget::Builder<QWidget, Self>
 {
     N_BUILDER(QComboBox)
+
+    N_ITEM_BUILDER(ComboBoxItem)
+    Builder(const QStringList& items) { object_()->addItems(items); }
 
     N_BEGIN_BUILDER_PROPERTY
     N_BUILDER_PROPERTY(editable)
@@ -1398,11 +1401,6 @@ template <typename Self> class nwidget::Builder<QComboBox, Self> : public nwidge
     N_BUILDER_SIGNAL(onCurrentIndexChanged, currentIndexChanged)
     N_BUILDER_SIGNAL(onCurrentTextChanged, currentTextChanged)
     N_END_BUILDER_SETTER
-
-    // clang-format off
-    Builder(const QStringList& items)                   { self(); object()->addItems(items); }
-    Builder(std::initializer_list<QComboBoxItem> items) { self().addItems(items); }
-    // clang-format on
 };
 
 N_IMPL_DECLARE_BUILDER(ComboBox)
@@ -1423,8 +1421,8 @@ template <typename Self> class nwidget::Builder<QGroupBox, Self> : public nwidge
 
     // clang-format off
     explicit
-    Builder(const QString& title)                  { self().init( ).title(title); }
-    Builder(const QString& title, QLayout* layout) { self().init( ).title(title).layout(layout); }
+    Builder(const QString& title)                  { self().title(title); }
+    Builder(const QString& title, QLayout* layout) { self().title(title).layout(layout); }
     // clang-format on
 };
 
@@ -1526,7 +1524,7 @@ public:
 
     template <typename Class, typename Self>
     MenuItem(const Builder<Class, Self>& builder)
-        : MenuItem(builder.object())
+        : MenuItem(builder.object_())
     {
     }
 
@@ -1545,6 +1543,10 @@ template <typename Self> class nwidget::Builder<QMenu, Self> : public nwidget::B
 {
     N_BUILDER(QMenu)
 
+    N_ITEM_BUILDER(MenuItem)
+
+    static auto Separator() { return MenuItem(MenuItem::separator::tag); }
+
     N_BEGIN_BUILDER_PROPERTY
     N_BUILDER_PROPERTY(tearOffEnabled)
     N_BUILDER_PROPERTY(title)
@@ -1552,12 +1554,6 @@ template <typename Self> class nwidget::Builder<QMenu, Self> : public nwidget::B
     N_BUILDER_PROPERTY(separatorsCollapsible)
     N_BUILDER_PROPERTY(toolTipsVisible)
     N_END_BUILDER_PROPERTY
-
-    Builder(std::initializer_list<MenuItem> items) { self().addItems(items); }
-
-    static auto Separator() { return MenuItem(MenuItem::separator::tag); }
-
-    Self& items(std::initializer_list<MenuItem> items) { return self().addItems(items); }
 };
 
 N_IMPL_DECLARE_BUILDER(Menu)
@@ -1593,12 +1589,12 @@ template <typename Self> class nwidget::Builder<QMenuBar, Self> : public nwidget
 {
     N_BUILDER(QMenuBar)
 
+    N_ITEM_BUILDER(MenuBarItem)
+
     N_BEGIN_BUILDER_PROPERTY
     N_BUILDER_PROPERTY(defaultUp)
     N_BUILDER_PROPERTY(nativeMenuBar)
     N_END_BUILDER_PROPERTY
-
-    Self& items(std::initializer_list<MenuBarItem> items) { return self().addItems(items); }
 };
 
 N_IMPL_DECLARE_BUILDER(MenuBar)
@@ -1667,6 +1663,8 @@ template <typename Self> class nwidget::Builder<QTabBar, Self> : public nwidget:
 {
     N_BUILDER(QTabBar)
 
+    N_ITEM_BUILDER(TabBarItem)
+
     N_BEGIN_BUILDER_PROPERTY
     N_BUILDER_PROPERTY(shape)
     N_BUILDER_PROPERTY(currentIndex)
@@ -1708,8 +1706,6 @@ template <typename Self> class nwidget::Builder<QTabBar, Self> : public nwidget:
     N_BUILDER_SIGNAL(onTabBarClicked, tabBarClicked)
     N_BUILDER_SIGNAL(onTabBarDoubleClicked, tabBarDoubleClicked)
     N_END_BUILDER_SIGNAL
-
-    Self& items(std::initializer_list<TabBarItem> items) { return self().addItems(items); }
 };
 
 N_IMPL_DECLARE_BUILDER(TabBar)
@@ -1751,6 +1747,8 @@ template <typename Self> class nwidget::Builder<QTabWidget, Self> : public nwidg
 {
     N_BUILDER(QTabWidget)
 
+    N_ITEM_BUILDER(TabWidgetItem)
+
     N_BEGIN_BUILDER_PROPERTY
     N_BUILDER_PROPERTY(tabPosition)
     N_BUILDER_PROPERTY(tabShape)
@@ -1781,10 +1779,6 @@ template <typename Self> class nwidget::Builder<QTabWidget, Self> : public nwidg
     N_BUILDER_SIGNAL(onTabBarClicked, tabBarClicked)
     N_BUILDER_SIGNAL(onTabBarDoubleClicked, tabBarDoubleClicked)
     N_END_BUILDER_SIGNAL
-
-    Builder(std::initializer_list<TabWidgetItem> items) { self().addItems(items); }
-
-    Self& items(std::initializer_list<TabWidgetItem> items) { return self().addItems(items); }
 };
 
 N_IMPL_DECLARE_BUILDER(TabWidget)

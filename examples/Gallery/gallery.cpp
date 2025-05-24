@@ -173,7 +173,7 @@ Gallery::Gallery(QWidget* parent)
         {2,
          0,
          TabWidget(itemViewTabWidget)
-             .items({
+             .items_({
                  {tr("Tree View"), TreeView().model(fileSystemModel)},
                  {tr("Table"), TableWidget().columnCount(10).rowCount(10)},
                  {tr("List"), ListView().model(listModel)},
@@ -182,7 +182,7 @@ Gallery::Gallery(QWidget* parent)
         {2,
          1,
          ToolBox(textToolBox)
-             .items({
+             .items_({
                  {tr("Text Edit"), TextEdit(richText)},
                  {tr("Plain Text Edit"), PlainTextEdit(plainText)},
                  {tr("Text Browser"), TextBrowser(systemInfoTextBrowser)},
