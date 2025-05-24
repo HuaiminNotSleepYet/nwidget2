@@ -118,6 +118,16 @@ public:                                                                         
         static_assert(MetaProp::isWritable);                                                                           \
         MetaProp::write(self().o, value);                                                                              \
         return self();                                                                                                 \
+    }                                                                                                                  \
+    template <typename... T> Self& NAME(::nwidget::MetaProperty<T...> prop)                                            \
+    {                                                                                                                  \
+        prop.bindTo(::nwidget::MetaObject<Class>(self().o).NAME());                                                    \
+        return self();                                                                                                 \
+    }                                                                                                                  \
+    template <typename... T> Self& NAME(const ::nwidget::BindingExpr<T...>& expr)                                      \
+    {                                                                                                                  \
+        expr.bindTo(MetaObject<Class>(self().o).NAME());                                                               \
+        return self();                                                                                                 \
     }
 
 #define N_BEGIN_BUILDER_SETTER
