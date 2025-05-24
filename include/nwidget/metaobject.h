@@ -150,14 +150,24 @@ private:
     C* o;
 };
 
-// clang-format off
-
 namespace impl {
+
 using Getter = void;
 using Setter = void;
 using Notify = void;
 using Reset  = void;
+
+template <typename T> T* create_if_default_constructible()
+{
+    if constexpr (!std::is_abstract_v<T> && std::is_default_constructible_v<T>)
+        return new T;
+    else
+        return nullptr;
 }
+
+} // namespace impl
+
+// clang-format off
 
 #define N_IMPL_READ(FUNC)   struct Getter { auto operator()(const _C* o)  const { return o->FUNC(); } };
 #define N_IMPL_WRITE(FUNC)  struct Setter { void operator()(_C* o, const _T& v) const { o->FUNC(v); } };
@@ -239,6 +249,11 @@ public:                                                                         
     N_IMPL_OBJECT(CLASS)                                                                                               \
 public:                                                                                                                \
     using Super = MetaObject<void>;                                                                                    \
+    MetaObject()                                                                                                       \
+        : o(impl::create_if_default_constructible<Class>())                                                            \
+    {                                                                                                                  \
+        Q_ASSERT(o);                                                                                                   \
+    }                                                                                                                  \
     MetaObject(Class* obj)                                                                                             \
         : o(obj)                                                                                                       \
     {                                                                                                                  \
@@ -252,6 +267,11 @@ protected:                                                                      
     N_IMPL_OBJECT(CLASS)                                                                                               \
 public:                                                                                                                \
     using Super = MetaObject<SUPER>;                                                                                   \
+    MetaObject()                                                                                                       \
+        : Super(impl::create_if_default_constructible<Class>())                                                        \
+    {                                                                                                                  \
+        Q_ASSERT(o);                                                                                                   \
+    }                                                                                                                  \
     MetaObject(Class* obj)                                                                                             \
         : Super(obj)                                                                                                   \
     {                                                                                                                  \
@@ -281,6 +301,12 @@ using closest_declared_metaobject_class_t =
 template <typename C> class MetaObject<C> : public MetaObject<impl::closest_declared_metaobject_class_t<C>>
 {
 public:
+    MetaObject()
+        : MetaObject<impl::closest_declared_metaobject_class_t<C>>(impl::create_if_default_constructible<C>())
+    {
+        static_assert(!std::is_abstract_v<C> && std::is_default_constructible_v<C>);
+    }
+
     MetaObject(C* obj)
         : MetaObject<impl::closest_declared_metaobject_class_t<C>>(obj)
     {
