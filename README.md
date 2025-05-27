@@ -1,6 +1,6 @@
 # nwidget2
 
-nwidget is a `header-only` library that provides `property binding`, `animation`, `declarative syntax` extension for QWidget.
+nwidget is a `header-only` library that provides `property binding`, `declarative syntax` `animation` extension for QWidget. It is designed based on the principle of low Invasive and can be introduced without modifying existing code.
 
 [How to use](./docs/How-to-use.md)
 
@@ -67,15 +67,19 @@ cond(checkBox.checked(), 300, 50).bindTo(Behavior::animated(rect.minimumWidth())
 
 using namespace nwidget;
 
-QLayout* layout = FormLayout{
-    {"Label 0", LineEdit().text("Hello")},
-    {"Label 1", Slider(Qt::Horizontal).range(0, 100).value(25)},
-    {GridLayout{
+QLayout* layout = FormLayout {
+    {"Label 0" , LineEdit().text("Hello")},
+    {"Label 1" , Slider(Qt::Horizontal).range(0, 100).value(25)},
+    {"Button 0", GridLayout{
         {0, 0,       PushButton("Button 0")},
         {1, 0,       PushButton("Button 1")},
         {0, 1, 2, 1, PushButton("Button 2").sizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding),
         },
-    }}};
+    }},
+    {"Button 1", HBoxLayout {
+        ForEach(4, [](int i){ return RadioButton().text(QString::number(i)); })
+    }},
+};
 ```
 
 ![](./docs/imgs/declarative_ui_syntax.png)
