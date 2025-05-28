@@ -138,6 +138,32 @@ private slots:
         l2->deleteLater();
     }
 
+    void testSignal()
+    {
+        int v1 = 0;
+        int v2 = 0;
+
+        QPushButton* button1 = PushButton().checkable(true);
+        QPushButton* button2 = PushButton()
+                                   .checkable(true)
+                                   .onToggled([&v1] { ++v1; })
+                                   .onToggled([&v2] { v2 += 2; })
+                                   .onToggled(button1, &QPushButton::setChecked);
+
+        QVERIFY(v1 == 0);
+        QVERIFY(v2 == 0);
+        QVERIFY(button1->isChecked() == button2->isChecked());
+
+        button2->setChecked(true);
+
+        QVERIFY(v1 == 1);
+        QVERIFY(v2 == 2);
+        QVERIFY(button1->isChecked() == button2->isChecked());
+
+        button1->deleteLater();
+        button2->deleteLater();
+    }
+
     void testForEach()
     {
         QStringList names = {"Mike", "John", "Tom"};
@@ -148,10 +174,10 @@ private slots:
         { return new QLabel(QString::number(index) + ": " + name); };
         static auto func7 = [](int index) { return new QLabel(QString::number(index)); };
 
-        static auto func2 = []() -> BoxLayoutItem { return func1(); };
-        static auto func4 = [](const QString& name) -> BoxLayoutItem { return func3(name); };
-        static auto func6 = [](int index, const QString& name) -> BoxLayoutItem { return func5(index, name); };
-        static auto func8 = [](int index) -> BoxLayoutItem { return func7(index); };
+        static auto func2 = []() { return func1(); };
+        static auto func4 = [](const QString& name) { return func3(name); };
+        static auto func6 = [](int index, const QString& name) { return func5(index, name); };
+        static auto func8 = [](int index) { return func7(index); };
 
         // func()
         {

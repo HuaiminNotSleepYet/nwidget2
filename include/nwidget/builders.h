@@ -1,16 +1,6 @@
 #ifndef NWIDGET_BUILDERS_H
 #define NWIDGET_BUILDERS_H
 
-#include <QBoxLayout>
-#include <QComboBox>
-#include <QFormLayout>
-#include <QGridLayout>
-#include <QMenuBar>
-#include <QSplitter>
-#include <QTabWidget>
-#include <QToolBar>
-#include <QToolBox>
-
 #include "builder.h"
 #include "metaobjects.h"
 

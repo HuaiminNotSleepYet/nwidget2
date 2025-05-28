@@ -174,7 +174,7 @@ public:                                                                         
 #define N_BUILDER_SIGNAL(NAME, SIGNAL_)                                                                                \
     template <typename Func> Self& NAME(Func func, Qt::ConnectionType type = Qt::AutoConnection)                       \
     {                                                                                                                  \
-        QObject::connect(object_(), &Class::SIGNAL_, func, type);                                                      \
+        QObject::connect(object_(), &Class::SIGNAL_, object_(), func, type);                                                      \
         return self();                                                                                                 \
     }                                                                                                                  \
     template <typename Rece, typename Func>                                                                            \
