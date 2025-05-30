@@ -242,8 +242,8 @@ public:                                                                         
                                                                                                                        \
     constexpr static char className[] = #CLASS;                                                                        \
                                                                                                                        \
-    Class* object() const { return static_cast<Class*>(o); }                                                           \
-    operator Class*() const { return object(); }
+    Class* object_() const { return static_cast<Class*>(o); }                                                          \
+    operator Class*() const { return object_(); }
 
 #define N_IMPL_OBJECT_0(CLASS, ...)                                                                                    \
     N_IMPL_OBJECT(CLASS)                                                                                               \
