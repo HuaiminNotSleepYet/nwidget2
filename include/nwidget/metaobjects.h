@@ -22,9 +22,11 @@ template <> class nwidget::MetaObject<QAction> : public MetaObject<QObject>
     N_OBJECT(QAction, QObject)
 
     N_BEGIN_PROPERTY
-    N_PROPERTY(bool, checkable, N_READ isCheckable N_WRITE setCheckable N_NOTIFY checkableChanged)
+    N_UNTIL(6, 0, N_PROPERTY(bool, checkable, N_READ isCheckable N_WRITE setCheckable N_NOTIFY toggled))
+    N_SINCE(6, 0, N_PROPERTY(bool, checkable, N_READ isCheckable N_WRITE setCheckable N_NOTIFY checkableChanged))
     N_PROPERTY(bool, checked, N_READ isChecked N_WRITE setChecked N_NOTIFY toggled)
-    N_PROPERTY(bool, enabled, N_READ isEnabled N_WRITE setEnabled N_NOTIFY enabledChanged)
+    N_UNTIL(6, 0, N_PROPERTY(bool, enabled, N_READ isEnabled N_WRITE setEnabled N_NOTIFY changed))
+    N_SINCE(6, 0, N_PROPERTY(bool, enabled, N_READ isEnabled N_WRITE setEnabled N_NOTIFY enabledChanged))
     N_PROPERTY(QIcon, icon, N_READ icon N_WRITE setIcon N_NOTIFY changed)
     N_PROPERTY(QString, text, N_READ text N_WRITE setText N_NOTIFY changed)
     N_PROPERTY(QString, iconText, N_READ iconText N_WRITE setIconText N_NOTIFY changed)
@@ -37,7 +39,8 @@ template <> class nwidget::MetaObject<QAction> : public MetaObject<QObject>
     N_PROPERTY(Qt::ShortcutContext, shortcutContext, N_READ shortcutContext N_WRITE setShortcutContext N_NOTIFY changed)
     N_PROPERTY(bool, autoRepeat, N_READ autoRepeat N_WRITE setAutoRepeat N_NOTIFY changed)
 #endif
-    N_PROPERTY(bool, visible, N_READ isVisible N_WRITE setVisible N_NOTIFY visibleChanged)
+    N_UNTIL(6, 0, N_PROPERTY(bool, visible, N_READ isVisible N_WRITE setVisible N_NOTIFY changed))
+    N_SINCE(6, 0, N_PROPERTY(bool, visible, N_READ isVisible N_WRITE setVisible N_NOTIFY visibleChanged))
     N_PROPERTY(QAction::MenuRole, menuRole, N_READ menuRole N_WRITE setMenuRole N_NOTIFY changed)
     N_PROPERTY(bool, iconVisibleInMenu, N_READ isIconVisibleInMenu N_WRITE setIconVisibleInMenu N_NOTIFY changed)
     N_PROPERTY(bool,
@@ -419,9 +422,13 @@ template <> class nwidget::MetaObject<QHeaderView> : public MetaObject<QAbstract
     N_PROPERTY(int, minimumSectionSize, N_READ minimumSectionSize N_WRITE setMinimumSectionSize)
     N_PROPERTY(int, maximumSectionSize, N_READ maximumSectionSize N_WRITE setMaximumSectionSize)
     N_PROPERTY(Qt::Alignment, defaultAlignment, N_READ defaultAlignment N_WRITE setDefaultAlignment)
-    N_PROPERTY(bool,
-               sortIndicatorClearable,
-               N_READ isSortIndicatorClearable N_WRITE setSortIndicatorClearable N_NOTIFY sortIndicatorClearableChanged)
+    // clang-format off
+    N_SINCE(6, 1, N_PROPERTY(
+        bool,    sortIndicatorClearable,
+        N_READ   isSortIndicatorClearable
+        N_WRITE  setSortIndicatorClearable
+        N_NOTIFY sortIndicatorClearableChanged))
+    // clang-format on
     N_END_PROPERTY
 };
 
@@ -583,7 +590,7 @@ template <> class nwidget::MetaObject<QTextEdit> : public MetaObject<QAbstractSc
     N_PROPERTY(QTextOption::WrapMode, wordWrapMode, N_READ wordWrapMode N_WRITE setWordWrapMode)
     N_PROPERTY(int, lineWrapColumnOrWidth, N_READ lineWrapColumnOrWidth N_WRITE setLineWrapColumnOrWidth)
     N_PROPERTY(bool, readOnly, N_READ isReadOnly N_WRITE setReadOnly)
-    N_PROPERTY(QString, markdown, N_READ toMarkdown N_WRITE setMarkdown N_NOTIFY textChanged)
+    N_SINCE(5, 14, N_PROPERTY(QString, markdown, N_READ toMarkdown N_WRITE setMarkdown N_NOTIFY textChanged))
     N_PROPERTY(QString, html, N_READ toHtml N_WRITE setHtml N_NOTIFY textChanged)
     N_PROPERTY(QString, plainText, N_READ toPlainText N_WRITE setPlainText)
     N_PROPERTY(bool, overwriteMode, N_READ overwriteMode N_WRITE setOverwriteMode)
@@ -608,7 +615,7 @@ template <> class nwidget::MetaObject<QTextBrowser> : public MetaObject<QTextEdi
 
     N_BEGIN_PROPERTY
     N_PROPERTY(QUrl, source, N_READ source N_WRITE setSource)
-    N_PROPERTY(QTextDocument::ResourceType, sourceType, N_READ sourceType)
+    N_SINCE(5, 14, N_PROPERTY(QTextDocument::ResourceType, sourceType, N_READ sourceType))
     N_PROPERTY(QStringList, searchPaths, N_READ searchPaths N_WRITE setSearchPaths)
     N_PROPERTY(bool, openExternalLinks, N_READ openExternalLinks N_WRITE setOpenExternalLinks)
     N_PROPERTY(bool, openLinks, N_READ openLinks N_WRITE setOpenLinks)
@@ -801,7 +808,7 @@ template <> class nwidget::MetaObject<QSpinBox> : public MetaObject<QAbstractSpi
     N_PROPERTY(int, maximum, N_READ maximum N_WRITE setMaximum)
     N_PROPERTY(int, singleStep, N_READ singleStep N_WRITE setSingleStep)
     N_PROPERTY(QSpinBox::StepType, stepType, N_READ stepType N_WRITE setStepType)
-    N_PROPERTY(int, value, N_READ value N_WRITE setValue N_NOTIFY valueChanged)
+    N_PROPERTY(int, value, N_READ value N_WRITE setValue N_NOTIFY_X(int) valueChanged)
     N_PROPERTY(int, displayIntegerBase, N_READ displayIntegerBase N_WRITE setDisplayIntegerBase)
     N_END_PROPERTY
 };
@@ -819,7 +826,7 @@ template <> class nwidget::MetaObject<QDoubleSpinBox> : public MetaObject<QAbstr
     N_PROPERTY(double, maximum, N_READ maximum N_WRITE setMaximum)
     N_PROPERTY(double, singleStep, N_READ singleStep N_WRITE setSingleStep)
     N_PROPERTY(QSpinBox::StepType, stepType, N_READ stepType N_WRITE setStepType)
-    N_PROPERTY(double, value, N_READ value N_WRITE setValue N_NOTIFY valueChanged)
+    N_PROPERTY(double, value, N_READ value N_WRITE setValue N_NOTIFY_X(double) valueChanged)
     N_END_PROPERTY
 };
 
@@ -836,7 +843,7 @@ template <> class nwidget::MetaObject<QComboBox> : public MetaObject<QWidget>
     N_PROPERTY(bool, editable, N_READ isEditable N_WRITE setEditable)
     N_PROPERTY(int, count, N_READ count)
     N_PROPERTY(QString, currentText, N_READ currentText N_WRITE setCurrentText N_NOTIFY currentTextChanged)
-    N_PROPERTY(int, currentIndex, N_READ currentIndex N_WRITE setCurrentIndex N_NOTIFY currentIndexChanged)
+    N_PROPERTY(int, currentIndex, N_READ currentIndex N_WRITE setCurrentIndex N_NOTIFY_X(int) currentIndexChanged)
     N_PROPERTY(QVariant, currentData, N_READ currentData)
     N_PROPERTY(int, maxVisibleItems, N_READ maxVisibleItems N_WRITE setMaxVisibleItems)
     N_PROPERTY(int, maxCount, N_READ maxCount N_WRITE setMaxCount)
@@ -844,7 +851,7 @@ template <> class nwidget::MetaObject<QComboBox> : public MetaObject<QWidget>
     N_PROPERTY(QComboBox::SizeAdjustPolicy, sizeAdjustPolicy, N_READ sizeAdjustPolicy N_WRITE setSizeAdjustPolicy)
     N_PROPERTY(int, minimumContentsLength, N_READ minimumContentsLength N_WRITE setMinimumContentsLength)
     N_PROPERTY(QSize, iconSize, N_READ iconSize N_WRITE setIconSize)
-    N_PROPERTY(QString, placeholderText, N_READ placeholderText N_WRITE setPlaceholderText)
+    N_SINCE(5, 15, N_PROPERTY(QString, placeholderText, N_READ placeholderText N_WRITE setPlaceholderText))
     N_PROPERTY(bool, duplicatesEnabled, N_READ duplicatesEnabled N_WRITE setDuplicatesEnabled)
     N_PROPERTY(bool, frame, N_READ hasFrame N_WRITE setFrame)
     N_PROPERTY(int, modelColumn, N_READ modelColumn N_WRITE setModelColumn)

@@ -143,7 +143,7 @@ public:
             return makeBindingExpr<impl::ActionInvoke>(*this, f, std::forward<As>(args)...);
     }
 
-    template <typename... As> auto operator()(As&&... args) const
+    template <typename... As> auto c(As&&... args) const
     {
         return makeBindingExpr<impl::ActionCall>(*this, std::forward<As>(args)...);
     }
@@ -191,7 +191,7 @@ private:
     template <typename Class, typename Func>
     auto bindTo(Class* receiver, Func func, const QString& name, Qt::ConnectionType type = Qt::AutoConnection) const
     {
-        auto slot = [e = *this, r = receiver, f = func]()
+        const auto slot = [e = *this, r = receiver, f = func]()
         {
             // e, f maybe unused
             Q_UNUSED(e);
@@ -228,7 +228,11 @@ private:
         }
 
         impl::bind(binding, *this);
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
         QObject::connect(binding, &QSignalMapper::mappedInt, binding, slot, type);
+#else
+        QObject::connect(binding, QOverload<int>::of(&QSignalMapper::mapped), binding, slot, type);
+#endif
 
         slot();
 

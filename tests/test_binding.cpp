@@ -334,7 +334,7 @@ private slots:
             auto s1 = MetaObject<>::from(&_s1);
             auto s2 = MetaObject<>::from(&_s2);
 
-            auto expr1 = obj.value()(s1.value(), s2.value());
+            auto expr1 = obj.value().c(s1.value(), s2.value());
             auto expr2 = [&_obj, &_s1, &_s2]() { return _obj.value()(_s1.value(), _s2.value()); };
 
             QCOMPARE(expr1.eval(), expr2());
@@ -426,7 +426,7 @@ private slots:
             s3.value() = 20;
             QCOMPARE(s1.value().get(), 10 + 20);
 
-            delete s3.object();
+            delete s3.object_();
 
             s2.value() = 20;
             QCOMPARE(s1.value().get(), 10 + 20);
@@ -527,7 +527,7 @@ private slots:
             auto s3  = MetaObject<>::from(&_s3);
             auto obj = MetaObject<>::from(&_obj);
 
-            s3.value() = obj.value()(s1.value(), s2.value());
+            s3.value() = obj.value().c(s1.value(), s2.value());
             auto expr  = [&_obj, &_s1, &_s2]() { return _obj.value()(_s1.value(), _s2.value()); };
 
             QCOMPARE(s3.value().get(), expr());

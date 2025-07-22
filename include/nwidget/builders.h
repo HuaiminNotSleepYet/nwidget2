@@ -68,9 +68,9 @@ template <typename Self> class nwidget::Builder<QAction, Self> : public nwidget:
 
     N_BEGIN_BUILDER_SIGNAL
     N_BUILDER_SIGNAL(onChanged, changed)
-    N_BUILDER_SIGNAL(onEnabledChanged, enabledChanged)
-    N_BUILDER_SIGNAL(onCheckableChanged, checkableChanged)
-    N_BUILDER_SIGNAL(onVisibleChanged, visibleChanged)
+    N_SINCE(6, 0, N_BUILDER_SIGNAL(onEnabledChanged, enabledChanged))
+    N_SINCE(6, 0, N_BUILDER_SIGNAL(onCheckableChanged, checkableChanged))
+    N_SINCE(6, 0, N_BUILDER_SIGNAL(onVisibleChanged, visibleChanged))
     N_BUILDER_SIGNAL(onTriggered, triggered)
     N_BUILDER_SIGNAL(onHovered, hovered)
     N_BUILDER_SIGNAL(onToggled, toggled)
@@ -718,7 +718,7 @@ template <typename Self> class nwidget::Builder<QHeaderView, Self> : public nwid
     N_BUILDER_PROPERTY(minimumSectionSize)
     N_BUILDER_PROPERTY(maximumSectionSize)
     N_BUILDER_PROPERTY(defaultAlignment)
-    N_BUILDER_PROPERTY(sortIndicatorClearable)
+    N_SINCE(6, 1, N_BUILDER_PROPERTY(sortIndicatorClearable))
     N_END_BUILDER_PROPERTY
 
     N_BEGIN_BUILDER_SETTER
@@ -748,7 +748,7 @@ template <typename Self> class nwidget::Builder<QHeaderView, Self> : public nwid
     N_BUILDER_SIGNAL(onSectionHandleDoubleClicked, sectionHandleDoubleClicked)
     N_BUILDER_SIGNAL(onGeometriesChanged, geometriesChanged)
     N_BUILDER_SIGNAL(onSortIndicatorChanged, sortIndicatorChanged)
-    N_BUILDER_SIGNAL(onSortIndicatorClearableChanged, sortIndicatorClearableChanged)
+    N_SINCE(6, 1, N_BUILDER_SIGNAL(onSortIndicatorClearableChanged, sortIndicatorClearableChanged))
     N_END_BUILDER_SIGNAL
 };
 
@@ -975,7 +975,7 @@ template <typename Self> class nwidget::Builder<QTextEdit, Self> : public nwidge
     N_BUILDER_PROPERTY(wordWrapMode)
     N_BUILDER_PROPERTY(lineWrapColumnOrWidth)
     N_BUILDER_PROPERTY(readOnly)
-    N_BUILDER_PROPERTY(markdown)
+    N_SINCE(5, 14, N_BUILDER_PROPERTY(markdown))
     N_BUILDER_PROPERTY(html)
     N_BUILDER_PROPERTY(plainText)
     N_BUILDER_PROPERTY(overwriteMode)
@@ -1250,7 +1250,7 @@ template <typename Self> class nwidget::Builder<QDateTimeEdit, Self> : public nw
     N_END_BUILDER_PROPERTY
 
     N_BEGIN_BUILDER_SETTER
-    N_BUILDER_SETTER1(calendar, setCalendar)
+    N_SINCE(6, 0, N_BUILDER_SETTER1(calendar, setCalendar))
     N_BUILDER_SETTER2(dateTimeRange, setDateTimeRange)
     N_BUILDER_SETTER2(dateRange, setDateRange)
     N_BUILDER_SETTER2(timeRange, setTimeRange)
@@ -1310,7 +1310,7 @@ template <typename Self> class nwidget::Builder<QSpinBox, Self> : public nwidget
 
     N_BEGIN_BUILDER_SIGNAL
     N_BUILDER_SIGNAL(onValueChanged, valueChanged)
-    N_BUILDER_SIGNAL(onTextChanged, textChanged)
+    N_SINCE(6, 0, N_BUILDER_SIGNAL(onTextChanged, textChanged))
     N_END_BUILDER_SIGNAL
 };
 
@@ -1335,7 +1335,7 @@ template <typename Self> class nwidget::Builder<QDoubleSpinBox, Self> : public n
 
     N_BEGIN_BUILDER_SIGNAL
     N_BUILDER_SIGNAL(onValueChanged, valueChanged)
-    N_BUILDER_SIGNAL(onTextChanged, textChanged)
+    N_SINCE(6, 0, N_BUILDER_SIGNAL(onTextChanged, textChanged))
     N_END_BUILDER_SIGNAL
 };
 
@@ -1402,7 +1402,7 @@ template <typename Self> class nwidget::Builder<QComboBox, Self> : public nwidge
     N_BUILDER_PROPERTY(sizeAdjustPolicy)
     N_BUILDER_PROPERTY(minimumContentsLength)
     N_BUILDER_PROPERTY(iconSize)
-    N_BUILDER_PROPERTY(placeholderText)
+    N_SINCE(5, 15, N_BUILDER_PROPERTY(placeholderText))
     N_BUILDER_PROPERTY(duplicatesEnabled)
     N_BUILDER_PROPERTY(frame)
     N_BUILDER_PROPERTY(modelColumn)
@@ -1411,9 +1411,9 @@ template <typename Self> class nwidget::Builder<QComboBox, Self> : public nwidge
     N_BEGIN_BUILDER_SIGNAL
     N_BUILDER_SIGNAL(onEditTextChanged, editTextChanged)
     N_BUILDER_SIGNAL(onActivated, activated)
-    N_BUILDER_SIGNAL(onTextActivated, textActivated)
+    N_SINCE(5, 14, N_BUILDER_SIGNAL(onTextActivated, textActivated))
     N_BUILDER_SIGNAL(onHighlighted, highlighted)
-    N_BUILDER_SIGNAL(onTextHighlighted, textHighlighted)
+    N_SINCE(5, 14, N_BUILDER_SIGNAL(onTextHighlighted, textHighlighted))
     N_BUILDER_SIGNAL(onCurrentIndexChanged, currentIndexChanged)
     N_BUILDER_SIGNAL(onCurrentTextChanged, currentTextChanged)
     N_END_BUILDER_SETTER
@@ -1718,7 +1718,7 @@ template <typename Self> class nwidget::Builder<QTabBar, Self> : public nwidget:
 
     N_BEGIN_BUILDER_SETTER
     N_BUILDER_SETTER2(tabEnabled, setTabEnabled)
-    N_BUILDER_SETTER2(tabVisible, setTabVisible)
+    N_SINCE(5, 15, N_BUILDER_SETTER2(tabVisible, setTabVisible))
     N_BUILDER_SETTER2(tabTextColor, setTabTextColor)
     N_BUILDER_SETTER1(ElideMode, setElideMode)
     N_BUILDER_SETTER2(tabData, setTabData)
@@ -1800,7 +1800,7 @@ template <typename Self> class nwidget::Builder<QTabWidget, Self> : public nwidg
 
     N_BEGIN_BUILDER_SETTER
     N_BUILDER_SETTER2(tabEnabled, setTabEnabled)
-    N_BUILDER_SETTER2(tabVisible, setTabVisible)
+    N_SINCE(5, 15, N_BUILDER_SETTER2(tabVisible, setTabVisible))
     N_BUILDER_SETTER2(tabText, setTabText)
     N_BUILDER_SETTER2(tabIcon, setTabIcon)
     N_BUILDER_SETTER1(currentWidget, setCurrentWidget)

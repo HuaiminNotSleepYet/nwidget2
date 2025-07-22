@@ -1,8 +1,11 @@
 enable_testing()
 
-find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets Test)
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Gui Widgets Test)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Gui Widgets Test)
 
-qt_standard_project_setup()
+set(CMAKE_AUTOUIC ON)
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
 
 function(add_nwidget_test name src)
     add_executable(${name} ${src})
@@ -12,10 +15,10 @@ function(add_nwidget_test name src)
     )
 
     target_link_libraries(${name} PRIVATE
-        Qt6::Core
-        Qt6::Gui
-        Qt6::Widgets
-        Qt6::Test
+        Qt${QT_VERSION_MAJOR}::Core
+        Qt${QT_VERSION_MAJOR}::Gui
+        Qt${QT_VERSION_MAJOR}::Widgets
+        Qt${QT_VERSION_MAJOR}::Test
     )
 
     add_test(NAME ${name} COMMAND ${name})

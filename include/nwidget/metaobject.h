@@ -136,9 +136,9 @@ public:
     template <typename... Ts> void operator=(MetaProperty<Ts...> prop) const { prop.bindTo(*this); }
     template <typename... Ts> void operator=(const BindingExpr<Ts...>& expr) const { expr.bindTo(*this); }
 
-    template <typename... Args> auto operator()(Args&&... args) const
+    template <typename... Args> auto c(Args&&... args) const
     {
-        return makeBindingExpr(*this)(std::forward<Args>(args)...);
+        return makeBindingExpr(*this).c(std::forward<Args>(args)...);
     }
 
     template <typename F, typename... Args> auto m(F f, Args&&... args) const
@@ -181,6 +181,9 @@ template <typename T> T* create_if_default_constructible()
 #define N_NOTIFY ); N_IMPL_NOTIFY N_IMPL_LEFT_PAREN
 #define N_RESET  ); N_IMPL_RESET  N_IMPL_LEFT_PAREN
 
+#define N_IMPL_NOTIFY_X(T, FUNC) struct Notify { constexpr auto operator()()  const { return QOverload<T>::of(&_C::FUNC); } };
+#define N_NOTIFY_X(T) ); N_IMPL_NOTIFY_X N_IMPL_LEFT_PAREN T,
+
 // clang-format on
 
 #define N_BEGIN_PROPERTY
@@ -193,8 +196,8 @@ template <typename T> T* create_if_default_constructible()
                                                                                                                        \
         struct _I                                                                                                      \
         {                                                                                                              \
-            static constexpr const char* name() { return #NAME; }                                                      \
-            static QString               bindingName() { return QStringLiteral("nwidget_binding_on_" #NAME); }         \
+            static const char* name() { return #NAME; }                                                                \
+            static QString     bindingName() { return QStringLiteral("nwidget_binding_on_" #NAME); }                   \
         };                                                                                                             \
                                                                                                                        \
         using _C = CLASS;                                                                                              \
@@ -214,8 +217,8 @@ public:                                                                         
                                                                                                                        \
         struct _I                                                                                                      \
         {                                                                                                              \
-            static constexpr const char* name() { return #NAME; }                                                      \
-            static QString               bindingName() { return QStringLiteral("nwidget_binding_on_" #NAME); }         \
+            static const char* name() { return #NAME; }                                                                \
+            static QString     bindingName() { return QStringLiteral("nwidget_binding_on_" #NAME); }                   \
         };                                                                                                             \
                                                                                                                        \
         using _C = Class;                                                                                              \

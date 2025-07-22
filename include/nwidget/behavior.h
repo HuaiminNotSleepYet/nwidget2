@@ -64,7 +64,7 @@ public:
 
 class Behavior : public QObject
 {
-    Q_DISABLE_COPY_MOVE(Behavior)
+    N_DISABLE_COPY_MOVE(Behavior)
 
 public:
     using type_erased_setter = void (*)(void* obj, const void* val);

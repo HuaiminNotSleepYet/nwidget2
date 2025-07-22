@@ -8,7 +8,7 @@
 class MCDayNightSwitchButton : public QAbstractButton
 {
     Q_OBJECT
-    Q_DISABLE_COPY_MOVE(MCDayNightSwitchButton)
+    N_DISABLE_COPY_MOVE(MCDayNightSwitchButton)
 
 public:
     explicit MCDayNightSwitchButton(QWidget* parent = nullptr);

@@ -6,6 +6,15 @@
 
 #include <QtGlobal>
 
+#define N_DISABLE_COPY(Class)                                                                                          \
+    Class(const Class&)            = delete;                                                                           \
+    Class& operator=(const Class&) = delete;
+
+#define N_DISABLE_COPY_MOVE(Class)                                                                                     \
+    N_DISABLE_COPY(Class)                                                                                              \
+    Class(Class&&)            = delete;                                                                                \
+    Class& operator=(Class&&) = delete;
+
 // clang-format off
 
 #define N_IMPL_CAT(A, B) N_IMPL_CAT_IMPL(A, B)
@@ -69,6 +78,30 @@ template <typename C, typename R, typename... T> struct mem_fn<R (C::*)(T...) co
 } // namespace nwidget::impl
 
 /* -------------------------------------------------- Version Check ------------------------------------------------- */
+
+#if QT_VERSION < QT_VERSION_CHECK(5, 14, 0)
+#define N_IMPL_UNTIL_5_14(F) F
+#else
+#define N_IMPL_UNTIL_5_14(F)
+#endif
+
+#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
+#define N_IMPL_SINCE_5_14(F) F
+#else
+#define N_IMPL_SINCE_5_14(F)
+#endif
+
+#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
+#define N_IMPL_UNTIL_5_15(F) F
+#else
+#define N_IMPL_UNTIL_5_15(F)
+#endif
+
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+#define N_IMPL_SINCE_5_15(F) F
+#else
+#define N_IMPL_SINCE_5_15(F)
+#endif
 
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 #define N_IMPL_UNTIL_6_0(F) F
