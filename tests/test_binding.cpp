@@ -55,20 +55,20 @@ private slots:
         using MetaObj = MetaObject<QSlider>;
 
         using Expr1 = decltype(std::declval<MetaObj>().value());
-        static_assert(std::is_same_v<Expr1::Type, int>);
-        static_assert(impl::is_observable_v<Expr1>);
+        static_assert(std::is_same<Expr1::Type, int>::value, "");
+        static_assert(impl::is_observable_v<Expr1>, "");
 
         using Expr2 = decltype(std::declval<MetaObj>().value() + std::declval<MetaObj>().value());
-        static_assert(std::is_same_v<Expr2::Type, int>);
-        static_assert(impl::is_observable_v<Expr2>);
+        static_assert(std::is_same<Expr2::Type, int>::value, "");
+        static_assert(impl::is_observable_v<Expr2>, "");
 
         using Expr3 = decltype(std::declval<MetaObj>().x());
-        static_assert(std::is_same_v<Expr3::Type, int>);
-        static_assert(!impl::is_observable_v<Expr3>);
+        static_assert(std::is_same<Expr3::Type, int>::value, "");
+        static_assert(!impl::is_observable_v<Expr3>, "");
 
         using Expr4 = decltype(std::declval<MetaObj>().value() + std::declval<MetaObj>().x());
-        static_assert(std::is_same_v<Expr4::Type, int>);
-        static_assert(impl::is_observable_v<Expr4>);
+        static_assert(std::is_same<Expr4::Type, int>::value, "");
+        static_assert(impl::is_observable_v<Expr4>, "");
     }
 
     void testExpr()

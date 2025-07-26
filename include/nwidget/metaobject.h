@@ -51,7 +51,7 @@
 
 namespace nwidget {
 
-template <typename Action, typename... Args> class BindingExpr;
+template <typename...> class BindingExpr;
 
 /* -------------------------------------------------- MetaProperty -------------------------------------------------- */
 
@@ -78,10 +78,10 @@ public:
     using Notify = N;
     using Reset  = R;
 
-    static constexpr bool isReadable      = !std::is_same_v<G, void>;
-    static constexpr bool isWritable      = !std::is_same_v<S, void>;
-    static constexpr bool hasNotifySignal = !std::is_same_v<N, void>;
-    static constexpr bool isResettable    = !std::is_same_v<R, void>;
+    static constexpr bool isReadable      = !std::is_same<G, void>::value;
+    static constexpr bool isWritable      = !std::is_same<S, void>::value;
+    static constexpr bool hasNotifySignal = !std::is_same<N, void>::value;
+    static constexpr bool isResettable    = !std::is_same<R, void>::value;
 
     static T    read(const C* obj) { return G{}(obj); }
     static void write(C* obj, const T& val) { S{}(obj, val); }
@@ -157,12 +157,18 @@ using Setter = void;
 using Notify = void;
 using Reset  = void;
 
-template <typename T> T* create_if_default_constructible()
+template <typename T>
+auto create_if_default_constructible()
+    -> std::enable_if_t<!std::is_abstract<T>::value && std::is_default_constructible<T>::value, T*>
 {
-    if constexpr (!std::is_abstract_v<T> && std::is_default_constructible_v<T>)
-        return new T;
-    else
-        return nullptr;
+    return new T;
+}
+
+template <typename T>
+auto create_if_default_constructible()
+    -> std::enable_if_t<std::is_abstract<T>::value || !std::is_default_constructible<T>::value, T*>
+{
+    return nullptr;
 }
 
 } // namespace impl
@@ -243,7 +249,7 @@ public:
 public:                                                                                                                \
     using Class = CLASS;                                                                                               \
                                                                                                                        \
-    constexpr static char className[] = #CLASS;                                                                        \
+    constexpr static const char* className = #CLASS;                                                                   \
                                                                                                                        \
     Class* object_() const { return static_cast<Class*>(o); }                                                          \
     operator Class*() const { return object_(); }
@@ -307,7 +313,7 @@ public:
     MetaObject()
         : MetaObject<impl::closest_declared_metaobject_class_t<C>>(impl::create_if_default_constructible<C>())
     {
-        static_assert(!std::is_abstract_v<C> && std::is_default_constructible_v<C>);
+        static_assert(!std::is_abstract<C>::value && std::is_default_constructible<C>::value);
     }
 
     MetaObject(C* obj)

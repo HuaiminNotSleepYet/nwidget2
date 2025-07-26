@@ -34,13 +34,11 @@
 #ifndef NWIDGET_BINDING_H
 #define NWIDGET_BINDING_H
 
-#include "metaobject.h"
-
 #include <QSignalMapper>
 
-namespace nwidget {
+#include "metaobject.h"
 
-template <typename Action, typename... Args> class BindingExpr;
+namespace nwidget {
 
 namespace impl {
 
@@ -59,13 +57,10 @@ template <typename T> struct is_observable<T>
     : std::false_type {};
 
 template <typename ...T> struct is_observable<MetaProperty<T...>>
-    : std::bool_constant<MetaProperty<T...>::hasNotifySignal> {};
-
-template <typename ...T> struct is_observable
-    : std::bool_constant<(... || is_observable_v<T>)> {};
+    : std::integral_constant<bool, MetaProperty<T...>::hasNotifySignal> {};
 
 template <typename Action, typename... Args> struct is_observable<BindingExpr<Action, Args...>>
-    : std::bool_constant<(... || is_observable_v<Args>)> {};
+    : std::integral_constant<bool, impl::fold<std::logical_or<bool>, std::false_type, is_observable<Args>...>::value> {};
 
 template<typename T> struct is_meta_property : std::false_type {};
 template<typename T> constexpr bool is_meta_property_v = is_meta_property<T>::value;
@@ -77,38 +72,6 @@ template<typename... T> struct is_binding_expr<BindingExpr<T...>> : std::true_ty
 
 // clang-format on
 
-template <typename T> static auto    eval(const T& val) { return val; }
-template <typename... T> static auto eval(const BindingExpr<T...>& expr) { return expr.eval(); }
-template <typename... T> static auto eval(MetaProperty<T...> prop) { return prop.get(); }
-
-template <typename T> inline static void bind(QSignalMapper* binding, const T& v);
-
-template <typename... T> static void bind0(QSignalMapper* binding, const BindingExpr<T...>& expr)
-{
-    impl::for_each([binding](const auto& arg) { impl::bind(binding, arg); }, expr.args);
-}
-
-template <typename... T> static void bind1(QSignalMapper* binding, MetaProperty<T...> prop)
-{
-    using MetaProp = MetaProperty<T...>;
-    if constexpr (!MetaProp::hasNotifySignal)
-        return;
-    auto obj = prop.object();
-    QObject::connect(obj, &QObject::destroyed, binding, [binding]() { delete binding; });
-    if constexpr (MetaProp::hasNotifySignal)
-        QObject::connect(obj, MetaProp::notify(), binding, qOverload<>(&QSignalMapper::map), Qt::UniqueConnection);
-    binding->setMapping(obj, 0);
-}
-
-template <typename T> static void bind(QSignalMapper* binding, const T& v)
-{
-    if constexpr (is_binding_expr_v<T>)
-        impl::bind0(binding, v);
-    else if constexpr (is_meta_property_v<T>)
-        impl::bind1(binding, v);
-}
-
-struct ActionCall;
 struct ActionMember;
 struct ActionInvoke;
 
@@ -121,12 +84,56 @@ BindingExpr<Action, std::decay_t<Args>...> makeBindingExpr(Args&&... args)
     return BindingExpr<Action, std::decay_t<Args>...>(std::forward<Args>(args)...);
 }
 
-template <typename Action, typename... Args> class BindingExpr
+template <> class BindingExpr<>
 {
-    template <typename... T> friend void impl::bind0(QSignalMapper*, const BindingExpr<T...>&);
+public:
+    template <typename...> friend class BindingExpr;
+
+    template <typename T> static auto    eval(const T& val) { return val; }
+    template <typename... T> static auto eval(const BindingExpr<T...>& expr) { return expr.eval(); }
+    template <typename... T> static auto eval(MetaProperty<T...> prop) { return prop.get(); }
+
+    template <typename T, std::enable_if_t<!impl::is_meta_property_v<T> && !impl::is_binding_expr_v<T>, bool> = true>
+    static void bind(QSignalMapper* binding, T)
+    {
+    }
+
+    template <typename T, std::enable_if_t<impl::is_meta_property_v<T> && T::hasNotifySignal, bool> = true>
+    static void bind(QSignalMapper* binding, T prop)
+    {
+        auto obj = prop.object();
+        QObject::connect(obj, &QObject::destroyed, binding, [binding]() { delete binding; });
+        QObject::connect(obj, T::notify(), binding, qOverload<>(&QSignalMapper::map), Qt::UniqueConnection);
+        binding->setMapping(obj, 0);
+    }
+
+    template <typename T, std::enable_if_t<impl::is_meta_property_v<T> && !T::hasNotifySignal, bool> = true>
+    static void bind(QSignalMapper* binding, T prop)
+    {
+        QObject::connect(prop.object(), &QObject::destroyed, binding, [binding]() { delete binding; });
+    }
+
+    template <typename T, std::enable_if_t<impl::is_binding_expr_v<T>, bool> = true>
+    static void bind(QSignalMapper* binding, const T& expr)
+    {
+        impl::for_each([binding](const auto& arg) { bind(binding, arg); }, expr.args);
+    }
+
+    // clang-format off
+    template <typename E, typename C, typename F> static auto makeFunctor(const E& e, C*  , const F& f, std::enable_if_t< impl::is_meta_property_v<F>                                                          , bool> = true) { return [e,    f]() { f.set(e.eval()); }; }
+    template <typename E, typename C, typename F> static auto makeFunctor(const E&  , C*  , const F& f, std::enable_if_t<!impl::is_meta_property_v<F> && std::is_void<decltype((void)f(        )      )>::value, bool> = true) { return [      f]() { f(        ); }; }
+    template <typename E, typename C, typename F> static auto makeFunctor(const E& e, C*  , const F& f, std::enable_if_t<!impl::is_meta_property_v<F> && std::is_void<decltype((void)f(e.eval())      )>::value, bool> = true) { return [e,    f]() { f(e.eval()); }; }
+    template <typename E, typename C, typename F> static auto makeFunctor(const E&  , C* r, const F& f, std::enable_if_t<!impl::is_meta_property_v<F> && std::is_void<decltype((void)(r->*f)(        ))>::value, bool> = true) { return [   r, f]() { (r->*f)(        ); }; }
+    template <typename E, typename C, typename F> static auto makeFunctor(const E& e, C* r, const F& f, std::enable_if_t<!impl::is_meta_property_v<F> && std::is_void<decltype((void)(r->*f)(e.eval()))>::value, bool> = true) { return [e, r, f]() { (r->*f)(e.eval()); }; }
+    // clang-format on
+};
+
+template <typename Action, typename... Args> class BindingExpr<Action, Args...>
+{
+    template <typename...> friend class BindingExpr;
 
 public:
-    using Type = decltype(Action{}(impl::eval(std::declval<Args>())...));
+    using Type = decltype(Action{}(BindingExpr<>::eval(std::declval<Args>())...));
 
     constexpr static bool isObservable = impl::is_observable_v<BindingExpr<Action, Args...>>;
 
@@ -135,22 +142,23 @@ public:
     {
     }
 
-    template <typename F, typename... As> auto m(F f, As&&... args) const
+    template <typename F, typename... As, std::enable_if_t<std::is_member_object_pointer<F>::value, bool> = true>
+    auto m(F f, As&&... args)
     {
-        if constexpr (std::is_member_object_pointer_v<F>)
-            return makeBindingExpr<impl::ActionMember>(*this, f, std::forward<As>(args)...);
-        else if constexpr (std::is_member_function_pointer_v<F>)
-            return makeBindingExpr<impl::ActionInvoke>(*this, f, std::forward<As>(args)...);
+        return makeBindingExpr<impl::ActionMember>(*this, f, std::forward<As>(args)...);
     }
 
-    template <typename... As> auto c(As&&... args) const
+    template <typename F, typename... As, std::enable_if_t<std::is_member_function_pointer<F>::value, bool> = true>
+    auto m(F f, As&&... args)
     {
-        return makeBindingExpr<impl::ActionCall>(*this, std::forward<As>(args)...);
+        return makeBindingExpr<impl::ActionInvoke>(*this, f, std::forward<As>(args)...);
     }
+
+    template <typename... As> auto c(As&&... args) const { return call(*this, std::forward<As>(args)...); }
 
     auto eval() const
     {
-        return std::apply(Action{}, impl::for_each([](const auto& arg) { return impl::eval(arg); }, args));
+        return impl::apply(Action{}, impl::for_each([](const auto& arg) { return BindingExpr<>::eval(arg); }, args));
     }
 
     template <typename... T> auto bindTo(MetaProperty<T...> prop, Qt::ConnectionType type = Qt::AutoConnection) const
@@ -191,22 +199,7 @@ private:
     template <typename Class, typename Func>
     auto bindTo(Class* receiver, Func func, const QString& name, Qt::ConnectionType type = Qt::AutoConnection) const
     {
-        const auto slot = [e = *this, r = receiver, f = func]()
-        {
-            // e, f maybe unused
-            Q_UNUSED(e);
-            Q_UNUSED(r);
-            if constexpr (impl::is_meta_property_v<Func>)
-                return [f, e]() { return f.set(e.eval()); };
-            else if constexpr (std::is_invocable_v<Func>)
-                return [f]() { return f(); };
-            else if constexpr (std::is_invocable_v<Func, Type>)
-                return [f, e]() { return f(e.eval()); };
-            else if constexpr (std::is_member_function_pointer_v<Func> && std::is_invocable_v<Func, Class*>)
-                return [r, f]() { return (r->*f)(); };
-            else if constexpr (std::is_member_function_pointer_v<Func> && std::is_invocable_v<Func, Class*, Type>)
-                return [r, f, e]() { return (r->*f)(e.eval()); };
-        }();
+        const auto slot = BindingExpr<>::makeFunctor(*this, receiver, func);
 
         QSignalMapper* binding = nullptr;
 
@@ -227,7 +220,8 @@ private:
             binding->setObjectName(name);
         }
 
-        impl::bind(binding, *this);
+        BindingExpr<>::bind(binding, *this);
+
 #if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
         QObject::connect(binding, &QSignalMapper::mappedInt, binding, slot, type);
 #else
@@ -256,27 +250,31 @@ struct ActionCall { template<typename F, typename ...Args> auto operator()(F fun
 
 struct ActionMember
 {
-    template <class Class, typename M> auto operator()(Class&& obj, M mem)
+    template <class Class, typename M, std::enable_if_t<std::is_pointer<Class>::value, bool> = true>
+    auto operator()(Class&& obj, M mem)
     {
-        if constexpr (!std::is_pointer_v<Class>)
-            return obj.*mem;
-        else {
-            Q_ASSERT(obj);
-            return obj->*mem;
-        }
+        return obj->mem;
+    }
+
+    template <class Class, typename M, std::enable_if_t<!std::is_pointer<Class>::value, bool> = true>
+    auto operator()(Class&& obj, M mem)
+    {
+        return obj.*mem;
     }
 };
 
 struct ActionInvoke
 {
-    template <class Class, typename F, typename... Args> auto operator()(Class&& obj, F fn, Args&&... args)
+    template <class Class, typename F, typename... Args, std::enable_if_t<std::is_pointer<Class>::value, bool> = true>
+    auto operator()(Class&& obj, F fn, Args&&... args)
     {
-        if constexpr (!std::is_pointer_v<Class>)
-            return (obj.*fn)(std::forward<Args>(args)...);
-        else {
-            Q_ASSERT(obj);
-            return (obj->*fn)(std::forward<Args>(args)...);
-        }
+        return (obj->*fn)(std::forward<Args>(args)...);
+    }
+
+    template <class Class, typename F, typename... Args, std::enable_if_t<!std::is_pointer<Class>::value, bool> = true>
+    auto operator()(Class&& obj, F fn, Args&&... args)
+    {
+        return (obj.*fn)(std::forward<Args>(args)...);
     }
 };
 

@@ -32,10 +32,12 @@
 #ifndef NWIDGET_BEHAVIOR_H
 #define NWIDGET_BEHAVIOR_H
 
-#include "metaobject.h"
+#include <cmath>
 
 #include <QMap>
 #include <QObject>
+
+#include "utils.h"
 
 #ifndef N_BEHAVIOR_ANIMATION_FPS
 #define N_BEHAVIOR_ANIMATION_FPS 60
@@ -95,7 +97,10 @@ public:
     {
         Q_ASSERT(b);
         bool oldAnim = false;
-        for (auto& [p, o, a] : b->animations) {
+        for (auto& it : b->animations) {
+            const auto p = std::get<0>(it);
+            const auto o = std::get<1>(it);
+            auto&      a = std::get<2>(it);
             if (prop == p && obj == o) {
                 delete a;
                 a       = anim;
@@ -116,8 +121,8 @@ public:
     {
         static_assert(MetaProp::isReadable);
         static_assert(MetaProp::isWritable);
-        static_assert(std::is_base_of_v<Animation, Anim>);
-        static_assert(std::is_same_v<typename MetaProp::Type, typename Anim::Type>);
+        static_assert(std::is_base_of<Animation, Anim>::value);
+        static_assert(std::is_same<typename MetaProp::Type, typename Anim::Type>::value);
         on(b, prop.object(), erase<MetaProp>(), anim, prop.get());
     }
 
@@ -125,8 +130,8 @@ public:
     {
         static_assert(MetaProp::isReadable);
         static_assert(MetaProp::isWritable);
-        static_assert(std::is_base_of_v<Animation, Anim>);
-        static_assert(std::is_same_v<typename MetaProp::Type, typename Anim::Type>);
+        static_assert(std::is_base_of<Animation, Anim>::value);
+        static_assert(std::is_same<typename MetaProp::Type, typename Anim::Type>::value);
         on(findOrCreateBehavior(prop.object()), prop.object(), erase<MetaProp>(), anim, prop.get());
     }
 
@@ -141,7 +146,10 @@ public:
     {
         if (!behavior)
             return default_;
-        for (auto& [p, o, a] : std::as_const(behavior->animations)) {
+        for (const auto& it : qAsConst(behavior->animations)) {
+            const auto p = std::get<0>(it);
+            const auto o = std::get<1>(it);
+            const auto a = std::get<2>(it);
             if (prop == p && obj == o)
                 return *static_cast<const T*>(a->current());
         }
@@ -152,7 +160,10 @@ public:
     {
         if (!behavior)
             prop(obj, &val);
-        for (auto& [p, o, a] : std::as_const(behavior->animations)) {
+        for (const auto& it : impl::as_const(behavior->animations)) {
+            const auto p = std::get<0>(it);
+            const auto o = std::get<1>(it);
+            const auto a = std::get<2>(it);
             if (prop == p && obj == o) {
                 a->setEnd(&val);
                 return;
@@ -202,7 +213,7 @@ public:
 
     template <typename MetaProp> static auto animated(MetaProp prop)
     {
-        static_assert(std::is_base_of_v<QObject, typename MetaProp::Class>);
+        static_assert(std::is_base_of<QObject, typename MetaProp::Class>::value);
         return animated(findOrCreateBehavior(prop.object()), prop);
     }
 
@@ -211,7 +222,10 @@ protected:
     {
         constexpr int tick = 1000.0 / N_BEHAVIOR_ANIMATION_FPS;
 
-        for (auto& [prop, obj, anim] : std::as_const(animations)) {
+        for (const auto& it : impl::as_const(animations)) {
+            const auto prop = std::get<0>(it);
+            const auto obj  = std::get<1>(it);
+            const auto anim = std::get<2>(it);
             if (anim->finished())
                 continue;
             prop(obj, anim->tick(tick));
@@ -234,8 +248,8 @@ private:
 
     virtual ~Behavior()
     {
-        for (auto& [_, __, anim] : std::as_const(animations))
-            delete anim;
+        for (const auto& it : impl::as_const(animations))
+            delete std::get<2>(it);
     }
 
     static Behavior* findBehavior(QObject* obj)
@@ -341,7 +355,7 @@ template <typename T> class SpringAnimation : public Animation
 public:
     using Type = T;
 
-    template <typename... Args> explicit SpringAnimation(Args... args) { (set(args), ...); };
+    template <typename... Args> explicit SpringAnimation(Args... args) { int _[]{(set(args), 0)...}; };
 
     qreal damping() const { return damping_; }
     qreal epsilon() const { return epsilon_; }
@@ -381,7 +395,7 @@ public:
             return current();
 
         if (modulus_ > 0)
-            current_ = std::fmod(current_, modulus_);
+            current_ = fmodf(current_, modulus_);
 
         const int steps = (ms / (1000 / N_BEHAVIOR_ANIMATION_FPS));
         for (int i = 0; i < steps; ++i) {

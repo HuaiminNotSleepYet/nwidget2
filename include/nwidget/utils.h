@@ -36,22 +36,66 @@
 
 // clang-format on
 
-namespace nwidget::impl {
+namespace nwidget {
+namespace impl {
 
-template <std::size_t I = 0, typename F, typename... Ts> constexpr auto for_each(F func, const std::tuple<Ts...>& tuple)
+/* ---------------------------------------------- For C++ Versions < 17 --------------------------------------------- */
+
+// fold expr
+
+template <typename Op, typename...> struct fold;
+
+template <typename Op, typename Arg> struct fold<Op, Arg> : Arg
 {
-    if constexpr (std::is_void_v<std::invoke_result_t<F, std::tuple_element_t<I, std::tuple<Ts...>>>>) {
-        func(std::get<I>(tuple));
-        if constexpr (I < sizeof...(Ts) - 1)
-            for_each<I + 1>(func, tuple);
-    } else {
-        const auto v = std::make_tuple(func(std::get<I>(tuple)));
-        if constexpr (I == sizeof...(Ts) - 1)
-            return v;
-        else
-            return std::tuple_cat(v, for_each<I + 1>(func, tuple));
-    }
+};
+
+template <typename Op, typename Arg, typename... ArgN> struct fold<Op, Arg, ArgN...>
+{
+    static constexpr auto value = Op{}(Arg::value, fold<Op, ArgN...>::value);
+    using value_type            = decltype(value);
+};
+
+// apply
+
+template <typename Fn, typename Tup, size_t... I> auto apply(Fn f, const Tup& t, std::index_sequence<I...>)
+{
+    return f(std::get<I>(t)...);
 }
+
+template <typename Fn, typename Tup> auto apply(Fn f, const Tup& t)
+{
+    return apply(f, t, std::make_index_sequence<std::tuple_size<Tup>::value>{});
+}
+
+// as_const
+
+template <typename T> constexpr std::add_const_t<T>& as_const(T& t) noexcept { return t; }
+template <typename T> void                           as_const(const T&&) = delete;
+
+/* ------------------------------------------------------ Utils ----------------------------------------------------- */
+
+// for_each
+
+template <typename Fn, typename Tup, size_t... I>
+constexpr auto for_each(const Fn& f, const Tup& t, std::index_sequence<I...>)
+    -> std::enable_if_t<fold<std::logical_and<bool>, std::is_void<decltype(f(std::get<I>(t)))>...>::value>
+{
+    int _[]{(f(std::get<I>(t)), 0)...};
+}
+
+template <typename Fn, typename Tup, size_t... I>
+constexpr auto for_each(const Fn& f, const Tup& t, std::index_sequence<I...>)
+    -> decltype(std::make_tuple(f(std::get<I>(t))...))
+{
+    return std::make_tuple(f(std::get<I>(t))...);
+}
+
+template <typename Fn, typename Tup> constexpr auto for_each(const Fn& f, const Tup& t)
+{
+    return for_each(f, t, std::make_index_sequence<std::tuple_size<Tup>::value>{});
+}
+
+// member function type traits
 
 template <typename T> struct mem_fn;
 
@@ -60,7 +104,7 @@ template <typename C, typename R, typename... T> struct mem_fn<R (C::*)(T...)>
     using result = R;
     using object = C;
 
-    constexpr static std::size_t argc = sizeof...(T);
+    static constexpr std::size_t argc = sizeof...(T);
 
     template <std::size_t i> using arg = std::tuple_element_t<i, std::tuple<T...>>;
 };
@@ -70,12 +114,13 @@ template <typename C, typename R, typename... T> struct mem_fn<R (C::*)(T...) co
     using result = R;
     using object = C;
 
-    constexpr static std::size_t argc = sizeof...(T);
+    static constexpr std::size_t argc = sizeof...(T);
 
     template <std::size_t i> using arg = std::tuple_element_t<i, std::tuple<T...>>;
 };
 
-} // namespace nwidget::impl
+} // namespace impl
+} // namespace nwidget
 
 /* -------------------------------------------------- Version Check ------------------------------------------------- */
 

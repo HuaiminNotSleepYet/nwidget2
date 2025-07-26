@@ -83,7 +83,8 @@
 #define NWIDGET_BUILDER_H
 
 #include <functional>
-#include <optional>
+
+#include "metaobjects.h"
 
 namespace nwidget {
 
@@ -117,7 +118,7 @@ public:                                                                         
     Self& NAME(const typename decltype(std::declval<::nwidget::MetaObject<Class>>().NAME())::Type& value)              \
     {                                                                                                                  \
         using MetaProp = decltype(std::declval<::nwidget::MetaObject<Class>>().NAME());                                \
-        static_assert(MetaProp::isWritable);                                                                           \
+        static_assert(MetaProp::isWritable, "");                                                                       \
         MetaProp::write(self().o, value);                                                                              \
         return self();                                                                                                 \
     }                                                                                                                  \
@@ -174,7 +175,7 @@ public:                                                                         
 #define N_BUILDER_SIGNAL(NAME, SIGNAL_)                                                                                \
     template <typename Func> Self& NAME(Func func, Qt::ConnectionType type = Qt::AutoConnection)                       \
     {                                                                                                                  \
-        QObject::connect(object_(), &Class::SIGNAL_, object_(), func, type);                                                      \
+        QObject::connect(object_(), &Class::SIGNAL_, object_(), func, type);                                           \
         return self();                                                                                                 \
     }                                                                                                                  \
     template <typename Rece, typename Func>                                                                            \
@@ -238,7 +239,20 @@ private:
         return self();                                                                                                 \
     }
 
-template <typename Item> using ItemGenerator = std::function<std::optional<Item>()>;
+template <typename It, typename Fn> struct ItemGenerator
+{
+    It begin;
+    It end;
+    Fn func;
+};
+
+namespace impl {
+// clang-format off
+template <typename T, typename Fn> auto invokeGeneratorFunc(int  , const T&  , Fn f) -> decltype(std::declval<Fn>()(                                      )) { return f(    ); }
+template <typename T, typename Fn> auto invokeGeneratorFunc(int  , const T& e, Fn f) -> decltype(std::declval<Fn>()(                     std::declval<T>())) { return f(   e); }
+template <typename T, typename Fn> auto invokeGeneratorFunc(int i, const T& e, Fn f) -> decltype(std::declval<Fn>()(std::declval<int>(), std::declval<T>())) { return f(i, e); }
+// clang-format on
+}; // namespace impl
 
 template <typename T> class BuilderItem
 {
@@ -252,13 +266,17 @@ public:
 protected:
     explicit BuilderItem(Func f) { func = f; }
 
-    template <typename Derived, typename Item> BuilderItem(Derived* self, ItemGenerator<Item> gen)
+    template <typename Derived, typename It, typename Fn> BuilderItem(Derived*, const ItemGenerator<It, Fn>& gen)
     {
         func = [gen](const BuilderItem*, T* target)
         {
-            while (auto item = gen()) {
-                Derived d = std::move(*item);
+            int  i  = 0;
+            auto it = gen.begin;
+            while (it != gen.end) {
+                Derived d = std::move(impl::invokeGeneratorFunc(i, *it, gen.func));
                 d.func(&d, target);
+                ++i;
+                ++it;
             }
         };
     };
@@ -269,87 +287,40 @@ private:
 
 /* ----------------------------------------------------- ForEach ---------------------------------------------------- */
 
-template <typename Iterator, typename Generator>
-auto ForEach(Iterator begin, Iterator end, Generator gen)
-    -> std::enable_if_t<std::is_invocable_v<Generator>, ItemGenerator<std::invoke_result_t<Generator>>>
-{
-    return [begin, end, gen]() mutable -> std::optional<decltype(gen())>
-    {
-        if (begin == end)
-            return std::nullopt;
-        auto item = gen();
-        ++begin;
-        return item;
-    };
-}
-
-template <typename Iterator, typename Generator>
-auto ForEach(Iterator begin, Iterator end, Generator gen)
-    -> std::enable_if_t<std::is_invocable_v<Generator, decltype(*begin)>,
-                        ItemGenerator<std::invoke_result_t<Generator, decltype(*begin)>>>
-{
-    return [begin, end, gen]() mutable -> std::optional<decltype(gen(*begin))>
-    {
-        if (begin == end)
-            return std::nullopt;
-        auto item = gen(*begin);
-        ++begin;
-        return item;
-    };
-}
-
-template <typename Iterator, typename Generator>
-auto ForEach(Iterator begin, Iterator end, Generator gen)
-    -> std::enable_if_t<std::is_invocable_v<Generator, int, decltype(*begin)>,
-                        ItemGenerator<std::invoke_result_t<Generator, int, decltype(*begin)>>>
-{
-    return [index = (int)0, begin, end, gen]() mutable -> std::optional<decltype(gen(0, *begin))>
-    {
-        if (begin == end)
-            return std::nullopt;
-        auto item = gen(index, *begin);
-        ++index;
-        ++begin;
-        return item;
-    };
-}
-
-template <typename T, typename Generator>
-auto ForEach(T begin, T end, Generator gen)
-    -> std::enable_if_t<std::is_integral_v<T>, ItemGenerator<std::invoke_result_t<Generator, T>>>
+template <typename It, typename Fn> auto ForEach(It begin, It end, Fn fn, std::true_type /* is_integral */)
 {
     struct iterator
     {
-        T value;
+        It value;
 
-        T operator*() const { return value; }
+        It operator*() const { return value; }
 
-        bool operator==(const iterator& other) const { return value == other.value; }
-        bool operator!=(const iterator& other) const { return value != other.value; }
+        bool operator==(iterator other) const { return value == other.value; }
+        bool operator!=(iterator other) const { return value != other.value; }
 
-        iterator& operator++()
+        iterator operator++()
         {
             ++value;
             return *this;
         }
     };
-
-    return ForEach(iterator{begin}, iterator{end}, gen);
+    return ItemGenerator<iterator, Fn>{iterator{begin}, iterator{end}, fn};
 }
 
-template <typename T, typename Generator> auto ForEach(const T& c, Generator g)
+template <typename It, typename Fn> auto ForEach(It begin, It end, Fn func, std::false_type /* is_integral */)
 {
-    if constexpr (std::is_integral_v<T>)
-        return ForEach(0, c, g);
-    else
-        return ForEach(c.begin(), c.end(), g);
+    return ItemGenerator<It, Fn>{begin, end, func};
 }
 
-template <typename T, typename Generator> auto ForEach(std::initializer_list<T> l, Generator g)
-{
-    return ForEach(l.begin(), l.end(), g);
-}
+// clang-format off
+template <typename T, typename Fn> auto ForEach(      T  n, Fn func, std::true_type  is_integral) { return ForEach(0         , n       , func, is_integral); }
+template <typename T, typename Fn> auto ForEach(const T& c, Fn func, std::false_type is_integral) { return ForEach(c.cbegin(), c.cend(), func, is_integral); }
 
+template <typename It, typename Fn> auto ForEach(It begin, It end,          Fn func) { return ForEach(begin, end,       func, typename std::is_integral<It>::type{}); }
+template <typename T , typename Fn> auto ForEach(const T& num_or_container, Fn func) { return ForEach(num_or_container, func, typename std::is_integral<T >::type{}); }
+
+template <typename T, typename F> auto ForEach(std::initializer_list<T> l, F f) { return ForEach(l.begin(), l.end(), f); }
+// clang-format on
 } // namespace nwidget
 
 #endif // NWIDGET_BUILDER_H

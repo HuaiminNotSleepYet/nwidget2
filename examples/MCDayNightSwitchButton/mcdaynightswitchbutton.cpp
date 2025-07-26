@@ -129,9 +129,11 @@ void MCDayNightSwitchButton::paintEvent(QPaintEvent* event)
     static const auto nightSkyColor = QColor(0, 0, 0);
     static const auto cloudColor    = QColor(240, 240, 240, 0.8 * 255);
 
-    const auto interpolateColor = [](const QColor& c1, const QColor& c2, qreal factor)
+    static const auto clamp = [](qreal val, qreal min, qreal max) { return std::max(min, std::min(val, max)); };
+
+    static const auto interpolateColor = [](const QColor& c1, const QColor& c2, qreal factor)
     {
-        factor = std::clamp(factor, 0.0, 1.0);
+        factor = clamp(factor, 0.0, 1.0);
         return QColor::fromRgbF(c1.redF() + (c2.redF() - c1.redF()) * factor,
                                 c1.greenF() + (c2.greenF() - c1.greenF()) * factor,
                                 c1.blueF() + (c2.blueF() - c1.blueF()) * factor,
@@ -147,7 +149,7 @@ void MCDayNightSwitchButton::paintEvent(QPaintEvent* event)
     // Twilight
     {
         p.save();
-        p.setOpacity(1 - std::abs(std::clamp((progress() - 0.5) * 4, -1.0, 1.0)));
+        p.setOpacity(1 - std::abs(clamp((progress() - 0.5) * 4, -1.0, 1.0)));
         QLinearGradient gradient({0, 0}, QPointF(0, height()));
         gradient.setColorAt(0, 0x4F6EA8);
         gradient.setColorAt(1, 0xD6743C);
@@ -171,8 +173,11 @@ void MCDayNightSwitchButton::paintEvent(QPaintEvent* event)
             {0.68, 0.32, 35.89},
             {0.82, 0.15, 9.38},
         };
-        const auto yOffset = height() * (1 - std::clamp(progress() - 0.5, 0.0, 0.5) * 2);
-        for (auto& [x, y, r] : stars) {
+        const auto yOffset = height() * (1 - clamp(progress() - 0.5, 0.0, 0.5) * 2);
+        for (const auto& it : stars) {
+            qreal x = std::get<0>(it);
+            qreal y = std::get<1>(it);
+            qreal r = std::get<2>(it);
             p.save();
             p.translate(width() * x, height() * y + yOffset);
             p.rotate(r);
@@ -197,10 +202,10 @@ void MCDayNightSwitchButton::paintEvent(QPaintEvent* event)
 
         p.drawImage(QRect(0, 0, Radius * 2, Radius * 2), sun);
 
-        p.setOpacity(std::clamp((progress()) * 2 - 1, 0.0, 1.0));
+        p.setOpacity(clamp((progress()) * 2 - 1, 0.0, 1.0));
         p.drawImage(QRect(0, 0, Radius * 2, Radius * 2), moon);
 
-        p.setOpacity(1 - std::clamp(progress() * 2, 0.0, 1.0));
+        p.setOpacity(1 - clamp(progress() * 2, 0.0, 1.0));
         p.fillRect(0, 0, Radius * 2, Radius * 2, 0xFFFFFF);
 
         p.restore();
@@ -217,7 +222,10 @@ void MCDayNightSwitchButton::paintEvent(QPaintEvent* event)
             {interp({0.0, 0.6}, {0.0, 0.85}), interp({-0.2, 0.5}, {0.6, 0.3})},
         };
 
-        for (auto& [pos, size] : cloud)
+        for (const auto& it : cloud) {
+            const auto pos  = std::get<0>(it);
+            const auto size = std::get<1>(it);
             p.fillRect(pos.x() * width(), pos.y() * height(), size.x() * width(), size.y() * height(), cloudColor);
+        }
     }
 }

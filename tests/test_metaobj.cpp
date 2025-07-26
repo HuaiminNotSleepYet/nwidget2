@@ -59,7 +59,8 @@ N_DECLARE_METAOBJECT(DeclaredClass)
 
 #undef N_PROPERTY
 
-namespace nwidget::test {
+namespace nwidget {
+namespace test {
 
 template <typename Class> using MetaObj = ::nwidget::MetaObject<Class>;
 
@@ -91,7 +92,7 @@ struct TestGetter
     template <typename MetaProp> static std::enable_if_t<!MetaProp::isReadable> run() {}
     template <typename MetaProp> static std::enable_if_t<MetaProp::isReadable>  run()
     {
-        static_assert(std::is_invocable_v<typename MetaProp::Getter, typename MetaProp::Class*>);
+        using _ = decltype(typename MetaProp::Getter{}(std::declval<const typename MetaProp::Class*>()));
     }
 };
 
@@ -100,8 +101,8 @@ struct TestSetter
     template <typename MetaProp> static std::enable_if_t<!MetaProp::isWritable> run() {}
     template <typename MetaProp> static std::enable_if_t<MetaProp::isWritable>  run()
     {
-        static_assert(
-            std::is_invocable_v<typename MetaProp::Setter, typename MetaProp::Class*, typename MetaProp::Type>);
+        using _ = decltype(typename MetaProp::Setter{}(std::declval<typename MetaProp::Class*>(),
+                                                       std::declval<typename MetaProp::Type>()));
     }
 };
 
@@ -116,13 +117,14 @@ struct TestReset
     template <typename MetaProp> static std::enable_if_t<!MetaProp::isResettable> run() {}
     template <typename MetaProp> static std::enable_if_t<MetaProp::isResettable>  run()
     {
-        static_assert(std::is_invocable_v<typename MetaProp::Reset, typename MetaProp::Class*>);
+        using _ = decltype(typename MetaProp::Reset{}(std::declval<typename MetaProp::Class*>()));
     }
 };
 
 template <typename...> class TestBuilder;
 
-} // namespace nwidget::test
+} // namespace text
+} // namespace nwidget
 
 #include <nwidget/metaobjects.h>
 
@@ -139,10 +141,8 @@ class TestMetaObj : public QObject
 private slots:
     void testUtils()
     {
-        static_assert(
-            std::is_same_v<MetaObject<QPushButton>::Class, MetaObject<NoDeclaredClass>::Class>);
-        static_assert(
-            std::is_same_v<MetaObject<DeclaredClass>::Class, MetaObject<DeclaredClass>::Class>);
+        static_assert(std::is_same<MetaObject<QPushButton>::Class, MetaObject<NoDeclaredClass>::Class>::value, "");
+        static_assert(std::is_same<MetaObject<DeclaredClass>::Class, MetaObject<DeclaredClass>::Class>::value, "");
     }
 
     void testMetaObject()
@@ -201,17 +201,17 @@ private slots:
         {
             using MetaObj = MetaObject<QObject>;
 
-            static_assert(std::is_same_v<QObject, MetaObj::Class>);
-            static_assert(std::is_same_v<void, MetaObj::Super::Class>);
+            static_assert(std::is_same<QObject, MetaObj::Class>::value, "");
+            static_assert(std::is_same<void, MetaObj::Super::Class>::value, "");
 
             QCOMPARE(MetaObj::className, "QObject");
 
             using MetaProp = decltype(std::declval<MetaObj>().objectName());
 
-            static_assert(std::is_same_v<MetaProp::Type, QString>);
-            static_assert(MetaProp::isReadable);
-            static_assert(MetaProp::isWritable);
-            static_assert(MetaProp::hasNotifySignal);
+            static_assert(std::is_same<MetaProp::Type, QString>::value, "");
+            static_assert(MetaProp::isReadable, "");
+            static_assert(MetaProp::isWritable, "");
+            static_assert(MetaProp::hasNotifySignal, "");
 
             QCOMPARE(MetaProp::Info::name(), "objectName");
         }
@@ -219,17 +219,17 @@ private slots:
         {
             using MetaObj = MetaObject<QWidget>;
 
-            static_assert(std::is_same_v<QWidget, MetaObj::Class>);
-            static_assert(std::is_same_v<QObject, MetaObj::Super::Class>);
+            static_assert(std::is_same<QWidget, MetaObj::Class>::value, "");
+            static_assert(std::is_same<QObject, MetaObj::Super::Class>::value, "");
 
             QCOMPARE(MetaObj::className, "QWidget");
 
             using MetaProp = decltype(std::declval<MetaObj>().x());
 
-            static_assert(std::is_same_v<MetaProp::Type, int>);
-            static_assert(MetaProp::isReadable);
-            static_assert(!MetaProp::isWritable);
-            static_assert(!MetaProp::hasNotifySignal);
+            static_assert(std::is_same<MetaProp::Type, int>::value, "");
+            static_assert(MetaProp::isReadable, "");
+            static_assert(!MetaProp::isWritable, "");
+            static_assert(!MetaProp::hasNotifySignal, "");
 
             QCOMPARE(MetaProp::Info::name(), "x");
         }

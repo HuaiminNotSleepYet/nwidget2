@@ -182,7 +182,7 @@ private slots:
         // func()
         {
             QLayout* l1 = new QHBoxLayout;
-            for (const auto& _ : std::as_const(names))
+            for (const auto& _ : impl::as_const(names))
                 l1->addWidget(func1());
 
             QLayout* l2 = HBoxLayout{
@@ -198,7 +198,7 @@ private slots:
         // func(const T&)
         {
             QLayout* l1 = new QHBoxLayout;
-            for (const auto& name : std::as_const(names))
+            for (const auto& name : impl::as_const(names))
                 l1->addWidget(func3(name));
 
             QLayout* l2 = HBoxLayout{

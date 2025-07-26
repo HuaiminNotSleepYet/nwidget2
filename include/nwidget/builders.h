@@ -2,7 +2,6 @@
 #define NWIDGET_BUILDERS_H
 
 #include "builder.h"
-#include "metaobjects.h"
 
 class QWidget;
 class QLayout;
@@ -115,8 +114,8 @@ public:
     {
     }
 
-    template <typename Item>
-    LayoutItem(ItemGenerator<Item> g)
+    template <typename It, typename Fn>
+    LayoutItem(ItemGenerator<It, Fn> g)
         : BuilderItem<T>(this, g)
     {
     }
@@ -1053,8 +1052,8 @@ public:
     {
     }
 
-    template <typename Item>
-    ToolBoxItem(ItemGenerator<Item> g)
+    template <typename It, typename Fn>
+    ToolBoxItem(ItemGenerator<It, Fn> g)
         : BuilderItem(this, g)
     {
     }
@@ -1098,8 +1097,8 @@ public:
     {
     }
 
-    template <typename Item>
-    SplitterItem(ItemGenerator<Item> g)
+    template <typename It, typename Fn>
+    SplitterItem(ItemGenerator<It, Fn> g)
         : BuilderItem(this, g)
     {
     }
@@ -1372,8 +1371,8 @@ public:
     {
     }
 
-    template <typename Item>
-    ComboBoxItem(ItemGenerator<Item> g)
+    template <typename It, typename Fn>
+    ComboBoxItem(ItemGenerator<It, Fn> g)
         : BuilderItem(this, g)
     {
     }
@@ -1551,8 +1550,8 @@ public:
     {
     }
 
-    template <typename Item>
-    MenuItem(ItemGenerator<Item> g)
+    template <typename It, typename Fn>
+    MenuItem(ItemGenerator<It, Fn> g)
         : BuilderItem(this, g)
     {
     }
@@ -1603,8 +1602,8 @@ public:
     {
     }
 
-    template <typename Item>
-    MenuBarItem(ItemGenerator<Item> g)
+    template <typename It, typename Fn>
+    MenuBarItem(ItemGenerator<It, Fn> g)
         : BuilderItem(this, g)
     {
     }
@@ -1682,8 +1681,8 @@ public:
     {
     }
 
-    template <typename Item>
-    TabBarItem(ItemGenerator<Item> g)
+    template <typename It, typename Fn>
+    TabBarItem(ItemGenerator<It, Fn> g)
         : BuilderItem(this, g)
     {
     }
@@ -1771,8 +1770,8 @@ public:
     {
     }
 
-    template <typename Item>
-    TabWidgetItem(ItemGenerator<Item> g)
+    template <typename It, typename Fn>
+    TabWidgetItem(ItemGenerator<It, Fn> g)
         : BuilderItem(this, g)
     {
     }
