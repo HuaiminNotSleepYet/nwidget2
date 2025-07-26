@@ -136,9 +136,9 @@ public:
     template <typename... Ts> void operator=(MetaProperty<Ts...> prop) const { prop.bindTo(*this); }
     template <typename... Ts> void operator=(const BindingExpr<Ts...>& expr) const { expr.bindTo(*this); }
 
-    template <typename... Args> auto c(Args&&... args) const
+    template <typename... Args> auto i(Args&&... args) const
     {
-        return makeBindingExpr(*this).c(std::forward<Args>(args)...);
+        return makeBindingExpr(*this).i(std::forward<Args>(args)...);
     }
 
     template <typename F, typename... Args> auto m(F f, Args&&... args) const

@@ -110,7 +110,7 @@ expr.bindTo([](int value) { /* ... */ });
 | `static_cast`      | nwidget::static_cast_      |
 | `reinterpret_cast` | nwidget::reinterpret_cast_ |
 | QString::asprintf  | nwidget::asprintf_         |
-| func(...)          | nwidget::call(func, ...)   |
+| func(...)          | nwidget::invoke(func, ...) |
 | A ? B : C          | nwidget::cond(A, B, C)     |
 | Type(...)          | nwidget::constructor(...)  |
 | obj.member         | expr.m(&Obj::member)       |

@@ -24,7 +24,7 @@ MCDayNightSwitchButton::MCDayNightSwitchButton(QWidget* parent)
 
         Behavior::on(button.progress(), new SpringAnimation<qreal>(spring{2.5}, damping{0.3}, epsilon{0.025}));
 
-        call(
+        invoke(
             [](Qt::CheckState s) -> qreal
             {
                 switch (s) {

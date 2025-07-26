@@ -34,9 +34,9 @@
 #ifndef NWIDGET_BINDING_H
 #define NWIDGET_BINDING_H
 
-#include <QSignalMapper>
-
 #include "metaobject.h"
+
+#include <QSignalMapper>
 
 namespace nwidget {
 
@@ -71,9 +71,6 @@ template<typename T> constexpr bool is_binding_expr_v = is_binding_expr<T>::valu
 template<typename... T> struct is_binding_expr<BindingExpr<T...>> : std::true_type {};
 
 // clang-format on
-
-struct ActionMember;
-struct ActionInvoke;
 
 } // namespace impl
 
@@ -142,19 +139,12 @@ public:
     {
     }
 
-    template <typename F, typename... As, std::enable_if_t<std::is_member_object_pointer<F>::value, bool> = true>
-    auto m(F f, As&&... args)
-    {
-        return makeBindingExpr<impl::ActionMember>(*this, f, std::forward<As>(args)...);
-    }
+    template <typename... As> auto i(As&&... args) const { return invoke(*this, std::forward<As>(args)...); }
 
-    template <typename F, typename... As, std::enable_if_t<std::is_member_function_pointer<F>::value, bool> = true>
-    auto m(F f, As&&... args)
+    template <typename F, typename... As> auto m(F f, As&&... args)
     {
-        return makeBindingExpr<impl::ActionInvoke>(*this, f, std::forward<As>(args)...);
+        return invoke(f, *this, std::forward<As>(args)...);
     }
-
-    template <typename... As> auto c(As&&... args) const { return call(*this, std::forward<As>(args)...); }
 
     auto eval() const
     {
@@ -244,37 +234,39 @@ template<typename To> struct ActionReinterpretCast { template<typename From> aut
 
 template<typename T> struct ActionConstructor { template<typename ...Args> T operator()(Args&&... args){ return T(std::forward<Args>(args)...); } };
 struct ActionCond { template<typename A, typename B, typename C> auto operator()(A&& a, B&& b, C&& c) { return a ? b : c; } };
-struct ActionCall { template<typename F, typename ...Args> auto operator()(F func, Args&&... args) { return func(std::forward<Args>(args)...); } };
 
 // clang-format on
 
-struct ActionMember
-{
-    template <class Class, typename M, std::enable_if_t<std::is_pointer<Class>::value, bool> = true>
-    auto operator()(Class&& obj, M mem)
-    {
-        return obj->mem;
-    }
-
-    template <class Class, typename M, std::enable_if_t<!std::is_pointer<Class>::value, bool> = true>
-    auto operator()(Class&& obj, M mem)
-    {
-        return obj.*mem;
-    }
-};
-
 struct ActionInvoke
 {
-    template <class Class, typename F, typename... Args, std::enable_if_t<std::is_pointer<Class>::value, bool> = true>
-    auto operator()(Class&& obj, F fn, Args&&... args)
+    template <typename F, typename C, std::enable_if_t<std::is_member_object_pointer<F>::value, bool> = true>
+    auto operator()(F fn, C&& obj) const -> decltype(obj->*fn)
+    {
+        return obj->*fn;
+    }
+
+    template <typename F, typename C, std::enable_if_t<std::is_member_object_pointer<F>::value, bool> = true>
+    auto operator()(F fn, C&& obj) const -> decltype(obj.*fn)
+    {
+        return obj.*fn;
+    }
+
+    template <typename F, typename C, typename... Args>
+    auto operator()(F fn, C&& obj, Args&&... args) const -> decltype((obj->*fn)(std::forward<Args>(args)...))
     {
         return (obj->*fn)(std::forward<Args>(args)...);
     }
 
-    template <class Class, typename F, typename... Args, std::enable_if_t<!std::is_pointer<Class>::value, bool> = true>
-    auto operator()(Class&& obj, F fn, Args&&... args)
+    template <typename F, typename C, typename... Args>
+    auto operator()(F fn, C&& obj, Args&&... args) const -> decltype((obj.*fn)(std::forward<Args>(args)...))
     {
         return (obj.*fn)(std::forward<Args>(args)...);
+    }
+
+    template <typename F, typename... Args>
+    auto operator()(F fn, Args&&... args) const -> decltype(fn(std::forward<Args>(args)...))
+    {
+        return fn(std::forward<Args>(args)...);
     }
 };
 
@@ -288,7 +280,7 @@ template<typename To, typename From> auto reinterpret_cast_(From&& from) { retur
 
 template<typename A, typename B, typename C> auto cond(const A& a, const B& b, const C& c) { return makeBindingExpr<impl::ActionCond>(a, b, c); }
 
-template<typename F, typename ...Args> auto call(F func, Args&&... args) { return makeBindingExpr<impl::ActionCall>(func, std::forward<Args>(args)...); }
+template<typename F, typename ...Args> auto invoke(F func, Args&&... args) { return makeBindingExpr<impl::ActionInvoke>(func, std::forward<Args>(args)...); }
 
 template<typename T, typename ...Args> auto constructor(Args&&... args) { return makeBindingExpr<impl::ActionConstructor<T>>(std::forward<Args>(args)...); }
 
@@ -296,7 +288,7 @@ template<typename T, typename ...Args> auto constructor(Args&&... args) { return
 
 template <typename... Args> auto asprintf_(const char* cformat, const Args&... args)
 {
-    return call(QString::asprintf, cformat, args...);
+    return invoke(QString::asprintf, cformat, args...);
 }
 
 } // namespace nwidget

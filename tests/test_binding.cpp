@@ -208,7 +208,7 @@ private slots:
                 return &val;
             };
 
-            auto expr1 = *reinterpret_cast_<qreal*>(call(func, s1.value())) / 3;
+            auto expr1 = *reinterpret_cast_<qreal*>(invoke(func, s1.value())) / 3;
             auto expr2 = [&_s1]() { return *reinterpret_cast<qreal*>(func(_s1.value())) / 3; };
 
             QCOMPARE(expr1.eval(), expr2());
@@ -246,7 +246,7 @@ private slots:
 
         static const auto func = [](int a, int b) { return a + b; };
 
-        auto expr1 = call(func, s1.value(), s2.value());
+        auto expr1 = invoke(func, s1.value(), s2.value());
         auto expr2 = [&_s1, &_s2]() { return func(_s1.value(), _s2.value()); };
 
         QCOMPARE(expr1.eval(), expr2());
@@ -334,7 +334,7 @@ private slots:
             auto s1 = MetaObject<>::from(&_s1);
             auto s2 = MetaObject<>::from(&_s2);
 
-            auto expr1 = obj.value().c(s1.value(), s2.value());
+            auto expr1 = obj.value().i(s1.value(), s2.value());
             auto expr2 = [&_obj, &_s1, &_s2]() { return _obj.value()(_s1.value(), _s2.value()); };
 
             QCOMPARE(expr1.eval(), expr2());
@@ -527,7 +527,7 @@ private slots:
             auto s3  = MetaObject<>::from(&_s3);
             auto obj = MetaObject<>::from(&_obj);
 
-            s3.value() = obj.value().c(s1.value(), s2.value());
+            s3.value() = obj.value().i(s1.value(), s2.value());
             auto expr  = [&_obj, &_s1, &_s2]() { return _obj.value()(_s1.value(), _s2.value()); };
 
             QCOMPARE(s3.value().get(), expr());

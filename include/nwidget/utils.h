@@ -1,6 +1,7 @@
 #ifndef NWIDGET_UTILS_H
 #define NWIDGET_UTILS_H
 
+#include <functional>
 #include <tuple>
 #include <type_traits>
 
