@@ -132,8 +132,6 @@ template <typename Action, typename... Args> class BindingExpr<Action, Args...>
 public:
     using Type = decltype(Action{}(BindingExpr<>::eval(std::declval<Args>())...));
 
-    constexpr static bool isObservable = impl::is_observable_v<BindingExpr<Action, Args...>>;
-
     explicit BindingExpr(const Args&... args)
         : args(args...)
     {
@@ -196,7 +194,7 @@ private:
         if (receiver)
             binding = receiver->template findChild<QSignalMapper*>(name, Qt::FindDirectChildrenOnly);
 
-        if (!isObservable) {
+        if (!impl::is_observable_v<BindingExpr>) {
             if (binding)
                 binding->disconnect();
             slot();
