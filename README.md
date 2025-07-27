@@ -1,6 +1,8 @@
 # nwidget2
 
-nwidget is a `header-only` library that provides `property binding`, `declarative syntax` `animation` extension for QWidget. It is designed based on the principle of low Invasive and can be introduced without modifying existing code.
+nwidget is a `header-only` C++14 library that provides `property binding`, `declarative syntax` `animation` extension for QWidget.
+
+It is designed based on the principle of low invasive, can be integrated without modifying existing code.
 
 [How to use](./docs/How-to-use.md)
 
@@ -94,6 +96,14 @@ QLayout* layout = FormLayout {
 | builders.h    | Builder specialization for Qt classes, include after Qt headers  |
 | metaobject.h  | Template Meta-Object System                                      |
 | metaobjects.h | Template specialization for Qt classes, include after Qt headers |
+
+## Compatibility
+
+I tested it in the following environment.
+
+| OS      | Qt                   | Compiler              |
+| ------- | -------------------- | --------------------- |
+| Windows | 5.12.4, 6.4.3, 6.8.0 | MSVC 2017, 2019, 2022 |
 
 ## Examples
 
