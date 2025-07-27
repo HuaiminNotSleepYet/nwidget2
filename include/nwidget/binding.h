@@ -95,6 +95,12 @@ public:
     {
     }
 
+    template <typename T, std::enable_if_t<std::is_base_of<QObject, T>::value, bool> = true>
+    static void bind(QSignalMapper* binding, T* obj)
+    {
+        QObject::connect(obj, &QObject::destroyed, binding, [binding]() { delete binding; });
+    }
+
     template <typename T, std::enable_if_t<impl::is_meta_property_v<T> && T::hasNotifySignal, bool> = true>
     static void bind(QSignalMapper* binding, T prop)
     {

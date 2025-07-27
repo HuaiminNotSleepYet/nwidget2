@@ -416,7 +416,7 @@ private slots:
         auto s1 = MetaObject<>::from(&_s1);
         auto s2 = MetaObject<>::from(&_s2);
 
-        // remove by object destroy
+        // remove by MetaProperty destroy
         {
             auto s3 = MetaObject<>::from(new QSlider);
 
@@ -427,6 +427,22 @@ private slots:
             QCOMPARE(s1.value().get(), 10 + 20);
 
             delete s3.object_();
+
+            s2.value() = 20;
+            QCOMPARE(s1.value().get(), 10 + 20);
+        }
+
+        // remove by QObject destroy
+        {
+            auto s3 = new QSlider;
+
+            s1.value() = s2.value() + invoke(&QSlider::value, s3);
+
+            s3->setValue(20);
+            s2.value() = 10;
+            QCOMPARE(s1.value().get(), 10 + 20);
+
+            delete s3;
 
             s2.value() = 20;
             QCOMPARE(s1.value().get(), 10 + 20);
