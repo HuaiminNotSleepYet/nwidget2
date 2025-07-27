@@ -21,8 +21,10 @@ jobs:
     strategy:
       matrix:
         os: [windows-latest]
-        qt_ver: [6.4.3, 6.8.0]
+        qt_ver: [5.12.4, 6.4.3, 6.8.0]
         include:
+          - qt_ver: 5.12.4
+            qt_arch: win64_msvc2017_64
           - qt_ver: 6.4.3
             qt_arch: win64_msvc2019_64
           - qt_ver: 6.8.0
