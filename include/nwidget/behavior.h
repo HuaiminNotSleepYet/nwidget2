@@ -119,19 +119,19 @@ public:
 
     template <typename MetaProp, typename Anim> static void on(Behavior* b, MetaProp prop, Anim* anim)
     {
-        static_assert(MetaProp::isReadable);
-        static_assert(MetaProp::isWritable);
-        static_assert(std::is_base_of<Animation, Anim>::value);
+        static_assert(MetaProp::isReadable, "");
+        static_assert(MetaProp::isWritable, "");
+        static_assert(std::is_base_of<Animation, Anim>::value, "");
         static_assert(std::is_same<typename MetaProp::Type, typename Anim::Type>::value);
         on(b, prop.object(), erase<MetaProp>(), anim, prop.get());
     }
 
     template <typename MetaProp, typename Anim> static void on(MetaProp prop, Anim* anim)
     {
-        static_assert(MetaProp::isReadable);
-        static_assert(MetaProp::isWritable);
-        static_assert(std::is_base_of<Animation, Anim>::value);
-        static_assert(std::is_same<typename MetaProp::Type, typename Anim::Type>::value);
+        static_assert(MetaProp::isReadable, "");
+        static_assert(MetaProp::isWritable, "");
+        static_assert(std::is_base_of<Animation, Anim>::value, "");
+        static_assert(std::is_same<typename MetaProp::Type, typename Anim::Type>::value, "");
         on(findOrCreateBehavior(prop.object()), prop.object(), erase<MetaProp>(), anim, prop.get());
     }
 
@@ -213,7 +213,7 @@ public:
 
     template <typename MetaProp> static auto animated(MetaProp prop)
     {
-        static_assert(std::is_base_of<QObject, typename MetaProp::Class>::value);
+        static_assert(std::is_base_of<QObject, typename MetaProp::Class>::value, "");
         return animated(findOrCreateBehavior(prop.object()), prop);
     }
 

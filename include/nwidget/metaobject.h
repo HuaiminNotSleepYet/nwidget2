@@ -294,8 +294,8 @@ public:                                                                         
 namespace impl {
 
 // clang-format off
-template <typename T, typename = void> struct has_metaobject_spec                                                  : std::false_type {};
-template <typename T>                  struct has_metaobject_spec<T, std::void_t<decltype(sizeof(MetaObject<T>))>> : std::true_type  {};
+template <typename T, typename = void> struct has_metaobject_spec                                                   : std::false_type {};
+template <typename T>                  struct has_metaobject_spec<T, impl::void_t<decltype(sizeof(MetaObject<T>))>> : std::true_type  {};
 template <typename T> constexpr bool has_metaobject_spec_v = has_metaobject_spec<T>::value;
 // clang-format on
 
@@ -313,7 +313,7 @@ public:
     MetaObject()
         : MetaObject<impl::closest_declared_metaobject_class_t<C>>(impl::create_if_default_constructible<C>())
     {
-        static_assert(!std::is_abstract<C>::value && std::is_default_constructible<C>::value);
+        static_assert(!std::is_abstract<C>::value && std::is_default_constructible<C>::value, "");
     }
 
     MetaObject(C* obj)

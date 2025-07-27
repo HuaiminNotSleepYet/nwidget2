@@ -190,8 +190,8 @@ public:                                                                         
 namespace impl {
 
 // clang-format off
-template <typename T, typename = void> struct has_builder_spec                                                    : std::false_type {};
-template <typename T>                  struct has_builder_spec<T, std::void_t<decltype(sizeof(Builder<T, int>))>> : std::true_type  {};
+template <typename T, typename = void> struct has_builder_spec                                                     : std::false_type {};
+template <typename T>                  struct has_builder_spec<T, impl::void_t<decltype(sizeof(Builder<T, int>))>> : std::true_type  {};
 template <typename T> constexpr bool has_builder_spec_v = has_builder_spec<T>::value;
 // clang-format on
 

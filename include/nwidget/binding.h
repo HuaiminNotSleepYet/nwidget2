@@ -292,11 +292,13 @@ template <typename... Args> auto asprintf_(const char* cformat, const Args&... a
 } // namespace nwidget
 
 #define N_IMPL_ACTION_BE(NAME, OP)                                                                                     \
-    namespace nwidget::impl {                                                                                          \
+    namespace nwidget {                                                                                                \
+    namespace impl {                                                                                                   \
     struct Action##NAME                                                                                                \
     {                                                                                                                  \
         template <typename L, typename R> auto operator()(L&& l, R&& r) const { return l OP r; }                       \
     };                                                                                                                 \
+    }                                                                                                                  \
     }                                                                                                                  \
                                                                                                                        \
     template <typename L,                                                                                              \
@@ -333,11 +335,13 @@ N_IMPL_ACTION_BE(BitLShift, <<)
 N_IMPL_ACTION_BE(BitRShift, >>)
 
 #define N_IMPL_ACTION_UE(NAME, OP)                                                                                     \
-    namespace nwidget::impl {                                                                                          \
+    namespace nwidget {                                                                                                \
+    namespace impl {                                                                                                   \
     struct Action##NAME                                                                                                \
     {                                                                                                                  \
         template <typename T> auto operator()(T&& val) { return OP val; }                                              \
     };                                                                                                                 \
+    }                                                                                                                  \
     }                                                                                                                  \
                                                                                                                        \
     template <typename T,                                                                                              \

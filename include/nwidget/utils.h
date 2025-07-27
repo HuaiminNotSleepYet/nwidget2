@@ -42,6 +42,10 @@ namespace impl {
 
 /* ---------------------------------------------- For C++ Versions < 17 --------------------------------------------- */
 
+// void_t
+
+template <typename...> using void_t = void;
+
 // fold expr
 
 template <typename Op, typename...> struct fold;
