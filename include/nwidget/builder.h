@@ -182,6 +182,19 @@ public:                                                                         
         return self();                                                                                                 \
     }
 
+#define N_BUILDER_SIGNALX(NAME, SIGNAL_, TYPE)                                                                         \
+    template <typename Func> Self& NAME(Func func, Qt::ConnectionType type = Qt::AutoConnection)                       \
+    {                                                                                                                  \
+        QObject::connect(object_(), QOverload<TYPE>::of(&Class::SIGNAL_), object_(), func, type);                      \
+        return self();                                                                                                 \
+    }                                                                                                                  \
+    template <typename Rece, typename Func>                                                                            \
+    Self& NAME(Rece* receiver, Func func, Qt::ConnectionType type = Qt::AutoConnection)                                \
+    {                                                                                                                  \
+        QObject::connect(object_(), QOverload<TYPE>::of(&Class::SIGNAL_), receiver, func, type);                       \
+        return self();                                                                                                 \
+    }
+
 #define N_DECLARE_BUILDER(TYPE) TYPE* nwidget_builder(TYPE* obj);
 
 namespace impl {

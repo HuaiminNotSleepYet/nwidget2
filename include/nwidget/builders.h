@@ -1371,7 +1371,7 @@ template <typename Self> class nwidget::Builder<QComboBox, Self> : public nwidge
     N_SINCE(5, 14, N_BUILDER_SIGNAL(onTextActivated, textActivated))
     N_BUILDER_SIGNAL(onHighlighted, highlighted)
     N_SINCE(5, 14, N_BUILDER_SIGNAL(onTextHighlighted, textHighlighted))
-    N_BUILDER_SIGNAL(onCurrentIndexChanged, currentIndexChanged)
+    N_BUILDER_SIGNALX(onCurrentIndexChanged, currentIndexChanged, int)
     N_BUILDER_SIGNAL(onCurrentTextChanged, currentTextChanged)
     N_END_BUILDER_SETTER
 };
