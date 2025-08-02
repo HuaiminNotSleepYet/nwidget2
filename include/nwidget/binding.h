@@ -83,7 +83,6 @@ BindingExpr<Action, std::decay_t<Args>...> makeBindingExpr(Args&&... args)
 
 template <> class BindingExpr<>
 {
-public:
     template <typename...> friend class BindingExpr;
 
     template <typename T> static auto    eval(const T& val) { return val; }
@@ -123,11 +122,10 @@ public:
     }
 
     // clang-format off
-    template <typename E, typename C, typename F> static auto makeFunctor(const E& e, C*  , const F& f, std::enable_if_t< impl::is_meta_property_v<F>                                                          , bool> = true) { return [e,    f]() { f.set(e.eval()); }; }
-    template <typename E, typename C, typename F> static auto makeFunctor(const E&  , C*  , const F& f, std::enable_if_t<!impl::is_meta_property_v<F> && std::is_void<decltype((void)f(        )      )>::value, bool> = true) { return [      f]() { f(        ); }; }
-    template <typename E, typename C, typename F> static auto makeFunctor(const E& e, C*  , const F& f, std::enable_if_t<!impl::is_meta_property_v<F> && std::is_void<decltype((void)f(e.eval())      )>::value, bool> = true) { return [e,    f]() { f(e.eval()); }; }
-    template <typename E, typename C, typename F> static auto makeFunctor(const E&  , C* r, const F& f, std::enable_if_t<!impl::is_meta_property_v<F> && std::is_void<decltype((void)(r->*f)(        ))>::value, bool> = true) { return [   r, f]() { (r->*f)(        ); }; }
-    template <typename E, typename C, typename F> static auto makeFunctor(const E& e, C* r, const F& f, std::enable_if_t<!impl::is_meta_property_v<F> && std::is_void<decltype((void)(r->*f)(e.eval()))>::value, bool> = true) { return [e, r, f]() { (r->*f)(e.eval()); }; }
+    template <typename E,             typename F> static auto invoke(const E&  ,       const F& f) -> decltype(f(        ))       { return f(        ); }
+    template <typename E,             typename F> static auto invoke(const E& e,       const F& f) -> decltype(f(e.eval()))       { return f(e.eval()); }
+    template <typename E, typename C, typename F> static auto invoke(const E&  , C* r, const F& f) -> decltype((r->*f)(        )) { return (r->*f)(        ); }
+    template <typename E, typename C, typename F> static auto invoke(const E& e, C* r, const F& f) -> decltype((r->*f)(e.eval())) { return (r->*f)(e.eval()); }
     // clang-format on
 };
 
@@ -140,7 +138,7 @@ public:
 
     explicit BindingExpr(const Args&... args) : args(args...) {}
 
-    template <typename... As> auto i(As&&... args) const { return invoke(*this, std::forward<As>(args)...); }
+    template <typename... As> auto operator()(As&&... args) const { return invoke(*this, std::forward<As>(args)...); }
 
     template <typename F, typename... As> auto m(F f, As&&... args)
     {
@@ -154,35 +152,46 @@ public:
 
     template <typename... T> auto bindTo(MetaProperty<T...> prop, Qt::ConnectionType type = Qt::AutoConnection) const
     {
-        return bindTo(prop.object(), prop, MetaProperty<T...>::Info::bindingName(), type);
+        return bindTo(
+            prop.object(),
+            [expr = *this, prop]() { prop.set(expr.eval()); },
+            MetaProperty<T...>::Info::bindingName(),
+            type);
     }
 
-    template <typename Func> auto bindTo(Func func) const
-    {
-        static const QString bindingName =
+    template <typename Func> auto bindTo(Func func) const { return bindTo((QObject*)nullptr, func); }
+
 #ifdef Q_CC_MSVC
-            QStringLiteral("nwidget_binding_to_func::") + __FUNCSIG__;
+#define FUNCSIG __FUNCSIG__
 #elif Q_CC_GNU
-            QStringLiteral("nwidget_binding_to_func::") + __PRETTY_FUNCTION__;
+#define FUNCSIG __PRETTY_FUNCTION__
 #else
-            QStringLiteral("nwidget_binding_to_func");
+#define FUNCSIG ""
 #endif
-        return bindTo((QObject*)nullptr, func, bindingName, Qt::DirectConnection);
-    }
 
-    template <typename Class, typename Func>
+    template <typename Class,
+              typename Func,
+              std::enable_if_t<std::is_member_function_pointer<Func>::value, bool> = true>
     auto bindTo(Class* receiver, Func func, Qt::ConnectionType type = Qt::AutoConnection) const
     {
-        static const QString bindingName =
-#ifdef Q_CC_MSVC
-            QStringLiteral("nwidget_binding_to_func::") + __FUNCSIG__;
-#elif Q_CC_GNU
-            QStringLiteral("nwidget_binding_to_func::") + __PRETTY_FUNCTION__;
-#else
-            QStringLiteral("nwidget_binding_to_func");
-#endif
-        return bindTo(receiver, func, bindingName, Qt::DirectConnection);
+        static const QString bindingName = QStringLiteral("nwidget_binding_to_mem_func::") + FUNCSIG;
+        return bindTo(
+            receiver,
+            [expr = *this, receiver, func]() { BindingExpr<>::invoke(expr, receiver, func); },
+            bindingName,
+            type);
     }
+
+    template <typename Class,
+              typename Func,
+              std::enable_if_t<!std::is_member_function_pointer<Func>::value, bool> = true>
+    auto bindTo(Class* receiver, Func func, Qt::ConnectionType type = Qt::AutoConnection) const
+    {
+        static const QString bindingName = QStringLiteral("nwidget_binding_to_func::") + FUNCSIG;
+        return bindTo(receiver, [expr = *this, func]() { BindingExpr<>::invoke(expr, func); }, bindingName, type);
+    }
+
+#undef FUNCSIG
 
 private:
     std::tuple<Args...> args;
@@ -190,8 +199,6 @@ private:
     template <typename Class, typename Func>
     auto bindTo(Class* receiver, Func func, const QString& name, Qt::ConnectionType type = Qt::AutoConnection) const
     {
-        const auto slot = BindingExpr<>::makeFunctor(*this, receiver, func);
-
         QSignalMapper* binding = nullptr;
 
         if (receiver)
@@ -200,7 +207,7 @@ private:
         if (!impl::is_observable_v<BindingExpr>) {
             if (binding)
                 binding->disconnect();
-            slot();
+            func();
             return *this;
         }
 
@@ -214,12 +221,12 @@ private:
         BindingExpr<>::bind(binding, *this);
 
 #if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
-        QObject::connect(binding, &QSignalMapper::mappedInt, binding, slot, type);
+        QObject::connect(binding, &QSignalMapper::mappedInt, binding, func, type);
 #else
-        QObject::connect(binding, QOverload<int>::of(&QSignalMapper::mapped), binding, slot, type);
+        QObject::connect(binding, QOverload<int>::of(&QSignalMapper::mapped), binding, func, type);
 #endif
 
-        slot();
+        func();
 
         return *this;
     }
