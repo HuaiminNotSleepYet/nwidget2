@@ -169,7 +169,7 @@ public:                                                                         
 #define N_BEGIN_BUILDER_SIGNAL
 #define N_END_BUILDER_SIGNAL
 
-#define N_BUILDER_SIGNAL(NAME, SIGNAL_)                                                                                \
+#define N_IMPL_BUILDER_SIGNAL_2(NAME, SIGNAL_)                                                                         \
     template <typename Func> Self& NAME(Func func, Qt::ConnectionType type = Qt::AutoConnection)                       \
     {                                                                                                                  \
         QObject::connect(object_(), &Class::SIGNAL_, object_(), func, type);                                           \
@@ -182,7 +182,7 @@ public:                                                                         
         return self();                                                                                                 \
     }
 
-#define N_BUILDER_SIGNALX(NAME, SIGNAL_, TYPE)                                                                         \
+#define N_IMPL_BUILDER_SIGNAL_3(NAME, SIGNAL_, TYPE)                                                                   \
     template <typename Func> Self& NAME(Func func, Qt::ConnectionType type = Qt::AutoConnection)                       \
     {                                                                                                                  \
         QObject::connect(object_(), QOverload<TYPE>::of(&Class::SIGNAL_), object_(), func, type);                      \
@@ -194,6 +194,8 @@ public:                                                                         
         QObject::connect(object_(), QOverload<TYPE>::of(&Class::SIGNAL_), receiver, func, type);                       \
         return self();                                                                                                 \
     }
+
+#define N_BUILDER_SIGNAL(...) N_IMPL_OVERLOAD(N_IMPL_BUILDER_SIGNAL_, __VA_ARGS__)
 
 #define N_DECLARE_BUILDER(TYPE) TYPE* nwidget_builder(TYPE* obj);
 
