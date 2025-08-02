@@ -102,38 +102,18 @@ public:
     {
     }
 
-    template <typename Class>
-    LayoutItem(MetaObject<Class> metaobj)
-        : LayoutItem(metaobj.object_())
-    {
-    }
+    template <typename Class> LayoutItem(MetaObject<Class> metaobj) : LayoutItem(metaobj.object_()) {}
 
-    template <typename Class>
-    LayoutItem(Builder<Class> builder)
-        : LayoutItem(builder.object_())
-    {
-    }
+    template <typename Class> LayoutItem(Builder<Class> builder) : LayoutItem(builder.object_()) {}
 
-    template <typename It, typename Fn>
-    LayoutItem(ItemGenerator<It, Fn> g)
-        : BuilderItem<T>(this, g)
-    {
-    }
+    template <typename It, typename Fn> LayoutItem(ItemGenerator<It, Fn> g) : BuilderItem<T>(this, g) {}
 
 protected:
     void* item;
 
-    explicit LayoutItem(typename BuilderItem<T>::Func f)
-        : BuilderItem<T>(f)
-        , item(nullptr)
-    {
-    }
+    explicit LayoutItem(typename BuilderItem<T>::Func f) : BuilderItem<T>(f), item(nullptr) {}
 
-    LayoutItem(void* item, typename BuilderItem<T>::Func f)
-        : BuilderItem<T>(f)
-        , item(item)
-    {
-    }
+    LayoutItem(void* item, typename BuilderItem<T>::Func f) : BuilderItem<T>(f), item(item) {}
 };
 } // namespace nwidget
 
@@ -1034,10 +1014,7 @@ class ToolBoxItem : public BuilderItem<QToolBox>
 public:
     using BuilderItem::BuilderItem;
 
-    ToolBoxItem(const QString& text, QWidget* widget)
-        : ToolBoxItem({}, text, widget)
-    {
-    }
+    ToolBoxItem(const QString& text, QWidget* widget) : ToolBoxItem({}, text, widget) {}
 
     ToolBoxItem(const QIcon& icon, const QString& text, QWidget* widget)
         : BuilderItem(
@@ -1052,11 +1029,7 @@ public:
     {
     }
 
-    template <typename It, typename Fn>
-    ToolBoxItem(ItemGenerator<It, Fn> g)
-        : BuilderItem(this, g)
-    {
-    }
+    template <typename It, typename Fn> ToolBoxItem(ItemGenerator<It, Fn> g) : BuilderItem(this, g) {}
 
 private:
     QIcon    icon;
@@ -1097,11 +1070,7 @@ public:
     {
     }
 
-    template <typename It, typename Fn>
-    SplitterItem(ItemGenerator<It, Fn> g)
-        : BuilderItem(this, g)
-    {
-    }
+    template <typename It, typename Fn> SplitterItem(ItemGenerator<It, Fn> g) : BuilderItem(this, g) {}
 
 private:
     QWidget* item;
@@ -1347,16 +1316,9 @@ namespace nwidget {
 class ComboBoxItem : public BuilderItem<QComboBox>
 {
 public:
-    template <typename T>
-    ComboBoxItem(T&& text)
-        : ComboBoxItem({}, std::forward<T>(text), {})
-    {
-    }
+    template <typename T> ComboBoxItem(T&& text) : ComboBoxItem({}, std::forward<T>(text), {}) {}
 
-    ComboBoxItem(const QString& text, const QVariant& userData)
-        : ComboBoxItem({}, text, userData)
-    {
-    }
+    ComboBoxItem(const QString& text, const QVariant& userData) : ComboBoxItem({}, text, userData) {}
 
     ComboBoxItem(const QIcon& icon, const QString& text, const QVariant& userData = {})
         : BuilderItem(
@@ -1371,11 +1333,7 @@ public:
     {
     }
 
-    template <typename It, typename Fn>
-    ComboBoxItem(ItemGenerator<It, Fn> g)
-        : BuilderItem(this, g)
-    {
-    }
+    template <typename It, typename Fn> ComboBoxItem(ItemGenerator<It, Fn> g) : BuilderItem(this, g) {}
 
 private:
     QIcon    icon;
@@ -1538,23 +1496,14 @@ public:
     {
     }
 
-    template <typename Class, typename Self>
-    MenuItem(const Builder<Class, Self>& builder)
-        : MenuItem(builder.object_())
+    template <typename Class, typename Self> MenuItem(const Builder<Class, Self>& builder) : MenuItem(builder.object_())
     {
     }
 
     enum class separator { tag };
-    MenuItem(separator)
-        : BuilderItem([](const BuilderItem* item, QMenu* m) { m->addSeparator(); })
-    {
-    }
+    MenuItem(separator) : BuilderItem([](const BuilderItem* item, QMenu* m) { m->addSeparator(); }) {}
 
-    template <typename It, typename Fn>
-    MenuItem(ItemGenerator<It, Fn> g)
-        : BuilderItem(this, g)
-    {
-    }
+    template <typename It, typename Fn> MenuItem(ItemGenerator<It, Fn> g) : BuilderItem(this, g) {}
 
 private:
     QObject* item;
@@ -1602,11 +1551,7 @@ public:
     {
     }
 
-    template <typename It, typename Fn>
-    MenuBarItem(ItemGenerator<It, Fn> g)
-        : BuilderItem(this, g)
-    {
-    }
+    template <typename It, typename Fn> MenuBarItem(ItemGenerator<It, Fn> g) : BuilderItem(this, g) {}
 
 private:
     QObject* item;
@@ -1664,10 +1609,7 @@ class TabBarItem : public BuilderItem<QTabBar>
 public:
     using BuilderItem::BuilderItem;
 
-    TabBarItem(const QString& text)
-        : TabBarItem({}, text)
-    {
-    }
+    TabBarItem(const QString& text) : TabBarItem({}, text) {}
 
     TabBarItem(const QIcon& icon, const QString& text)
         : BuilderItem(
@@ -1681,11 +1623,7 @@ public:
     {
     }
 
-    template <typename It, typename Fn>
-    TabBarItem(ItemGenerator<It, Fn> g)
-        : BuilderItem(this, g)
-    {
-    }
+    template <typename It, typename Fn> TabBarItem(ItemGenerator<It, Fn> g) : BuilderItem(this, g) {}
 
 private:
     QIcon   icon;
@@ -1752,10 +1690,7 @@ class TabWidgetItem : public BuilderItem<QTabWidget>
 public:
     using BuilderItem::BuilderItem;
 
-    TabWidgetItem(const QString& text, QWidget* page)
-        : TabWidgetItem({}, text, page)
-    {
-    }
+    TabWidgetItem(const QString& text, QWidget* page) : TabWidgetItem({}, text, page) {}
 
     TabWidgetItem(const QString& icon, const QString& text, QWidget* page)
         : BuilderItem(
@@ -1770,11 +1705,7 @@ public:
     {
     }
 
-    template <typename It, typename Fn>
-    TabWidgetItem(ItemGenerator<It, Fn> g)
-        : BuilderItem(this, g)
-    {
-    }
+    template <typename It, typename Fn> TabWidgetItem(ItemGenerator<It, Fn> g) : BuilderItem(this, g) {}
 
 private:
     QIcon    icon;

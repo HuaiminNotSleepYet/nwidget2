@@ -8,10 +8,7 @@
 struct MyValue
 {
     MyValue() {}
-    explicit MyValue(qreal v)
-        : v(v)
-    {
-    }
+    explicit MyValue(qreal v) : v(v) {}
 
     qreal v = 0;
 

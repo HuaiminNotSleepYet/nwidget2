@@ -90,11 +90,7 @@ public:
     static constexpr auto notify() { return N{}(); }
 
 public:
-    explicit MetaProperty(C* obj)
-        : o(obj)
-    {
-        Q_ASSERT(o);
-    }
+    explicit MetaProperty(C* obj) : o(obj) { Q_ASSERT(o); }
 
     MetaProperty(const MetaProperty&) = default;
     MetaProperty(MetaProperty&&)      = default;
@@ -258,16 +254,8 @@ public:                                                                         
     N_IMPL_OBJECT(CLASS)                                                                                               \
 public:                                                                                                                \
     using Super = MetaObject<void>;                                                                                    \
-    MetaObject()                                                                                                       \
-        : o(impl::create_if_default_constructible<Class>())                                                            \
-    {                                                                                                                  \
-        Q_ASSERT(o);                                                                                                   \
-    }                                                                                                                  \
-    MetaObject(Class* obj)                                                                                             \
-        : o(obj)                                                                                                       \
-    {                                                                                                                  \
-        Q_ASSERT(o);                                                                                                   \
-    }                                                                                                                  \
+    MetaObject() : o(impl::create_if_default_constructible<Class>()) { Q_ASSERT(o); }                                  \
+    MetaObject(Class* obj) : o(obj) { Q_ASSERT(o); }                                                                   \
                                                                                                                        \
 protected:                                                                                                             \
     Class* o;
@@ -276,16 +264,8 @@ protected:                                                                      
     N_IMPL_OBJECT(CLASS)                                                                                               \
 public:                                                                                                                \
     using Super = MetaObject<SUPER>;                                                                                   \
-    MetaObject()                                                                                                       \
-        : Super(impl::create_if_default_constructible<Class>())                                                        \
-    {                                                                                                                  \
-        Q_ASSERT(o);                                                                                                   \
-    }                                                                                                                  \
-    MetaObject(Class* obj)                                                                                             \
-        : Super(obj)                                                                                                   \
-    {                                                                                                                  \
-        Q_ASSERT(this->o);                                                                                             \
-    }
+    MetaObject() : Super(impl::create_if_default_constructible<Class>()) { Q_ASSERT(o); }                              \
+    MetaObject(Class* obj) : Super(obj) { Q_ASSERT(this->o); }
 
 #define N_OBJECT(CLASS, ...) N_IMPL_CAT(N_IMPL_OBJECT_, N_IMPL_COUNT(__VA_ARGS__))(CLASS, __VA_ARGS__)
 
@@ -310,16 +290,12 @@ using closest_declared_metaobject_class_t =
 template <typename C> class MetaObject<C> : public MetaObject<impl::closest_declared_metaobject_class_t<C>>
 {
 public:
-    MetaObject()
-        : MetaObject<impl::closest_declared_metaobject_class_t<C>>(impl::create_if_default_constructible<C>())
+    MetaObject() : MetaObject<impl::closest_declared_metaobject_class_t<C>>(impl::create_if_default_constructible<C>())
     {
         static_assert(!std::is_abstract<C>::value && std::is_default_constructible<C>::value, "");
     }
 
-    MetaObject(C* obj)
-        : MetaObject<impl::closest_declared_metaobject_class_t<C>>(obj)
-    {
-    }
+    MetaObject(C* obj) : MetaObject<impl::closest_declared_metaobject_class_t<C>>(obj) {}
 };
 
 /* ------------------------------------------------------ Utils ----------------------------------------------------- */

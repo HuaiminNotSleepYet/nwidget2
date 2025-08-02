@@ -102,10 +102,7 @@ private:                                                                        
 public:                                                                                                                \
     using Class = CLASS;                                                                                               \
     Builder() {}                                                                                                       \
-    explicit Builder(Class* o)                                                                                         \
-        : Builder<typename MetaObject<Class>::Super::Class, Self>(o)                                                   \
-    {                                                                                                                  \
-    }                                                                                                                  \
+    explicit Builder(Class* o) : Builder<typename MetaObject<Class>::Super::Class, Self>(o) {}                         \
                                                                                                                        \
     /* Add trailing underscore to avoid duplication with possible prop name. */                                        \
     Class* object_() const { return self().o; }

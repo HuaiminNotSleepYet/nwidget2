@@ -138,10 +138,7 @@ template <typename Action, typename... Args> class BindingExpr<Action, Args...>
 public:
     using Type = decltype(Action{}(BindingExpr<>::eval(std::declval<Args>())...));
 
-    explicit BindingExpr(const Args&... args)
-        : args(args...)
-    {
-    }
+    explicit BindingExpr(const Args&... args) : args(args...) {}
 
     template <typename... As> auto i(As&&... args) const { return invoke(*this, std::forward<As>(args)...); }
 

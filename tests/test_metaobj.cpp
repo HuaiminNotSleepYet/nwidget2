@@ -123,7 +123,7 @@ struct TestReset
 
 template <typename...> class TestBuilder;
 
-} // namespace text
+} // namespace test
 } // namespace nwidget
 
 #include <nwidget/metaobjects.h>

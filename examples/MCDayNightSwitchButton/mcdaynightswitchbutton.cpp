@@ -8,8 +8,7 @@
 constexpr auto Radius = 32;
 constexpr auto Margin = 8;
 
-MCDayNightSwitchButton::MCDayNightSwitchButton(QWidget* parent)
-    : QAbstractButton(parent)
+MCDayNightSwitchButton::MCDayNightSwitchButton(QWidget* parent) : QAbstractButton(parent)
 {
     setCheckable(true);
     setFixedWidth(Radius * 2 * 3 + Margin * 4);

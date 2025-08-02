@@ -72,8 +72,7 @@ static QString highDpiScaleFactorRoundingPolicy()
     return result;
 }
 
-Gallery::Gallery(QWidget* parent)
-    : QDialog(parent)
+Gallery::Gallery(QWidget* parent) : QDialog(parent)
 {
     using namespace nwidget;
 
