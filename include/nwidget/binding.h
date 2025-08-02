@@ -139,6 +139,7 @@ public:
     explicit BindingExpr(const Args&... args) : args(args...) {}
 
     template <typename... As> auto operator()(As&&... args) const { return invoke(*this, std::forward<As>(args)...); }
+    template <typename I> auto     operator[](I&& v) const { return subscript(*this, std::forward<I>(v)); }
 
     template <typename F, typename... As> auto m(F f, As&&... args)
     {
@@ -278,6 +279,11 @@ struct ActionInvoke
     }
 };
 
+struct ActionSubscript
+{
+    template <typename T, typename I> auto operator()(T&& v, I&& i) const { return v[std::forward<I>(i)]; }
+};
+
 } // namespace impl
 
 // clang-format off
@@ -289,6 +295,8 @@ template<typename To, typename From> auto reinterpret_cast_(From&& from) { retur
 template<typename A, typename B, typename C> auto cond(const A& a, const B& b, const C& c) { return makeBindingExpr<impl::ActionCond>(a, b, c); }
 
 template<typename F, typename ...Args> auto invoke(F func, Args&&... args) { return makeBindingExpr<impl::ActionInvoke>(func, std::forward<Args>(args)...); }
+
+template<typename T, typename I> auto subscript(T&& v, I&& i) { return makeBindingExpr<impl::ActionSubscript>(std::forward<T>(v), std::forward<I>(i)); }
 
 template<typename T, typename ...Args> auto constructor(Args&&... args) { return makeBindingExpr<impl::ActionConstructor<T>>(std::forward<Args>(args)...); }
 

@@ -19,6 +19,7 @@ struct MyValue
     qreal baz(qreal val) const { return val + 456; }
 
     qreal operator()(qreal a, qreal b) const { return a + b; }
+    int   operator[](int v) const { return v; }
 };
 
 class MyObject : public QObject
@@ -250,6 +251,22 @@ private slots:
 
         s1.value() = 10;
         s2.value() = 20;
+        QCOMPARE(expr1.eval(), expr2());
+    }
+
+    void testSubscript()
+    {
+        MyObject _obj;
+        QSlider  _s;
+
+        auto obj = MetaObject<>::from(&_obj);
+        auto s   = MetaObject<>::from(&_s);
+
+        auto expr1 = obj.value()[s.value()];
+        auto expr2 = [&]() { return _obj.value()[_s.value()]; };
+
+        QCOMPARE(expr1.eval(), expr2());
+        s.value() = 20;
         QCOMPARE(expr1.eval(), expr2());
     }
 

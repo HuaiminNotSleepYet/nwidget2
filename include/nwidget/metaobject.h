@@ -137,6 +137,8 @@ public:
         return makeBindingExpr(*this)(std::forward<Args>(args)...);
     }
 
+    template <typename Idx> auto operator[](Idx&& v) const { return makeBindingExpr(*this)[std::forward<Idx>(v)]; }
+
     template <typename F, typename... Args> auto m(F f, Args&&... args) const
     {
         return makeBindingExpr(*this).m(f, std::forward<Args>(args)...);
