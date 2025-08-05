@@ -242,6 +242,7 @@ private:
 
 #define N_ITEM_BUILDER(ITEM)                                                                                           \
     explicit Builder(std::initializer_list<ITEM> items) { self().items_(items); }                                      \
+    template <typename It, typename Fn> explicit Builder(ItemGenerator<It, Fn> g) { self().items_({ITEM(g)}); }        \
                                                                                                                        \
     /* Add trailing underscore to avoid duplication with possible prop name. */                                        \
     Self& items_(std::initializer_list<ITEM> items)                                                                    \
@@ -249,7 +250,8 @@ private:
         for (const auto& item : items)                                                                                 \
             item.func(&item, object_());                                                                               \
         return self();                                                                                                 \
-    }
+    }                                                                                                                  \
+    template <typename It, typename Fn> Self items_(ItemGenerator<It, Fn> g) { return items_({ITEM(g)}); }
 
 template <typename It, typename Fn> struct ItemGenerator
 {
