@@ -258,6 +258,37 @@ private slots:
             l1->deleteLater();
             l2->deleteLater();
         }
+
+        // func(const T&)
+        {
+            std::array<bool, 4>       bools = {true, false, true, false};
+            std::array<QCheckBox*, 4> boxs  = {new QCheckBox, new QCheckBox, new QCheckBox, new QCheckBox};
+
+            QWidget w;
+            w.setLayout(VBoxLayout{ForEach(
+                impl::as_const(bools), [&](int index, const bool& b) { return CheckBox(boxs[index]).checked(b); })});
+
+            for (int i = 0; i < boxs.size(); ++i)
+                QCOMPARE(bools[i], boxs[i]->isChecked());
+        }
+
+        // func(T&)
+        {
+            std::array<bool, 4>       bools = {true, false, true, false};
+            std::array<QCheckBox*, 4> boxs  = {new QCheckBox, new QCheckBox, new QCheckBox, new QCheckBox};
+
+            QWidget w;
+            w.setLayout(
+                VBoxLayout{ForEach(bools,
+                                   [&](int index, bool& b)
+                                   { return CheckBox(boxs[index]).checked(b).onToggled([&](bool v) { b = v; }); })});
+
+            boxs[0]->setChecked(false);
+            boxs[3]->setChecked(true);
+
+            for (int i = 0; i < boxs.size(); ++i)
+                QCOMPARE(bools[i], boxs[i]->isChecked());
+        }
     }
 };
 

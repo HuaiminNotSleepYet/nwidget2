@@ -262,9 +262,12 @@ template <typename It, typename Fn> struct ItemGenerator
 
 namespace impl {
 // clang-format off
-template <typename T, typename Fn> auto invokeGeneratorFunc(int  , const T&  , Fn f) -> decltype(std::declval<Fn>()(                                      )) { return f(    ); }
-template <typename T, typename Fn> auto invokeGeneratorFunc(int  , const T& e, Fn f) -> decltype(std::declval<Fn>()(                     std::declval<T>())) { return f(   e); }
-template <typename T, typename Fn> auto invokeGeneratorFunc(int i, const T& e, Fn f) -> decltype(std::declval<Fn>()(std::declval<int>(), std::declval<T>())) { return f(i, e); }
+template <typename T, typename Fn> auto invokeGeneratorFunc(int  ,       T&  , Fn f) -> decltype(f(    )) { return f(    ); }
+template <typename T, typename Fn> auto invokeGeneratorFunc(int  ,       T& e, Fn f) -> decltype(f(   e)) { return f(   e); }
+template <typename T, typename Fn> auto invokeGeneratorFunc(int i,       T& e, Fn f) -> decltype(f(i, e)) { return f(i, e); }
+template <typename T, typename Fn> auto invokeGeneratorFunc(int  , const T&  , Fn f) -> decltype(f(    )) { return f(    ); }
+template <typename T, typename Fn> auto invokeGeneratorFunc(int  , const T& e, Fn f) -> decltype(f(   e)) { return f(   e); }
+template <typename T, typename Fn> auto invokeGeneratorFunc(int i, const T& e, Fn f) -> decltype(f(i, e)) { return f(i, e); }
 // clang-format on
 }; // namespace impl
 
@@ -327,11 +330,11 @@ template <typename It, typename Fn> auto ForEach(It begin, It end, Fn func, std:
 }
 
 // clang-format off
-template <typename T, typename Fn> auto ForEach(      T  n, Fn func, std::true_type  is_integral) { return ForEach(0         , n       , func, is_integral); }
-template <typename T, typename Fn> auto ForEach(const T& c, Fn func, std::false_type is_integral) { return ForEach(c.cbegin(), c.cend(), func, is_integral); }
+template <typename T, typename Fn> auto ForEach(T   n, Fn func, std::true_type  is_integral) { return ForEach(0        , n      , func, is_integral); }
+template <typename T, typename Fn> auto ForEach(T&& c, Fn func, std::false_type is_integral) { return ForEach(c.begin(), c.end(), func, is_integral); }
 
-template <typename It, typename Fn> auto ForEach(It begin, It end,          Fn func) { return ForEach(begin, end,       func, typename std::is_integral<It>::type{}); }
-template <typename T , typename Fn> auto ForEach(const T& num_or_container, Fn func) { return ForEach(num_or_container, func, typename std::is_integral<T >::type{}); }
+template <typename It, typename Fn> auto ForEach(It begin, It end,     Fn func) { return ForEach(begin, end,       func, typename std::is_integral<It>::type{}); }
+template <typename T , typename Fn> auto ForEach(T&& num_or_container, Fn func) { return ForEach(num_or_container, func, typename std::is_integral<T >::type{}); }
 
 template <typename T, typename F> auto ForEach(std::initializer_list<T> l, F f) { return ForEach(l.begin(), l.end(), f); }
 // clang-format on
