@@ -84,7 +84,7 @@
 
 #include <functional>
 
-#include "metaobjects.h"
+#include "metaobject.h"
 
 namespace nwidget {
 

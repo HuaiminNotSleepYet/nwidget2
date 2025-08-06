@@ -1,9 +1,8 @@
-#ifndef NWIDGET_METAOBJECTS_H
-#define NWIDGET_METAOBJECTS_H
-
 #include "metaobject.h"
 
 #ifdef QOBJECT_H
+#ifndef NWIDGET_METAOBJECTS_QOBJECT_H
+#define NWIDGET_METAOBJECTS_QOBJECT_H
 template <> class nwidget::MetaObject<QObject>
 {
     N_OBJECT(QObject)
@@ -15,8 +14,11 @@ template <> class nwidget::MetaObject<QObject>
 
 N_DECLARE_METAOBJECT(QObject)
 #endif
+#endif
 
 #ifdef QACTION_H
+#ifndef NWIDGET_METAOBJECTS_ACTION_H
+#define NWIDGET_METAOBJECTS_ACTION_H
 template <> class nwidget::MetaObject<QAction> : public MetaObject<QObject>
 {
     N_OBJECT(QAction, QObject)
@@ -52,8 +54,11 @@ template <> class nwidget::MetaObject<QAction> : public MetaObject<QObject>
 
 N_DECLARE_METAOBJECT(QAction)
 #endif
+#endif
 
 #ifdef QLAYOUT_H
+#ifndef NWIDGET_METAOBJECTS_LAYOUT_H
+#define NWIDGET_METAOBJECTS_LAYOUT_H
 template <> class nwidget::MetaObject<QLayout> : public MetaObject<QObject>
 {
     N_OBJECT(QLayout, QObject)
@@ -67,8 +72,11 @@ template <> class nwidget::MetaObject<QLayout> : public MetaObject<QObject>
 
 N_DECLARE_METAOBJECT(QLayout)
 #endif
+#endif
 
 #ifdef QBOXLAYOUT_H
+#ifndef NWIDGET_METAOBJECTS_BOXLAYOUT_H
+#define NWIDGET_METAOBJECTS_BOXLAYOUT_H
 template <> class nwidget::MetaObject<QBoxLayout> : public MetaObject<QLayout>
 {
     N_OBJECT(QBoxLayout, QLayout)
@@ -88,8 +96,11 @@ N_DECLARE_METAOBJECT(QBoxLayout)
 N_DECLARE_METAOBJECT(QHBoxLayout)
 N_DECLARE_METAOBJECT(QVBoxLayout)
 #endif
+#endif
 
 #ifdef QFORMLAYOUT_H
+#ifndef NWIDGET_METAOBJECTS_FORMLAYOUT_H
+#define NWIDGET_METAOBJECTS_FORMLAYOUT_H
 template <> class nwidget::MetaObject<QFormLayout> : public MetaObject<QLayout>
 {
     N_OBJECT(QFormLayout, QLayout)
@@ -106,8 +117,11 @@ template <> class nwidget::MetaObject<QFormLayout> : public MetaObject<QLayout>
 
 N_DECLARE_METAOBJECT(QFormLayout)
 #endif
+#endif
 
 #ifdef QGRIDLAYOUT_H
+#ifndef NWIDGET_METAOBJECTS_GRIDLAYOUT_H
+#define NWIDGET_METAOBJECTS_GRIDLAYOUT_H
 template <> class nwidget::MetaObject<QGridLayout> : public MetaObject<QLayout>
 {
     N_OBJECT(QGridLayout, QLayout)
@@ -120,8 +134,11 @@ template <> class nwidget::MetaObject<QGridLayout> : public MetaObject<QLayout>
 
 N_DECLARE_METAOBJECT(QGridLayout)
 #endif
+#endif
 
 #ifdef QSTACKEDLAYOUT_H
+#ifndef NWIDGET_METAOBJECTS_STACKEDLAYOUT_H
+#define NWIDGET_METAOBJECTS_STACKEDLAYOUT_H
 template <> class nwidget::MetaObject<QStackedLayout> : public MetaObject<QLayout>
 {
     N_OBJECT(QStackedLayout, QLayout)
@@ -135,8 +152,12 @@ template <> class nwidget::MetaObject<QStackedLayout> : public MetaObject<QLayou
 
 N_DECLARE_METAOBJECT(QStackedLayout)
 #endif
+#endif
 
 #ifdef QWIDGET_H
+#ifndef NWIDGET_METAOBJECTS_WIDGET_H
+#define NWIDGET_METAOBJECTS_WIDGET_H
+
 #include <QLocale>
 
 template <> class nwidget::MetaObject<QWidget> : public MetaObject<QObject>
@@ -221,8 +242,11 @@ template <> class nwidget::MetaObject<QWidget> : public MetaObject<QObject>
 
 N_DECLARE_METAOBJECT(QWidget)
 #endif
+#endif
 
 #ifdef QABSTRACTBUTTON_H
+#ifndef NWIDGET_METAOBJECTS_ABSTRACTBUTTON_H
+#define NWIDGET_METAOBJECTS_ABSTRACTBUTTON_H
 template <> class nwidget::MetaObject<QAbstractButton> : public MetaObject<QWidget>
 {
     N_OBJECT(QAbstractButton, QWidget)
@@ -246,8 +270,11 @@ template <> class nwidget::MetaObject<QAbstractButton> : public MetaObject<QWidg
 
 N_DECLARE_METAOBJECT(QAbstractButton)
 #endif
+#endif
 
 #ifdef QDIALOGBUTTONBOX_H
+#ifndef NWIDGET_METAOBJECTS_DIALOGBUTTONBOX_H
+#define NWIDGET_METAOBJECTS_DIALOGBUTTONBOX_H
 template <> class nwidget::MetaObject<QDialogButtonBox> : public MetaObject<QWidget>
 {
     N_OBJECT(QDialogButtonBox, QWidget)
@@ -261,8 +288,11 @@ template <> class nwidget::MetaObject<QDialogButtonBox> : public MetaObject<QWid
 
 N_DECLARE_METAOBJECT(QDialogButtonBox)
 #endif
+#endif
 
 #ifdef QCHECKBOX_H
+#ifndef NWIDGET_METAOBJECTS_CHECKBOX_H
+#define NWIDGET_METAOBJECTS_CHECKBOX_H
 template <> class nwidget::MetaObject<QCheckBox> : public MetaObject<QAbstractButton>
 {
     N_OBJECT(QCheckBox, QAbstractButton)
@@ -275,8 +305,11 @@ template <> class nwidget::MetaObject<QCheckBox> : public MetaObject<QAbstractBu
 
 N_DECLARE_METAOBJECT(QCheckBox)
 #endif
+#endif
 
 #ifdef QPUSHBUTTON_H
+#ifndef NWIDGET_METAOBJECTS_PUSHBUTTON_H
+#define NWIDGET_METAOBJECTS_PUSHBUTTON_H
 template <> class nwidget::MetaObject<QPushButton> : public MetaObject<QAbstractButton>
 {
     N_OBJECT(QPushButton, QAbstractButton)
@@ -290,8 +323,11 @@ template <> class nwidget::MetaObject<QPushButton> : public MetaObject<QAbstract
 
 N_DECLARE_METAOBJECT(QPushButton)
 #endif
+#endif
 
 #ifdef QCOMMANDLINKBUTTON_H
+#ifndef NWIDGET_METAOBJECTS_COMMANDLINKBUTTON_H
+#define NWIDGET_METAOBJECTS_COMMANDLINKBUTTON_H
 template <> class nwidget::MetaObject<QCommandLinkButton> : public MetaObject<QPushButton>
 {
     N_OBJECT(QCommandLinkButton, QPushButton)
@@ -304,8 +340,11 @@ template <> class nwidget::MetaObject<QCommandLinkButton> : public MetaObject<QP
 
 N_DECLARE_METAOBJECT(QCommandLinkButton)
 #endif
+#endif
 
 #ifdef QRADIOBUTTON_H
+#ifndef NWIDGET_METAOBJECTS_RADIOBUTTON_H
+#define NWIDGET_METAOBJECTS_RADIOBUTTON_H
 template <> class nwidget::MetaObject<QRadioButton> : public MetaObject<QAbstractButton>
 {
     N_OBJECT(QRadioButton, QAbstractButton)
@@ -313,8 +352,11 @@ template <> class nwidget::MetaObject<QRadioButton> : public MetaObject<QAbstrac
 
 N_DECLARE_METAOBJECT(QRadioButton)
 #endif
+#endif
 
 #ifdef QTOOLBUTTON_H
+#ifndef NWIDGET_METAOBJECTS_TOOLBUTTON_H
+#define NWIDGET_METAOBJECTS_TOOLBUTTON_H
 template <> class nwidget::MetaObject<QToolButton> : public MetaObject<QAbstractButton>
 {
     N_OBJECT(QToolButton, QAbstractButton)
@@ -331,8 +373,11 @@ template <> class nwidget::MetaObject<QToolButton> : public MetaObject<QAbstract
 
 N_DECLARE_METAOBJECT(QToolButton)
 #endif
+#endif
 
 #ifdef QFRAME_H
+#ifndef NWIDGET_METAOBJECTS_FRAME_H
+#define NWIDGET_METAOBJECTS_FRAME_H
 template <> class nwidget::MetaObject<QFrame> : public MetaObject<QWidget>
 {
     N_OBJECT(QFrame, QWidget)
@@ -349,8 +394,11 @@ template <> class nwidget::MetaObject<QFrame> : public MetaObject<QWidget>
 
 N_DECLARE_METAOBJECT(QFrame)
 #endif
+#endif
 
 #ifdef QABSTRACTSCROLLAREA_H
+#ifndef NWIDGET_METAOBJECTS_ABSTRACTSCROLLAREA_H
+#define NWIDGET_METAOBJECTS_ABSTRACTSCROLLAREA_H
 template <> class nwidget::MetaObject<QAbstractScrollArea> : public MetaObject<QFrame>
 {
     N_OBJECT(QAbstractScrollArea, QFrame)
@@ -370,8 +418,11 @@ template <> class nwidget::MetaObject<QAbstractScrollArea> : public MetaObject<Q
 
 N_DECLARE_METAOBJECT(QAbstractScrollArea)
 #endif
+#endif
 
 #ifdef QABSTRACTITEMVIEW_H
+#ifndef NWIDGET_METAOBJECTS_ABSTRACTITEMVIEW_H
+#define NWIDGET_METAOBJECTS_ABSTRACTITEMVIEW_H
 template <> class nwidget::MetaObject<QAbstractItemView> : public MetaObject<QAbstractScrollArea>
 {
     N_OBJECT(QAbstractItemView, QAbstractScrollArea)
@@ -406,8 +457,11 @@ template <> class nwidget::MetaObject<QAbstractItemView> : public MetaObject<QAb
 
 N_DECLARE_METAOBJECT(QAbstractItemView)
 #endif
+#endif
 
 #ifdef QHEADERVIEW_H
+#ifndef NWIDGET_METAOBJECTS_HEADERVIEW_H
+#define NWIDGET_METAOBJECTS_HEADERVIEW_H
 template <> class nwidget::MetaObject<QHeaderView> : public MetaObject<QAbstractItemView>
 {
     N_OBJECT(QHeaderView, QAbstractItemView)
@@ -434,8 +488,11 @@ template <> class nwidget::MetaObject<QHeaderView> : public MetaObject<QAbstract
 
 N_DECLARE_METAOBJECT(QHeaderView)
 #endif
+#endif
 
 #ifdef QLISTVIEW_H
+#ifndef NWIDGET_METAOBJECTS_LISTVIEW_H
+#define NWIDGET_METAOBJECTS_LISTVIEW_H
 template <> class nwidget::MetaObject<QListView> : public MetaObject<QAbstractItemView>
 {
     N_OBJECT(QListView, QAbstractItemView)
@@ -460,8 +517,11 @@ template <> class nwidget::MetaObject<QListView> : public MetaObject<QAbstractIt
 
 N_DECLARE_METAOBJECT(QListView)
 #endif
+#endif
 
 #ifdef QLISTWIDGET_H
+#ifndef NWIDGET_METAOBJECTS_LISTWIDGET_H
+#define NWIDGET_METAOBJECTS_LISTWIDGET_H
 template <> class nwidget::MetaObject<QListWidget> : public MetaObject<QListView>
 {
     N_OBJECT(QListWidget, QListView)
@@ -475,8 +535,11 @@ template <> class nwidget::MetaObject<QListWidget> : public MetaObject<QListView
 
 N_DECLARE_METAOBJECT(QListWidget)
 #endif
+#endif
 
 #ifdef QTABLEVIEW_H
+#ifndef NWIDGET_METAOBJECTS_TABLEVIEW_H
+#define NWIDGET_METAOBJECTS_TABLEVIEW_H
 template <> class nwidget::MetaObject<QTableView> : public MetaObject<QAbstractItemView>
 {
     N_OBJECT(QTableView, QAbstractItemView)
@@ -494,8 +557,11 @@ template <> class nwidget::MetaObject<QTableView> : public MetaObject<QAbstractI
 
 N_DECLARE_METAOBJECT(QTableView)
 #endif
+#endif
 
 #ifdef QTABLEWIDGET_H
+#ifndef NWIDGET_METAOBJECTS_TABLEWIDGET_H
+#define NWIDGET_METAOBJECTS_TABLEWIDGET_H
 template <> class nwidget::MetaObject<QTableWidget> : public MetaObject<QAbstractItemView>
 {
     N_OBJECT(QTableWidget, QAbstractItemView)
@@ -508,8 +574,11 @@ template <> class nwidget::MetaObject<QTableWidget> : public MetaObject<QAbstrac
 
 N_DECLARE_METAOBJECT(QTableWidget)
 #endif
+#endif
 
 #ifdef QTREEVIEW_H
+#ifndef NWIDGET_METAOBJECTS_TREEVIEW_H
+#define NWIDGET_METAOBJECTS_TREEVIEW_H
 template <> class nwidget::MetaObject<QTreeView> : public MetaObject<QAbstractItemView>
 {
     N_OBJECT(QTreeView, QAbstractItemView)
@@ -531,8 +600,11 @@ template <> class nwidget::MetaObject<QTreeView> : public MetaObject<QAbstractIt
 
 N_DECLARE_METAOBJECT(QTreeView)
 #endif
+#endif
 
 #ifdef QTREEWIDGET_H
+#ifndef NWIDGET_METAOBJECTS_TREEWIDGET_H
+#define NWIDGET_METAOBJECTS_TREEWIDGET_H
 template <> class nwidget::MetaObject<QTreeWidget> : public MetaObject<QAbstractItemView>
 {
     N_OBJECT(QTreeWidget, QAbstractItemView)
@@ -545,8 +617,11 @@ template <> class nwidget::MetaObject<QTreeWidget> : public MetaObject<QAbstract
 
 N_DECLARE_METAOBJECT(QTreeWidget)
 #endif
+#endif
 
 #ifdef QPLAINTEXTEDIT_H
+#ifndef NWIDGET_METAOBJECTS_PLAINTEXTEDIT_H
+#define NWIDGET_METAOBJECTS_PLAINTEXTEDIT_H
 template <> class nwidget::MetaObject<QPlainTextEdit> : public MetaObject<QAbstractScrollArea>
 {
     N_OBJECT(QPlainTextEdit, QAbstractScrollArea)
@@ -575,8 +650,11 @@ template <> class nwidget::MetaObject<QPlainTextEdit> : public MetaObject<QAbstr
 
 N_DECLARE_METAOBJECT(QPlainTextEdit)
 #endif
+#endif
 
 #ifdef QTEXTEDIT_H
+#ifndef NWIDGET_METAOBJECTS_TEXTEDIT_H
+#define NWIDGET_METAOBJECTS_TEXTEDIT_H
 template <> class nwidget::MetaObject<QTextEdit> : public MetaObject<QAbstractScrollArea>
 {
     N_OBJECT(QTextEdit, QAbstractScrollArea)
@@ -607,8 +685,11 @@ template <> class nwidget::MetaObject<QTextEdit> : public MetaObject<QAbstractSc
 
 N_DECLARE_METAOBJECT(QTextEdit)
 #endif
+#endif
 
 #ifdef QTEXTBROWSER_H
+#ifndef NWIDGET_METAOBJECTS_TEXTBROWSER_H
+#define NWIDGET_METAOBJECTS_TEXTBROWSER_H
 template <> class nwidget::MetaObject<QTextBrowser> : public MetaObject<QTextEdit>
 {
     N_OBJECT(QTextBrowser, QTextEdit)
@@ -624,8 +705,11 @@ template <> class nwidget::MetaObject<QTextBrowser> : public MetaObject<QTextEdi
 
 N_DECLARE_METAOBJECT(QTextBrowser)
 #endif
+#endif
 
 #ifdef QTOOLBOX_H
+#ifndef NWIDGET_METAOBJECTS_TOOLBOX_H
+#define NWIDGET_METAOBJECTS_TOOLBOX_H
 template <> class nwidget::MetaObject<QToolBox> : public MetaObject<QFrame>
 {
     N_OBJECT(QToolBox, QFrame)
@@ -638,8 +722,11 @@ template <> class nwidget::MetaObject<QToolBox> : public MetaObject<QFrame>
 
 N_DECLARE_METAOBJECT(QToolBox)
 #endif
+#endif
 
 #ifdef QSPLITTER_H
+#ifndef NWIDGET_METAOBJECTS_SPLITTER_H
+#define NWIDGET_METAOBJECTS_SPLITTER_H
 template <> class nwidget::MetaObject<QSplitter> : public MetaObject<QFrame>
 {
     N_OBJECT(QSplitter, QFrame)
@@ -654,8 +741,11 @@ template <> class nwidget::MetaObject<QSplitter> : public MetaObject<QFrame>
 
 N_DECLARE_METAOBJECT(QSplitter)
 #endif
+#endif
 
 #ifdef QABSTRACTSLIDER_H
+#ifndef NWIDGET_METAOBJECTS_ABSTRACTSLIDER_H
+#define NWIDGET_METAOBJECTS_ABSTRACTSLIDER_H
 template <> class nwidget::MetaObject<QAbstractSlider> : public MetaObject<QWidget>
 {
     N_OBJECT(QAbstractSlider, QWidget)
@@ -676,8 +766,11 @@ template <> class nwidget::MetaObject<QAbstractSlider> : public MetaObject<QWidg
 
 N_DECLARE_METAOBJECT(QAbstractSlider)
 #endif
+#endif
 
 #ifdef QDIAL_H
+#ifndef NWIDGET_METAOBJECTS_DIAL_H
+#define NWIDGET_METAOBJECTS_DIAL_H
 template <> class nwidget::MetaObject<QDial> : public MetaObject<QAbstractSlider>
 {
     N_OBJECT(QDial, QAbstractSlider)
@@ -692,8 +785,11 @@ template <> class nwidget::MetaObject<QDial> : public MetaObject<QAbstractSlider
 
 N_DECLARE_METAOBJECT(QDial)
 #endif
+#endif
 
 #ifdef QSLIDER_H
+#ifndef NWIDGET_METAOBJECTS_SLIDER_H
+#define NWIDGET_METAOBJECTS_SLIDER_H
 template <> class nwidget::MetaObject<QSlider> : public MetaObject<QAbstractSlider>
 {
     N_OBJECT(QSlider, QAbstractSlider)
@@ -706,8 +802,11 @@ template <> class nwidget::MetaObject<QSlider> : public MetaObject<QAbstractSlid
 
 N_DECLARE_METAOBJECT(QSlider)
 #endif
+#endif
 
 #ifdef QSCROLLBAR_H
+#ifndef NWIDGET_METAOBJECTS_SCROLLBAR_H
+#define NWIDGET_METAOBJECTS_SCROLLBAR_H
 template <> class nwidget::MetaObject<QScrollBar> : public MetaObject<QAbstractSlider>
 {
     N_OBJECT(QScrollBar, QAbstractSlider)
@@ -715,8 +814,11 @@ template <> class nwidget::MetaObject<QScrollBar> : public MetaObject<QAbstractS
 
 N_DECLARE_METAOBJECT(QScrollBar)
 #endif
+#endif
 
 #ifdef QABSTRACTSPINBOX_H
+#ifndef NWIDGET_METAOBJECTS_ABSTRACTSPINBOX_H
+#define NWIDGET_METAOBJECTS_ABSTRACTSPINBOX_H
 template <> class nwidget::MetaObject<QAbstractSpinBox> : public MetaObject<QWidget>
 {
     N_OBJECT(QAbstractSpinBox, QWidget)
@@ -739,8 +841,11 @@ template <> class nwidget::MetaObject<QAbstractSpinBox> : public MetaObject<QWid
 
 N_DECLARE_METAOBJECT(QAbstractSpinBox)
 #endif
+#endif
 
 #ifdef QDATETIMEEDIT_H
+#ifndef NWIDGET_METAOBJECTS_DATETIMEEDIT_H
+#define NWIDGET_METAOBJECTS_DATETIMEEDIT_H
 template <> class nwidget::MetaObject<QDateTimeEdit> : public MetaObject<QAbstractSpinBox>
 {
     N_OBJECT(QDateTimeEdit, QAbstractSpinBox)
@@ -794,8 +899,11 @@ N_DECLARE_METAOBJECT(QDateTimeEdit)
 N_DECLARE_METAOBJECT(QDateEdit)
 N_DECLARE_METAOBJECT(QTimeEdit)
 #endif
+#endif
 
 #ifdef QSPINBOX_H
+#ifndef NWIDGET_METAOBJECTS_SPINBOX_H
+#define NWIDGET_METAOBJECTS_SPINBOX_H
 template <> class nwidget::MetaObject<QSpinBox> : public MetaObject<QAbstractSpinBox>
 {
     N_OBJECT(QSpinBox, QAbstractSpinBox)
@@ -833,8 +941,11 @@ template <> class nwidget::MetaObject<QDoubleSpinBox> : public MetaObject<QAbstr
 N_DECLARE_METAOBJECT(QSpinBox)
 N_DECLARE_METAOBJECT(QDoubleSpinBox)
 #endif
+#endif
 
 #ifdef QCOMBOBOX_H
+#ifndef NWIDGET_METAOBJECTS_COMBOBOX_H
+#define NWIDGET_METAOBJECTS_COMBOBOX_H
 template <> class nwidget::MetaObject<QComboBox> : public MetaObject<QWidget>
 {
     N_OBJECT(QComboBox, QWidget)
@@ -860,8 +971,11 @@ template <> class nwidget::MetaObject<QComboBox> : public MetaObject<QWidget>
 
 N_DECLARE_METAOBJECT(QComboBox)
 #endif
+#endif
 
 #ifdef QGROUPBOX_H
+#ifndef NWIDGET_METAOBJECTS_GROUPBOX_H
+#define NWIDGET_METAOBJECTS_GROUPBOX_H
 template <> class nwidget::MetaObject<QGroupBox> : public MetaObject<QWidget>
 {
     N_OBJECT(QGroupBox, QWidget)
@@ -877,8 +991,11 @@ template <> class nwidget::MetaObject<QGroupBox> : public MetaObject<QWidget>
 
 N_DECLARE_METAOBJECT(QGroupBox)
 #endif
+#endif
 
 #ifdef QLABEL_H
+#ifndef NWIDGET_METAOBJECTS_LABEL_H
+#define NWIDGET_METAOBJECTS_LABEL_H
 template <> class nwidget::MetaObject<QLabel> : public MetaObject<QWidget>
 {
     N_OBJECT(QLabel, QWidget)
@@ -901,8 +1018,11 @@ template <> class nwidget::MetaObject<QLabel> : public MetaObject<QWidget>
 
 N_DECLARE_METAOBJECT(QLabel)
 #endif
+#endif
 
 #ifdef QLINEEDIT_H
+#ifndef NWIDGET_METAOBJECTS_LINEEDIT_H
+#define NWIDGET_METAOBJECTS_LINEEDIT_H
 template <> class nwidget::MetaObject<QLineEdit> : public MetaObject<QWidget>
 {
     N_OBJECT(QLineEdit, QWidget)
@@ -932,8 +1052,11 @@ template <> class nwidget::MetaObject<QLineEdit> : public MetaObject<QWidget>
 
 N_DECLARE_METAOBJECT(QLineEdit)
 #endif
+#endif
 
 #ifdef QMENU_H
+#ifndef NWIDGET_METAOBJECTS_MENU_H
+#define NWIDGET_METAOBJECTS_MENU_H
 template <> class nwidget::MetaObject<QMenu> : public MetaObject<QWidget>
 {
     N_OBJECT(QMenu, QWidget)
@@ -949,8 +1072,11 @@ template <> class nwidget::MetaObject<QMenu> : public MetaObject<QWidget>
 
 N_DECLARE_METAOBJECT(QMenu)
 #endif
+#endif
 
 #ifdef QMENUBAR_H
+#ifndef NWIDGET_METAOBJECTS_MENUBAR_H
+#define NWIDGET_METAOBJECTS_MENUBAR_H
 template <> class nwidget::MetaObject<QMenuBar> : public MetaObject<QWidget>
 {
     N_OBJECT(QMenuBar, QWidget)
@@ -963,8 +1089,11 @@ template <> class nwidget::MetaObject<QMenuBar> : public MetaObject<QWidget>
 
 N_DECLARE_METAOBJECT(QMenuBar)
 #endif
+#endif
 
 #ifdef QPROGRESSBAR_H
+#ifndef NWIDGET_METAOBJECTS_PROGRESSBAR_H
+#define NWIDGET_METAOBJECTS_PROGRESSBAR_H
 template <> class nwidget::MetaObject<QProgressBar> : public MetaObject<QWidget>
 {
     N_OBJECT(QProgressBar, QWidget)
@@ -985,8 +1114,11 @@ template <> class nwidget::MetaObject<QProgressBar> : public MetaObject<QWidget>
 
 N_DECLARE_METAOBJECT(QProgressBar)
 #endif
+#endif
 
 #ifdef QTABBAR_H
+#ifndef NWIDGET_METAOBJECTS_TABBAR_H
+#define NWIDGET_METAOBJECTS_TABBAR_H
 template <> class nwidget::MetaObject<QTabBar> : public MetaObject<QWidget>
 {
     N_OBJECT(QTabBar, QWidget)
@@ -1013,8 +1145,11 @@ template <> class nwidget::MetaObject<QTabBar> : public MetaObject<QWidget>
 
 N_DECLARE_METAOBJECT(QTabBar)
 #endif
+#endif
 
 #ifdef QTABWIDGET_H
+#ifndef NWIDGET_METAOBJECTS_TABWIDGET_H
+#define NWIDGET_METAOBJECTS_TABWIDGET_H
 template <> class nwidget::MetaObject<QTabWidget> : public MetaObject<QWidget>
 {
     N_OBJECT(QTabWidget, QWidget)
@@ -1030,5 +1165,4 @@ template <> class nwidget::MetaObject<QTabWidget> : public MetaObject<QWidget>
 
 N_DECLARE_METAOBJECT(QTabWidget)
 #endif
-
-#endif // N_WIDGET_META_OBJECTS_H
+#endif

@@ -1,7 +1,5 @@
-#ifndef NWIDGET_BUILDERS_H
-#define NWIDGET_BUILDERS_H
-
 #include "builder.h"
+#include "metaobjects.h"
 
 class QWidget;
 class QLayout;
@@ -14,6 +12,8 @@ class QLayoutItem;
     }
 
 #ifdef QOBJECT_H
+#ifndef NWIDGET_BUILDERS_OBJECT_H
+#define NWIDGET_BUILDERS_OBJECT_H
 template <typename Self> class nwidget::Builder<QObject, Self> : public nwidget::Builder<void, Self>
 {
     N_BUILDER(QObject)
@@ -36,8 +36,11 @@ template <typename Self> class nwidget::Builder<QObject, Self> : public nwidget:
 
 N_IMPL_DECLARE_BUILDER(Object)
 #endif
+#endif
 
 #ifdef QACTION_H
+#ifndef NWIDGET_BUILDERS_ACTION_H
+#define NWIDGET_BUILDERS_ACTION_H
 template <typename Self> class nwidget::Builder<QAction, Self> : public nwidget::Builder<QObject, Self>
 {
     N_BUILDER(QAction)
@@ -80,8 +83,11 @@ template <typename Self> class nwidget::Builder<QAction, Self> : public nwidget:
 
 N_IMPL_DECLARE_BUILDER(Action)
 #endif
+#endif
 
 #ifdef QLAYOUT_H
+#ifndef NWIDGET_BUILDERS_LAYOUT_H
+#define NWIDGET_BUILDERS_LAYOUT_H
 namespace nwidget {
 template <typename T> class LayoutItem : public BuilderItem<T>
 {
@@ -134,8 +140,11 @@ template <typename Self> class nwidget::Builder<QLayout, Self> : public nwidget:
 
 N_IMPL_DECLARE_BUILDER(Layout)
 #endif
+#endif
 
 #ifdef QBOXLAYOUT_H
+#ifndef NWIDGET_BUILDERS_BOXLAYOUT_H
+#define NWIDGET_BUILDERS_BOXLAYOUT_H
 namespace nwidget {
 class BoxLayoutItem : public LayoutItem<QBoxLayout>
 {
@@ -233,8 +242,11 @@ N_IMPL_DECLARE_BUILDER(BoxLayout)
 N_IMPL_DECLARE_BUILDER(HBoxLayout)
 N_IMPL_DECLARE_BUILDER(VBoxLayout)
 #endif
+#endif
 
 #ifdef QFORMLAYOUT_H
+#ifndef NWIDGET_BUILDERS_FORMLAYOUT_H
+#define NWIDGET_BUILDERS_FORMLAYOUT_H
 namespace nwidget {
 class FormLayoutItem : public LayoutItem<QFormLayout>
 {
@@ -273,8 +285,11 @@ template <typename Self> class nwidget::Builder<QFormLayout, Self> : public nwid
 
 N_IMPL_DECLARE_BUILDER(FormLayout)
 #endif
+#endif
 
 #ifdef QGRIDLAYOUT_H
+#ifndef NWIDGET_BUILDERS_GRIDLAYOUT_H
+#define NWIDGET_BUILDERS_GRIDLAYOUT_H
 namespace nwidget {
 class GridLayoutItem : public LayoutItem<QGridLayout>
 {
@@ -331,8 +346,11 @@ template <typename Self> class nwidget::Builder<QGridLayout, Self> : public nwid
 
 N_IMPL_DECLARE_BUILDER(GridLayout)
 #endif
+#endif
 
 #ifdef QSTACKEDLAYOUT_H
+#ifndef NWIDGET_BUILDERS_STACKEDLAYOUT_H
+#define NWIDGET_BUILDERS_STACKEDLAYOUT_H
 template <typename Self> class nwidget::Builder<QStackedLayout, Self> : public nwidget::Builder<QLayout, Self>
 {
     N_BUILDER(QStackedLayout)
@@ -349,8 +367,11 @@ template <typename Self> class nwidget::Builder<QStackedLayout, Self> : public n
 
 N_IMPL_DECLARE_BUILDER(StackedLayout)
 #endif
+#endif
 
 #ifdef QWIDGET_H
+#ifndef NWIDGET_BUILDERS_WIDGET_H
+#define NWIDGET_BUILDERS_WIDGET_H
 template <typename Self> class nwidget::Builder<QWidget, Self> : public nwidget::Builder<QObject, Self>
 {
     N_BUILDER(QWidget)
@@ -465,8 +486,11 @@ template <typename Self> class nwidget::Builder<QWidget, Self> : public nwidget:
 
 N_IMPL_DECLARE_BUILDER(Widget)
 #endif
+#endif
 
 #ifdef QABSTRACTBUTTON_H
+#ifndef NWIDGET_BUILDERS_ABSTRACTBUTTON_H
+#define NWIDGET_BUILDERS_ABSTRACTBUTTON_H
 template <typename Self> class nwidget::Builder<QAbstractButton, Self> : public nwidget::Builder<QWidget, Self>
 {
     N_BUILDER(QAbstractButton)
@@ -497,8 +521,11 @@ template <typename Self> class nwidget::Builder<QAbstractButton, Self> : public 
 
 N_IMPL_DECLARE_BUILDER(AbstractButton)
 #endif
+#endif
 
 #ifdef QCHECKBOX_H
+#ifndef NWIDGET_BUILDERS_CHECKBOX_H
+#define NWIDGET_BUILDERS_CHECKBOX_H
 template <typename Self> class nwidget::Builder<QCheckBox, Self> : public nwidget::Builder<QAbstractButton, Self>
 {
     N_BUILDER(QCheckBox)
@@ -518,8 +545,11 @@ template <typename Self> class nwidget::Builder<QCheckBox, Self> : public nwidge
 
 N_IMPL_DECLARE_BUILDER(CheckBox)
 #endif
+#endif
 
 #ifdef QDIALOGBUTTONBOX_H
+#ifndef NWIDGET_BUILDERS_DIALOGBUTTONBOX_H
+#define NWIDGET_BUILDERS_DIALOGBUTTONBOX_H
 template <typename Self> class nwidget::Builder<QDialogButtonBox, Self> : public nwidget::Builder<QWidget, Self>
 {
     N_BUILDER(QDialogButtonBox)
@@ -542,8 +572,11 @@ template <typename Self> class nwidget::Builder<QDialogButtonBox, Self> : public
 
 N_IMPL_DECLARE_BUILDER(DialogButtonBox)
 #endif
+#endif
 
 #ifdef QPUSHBUTTON_H
+#ifndef NWIDGET_BUILDERS_PUSHBUTTON_H
+#define NWIDGET_BUILDERS_PUSHBUTTON_H
 template <typename Self> class nwidget::Builder<QPushButton, Self> : public nwidget::Builder<QAbstractButton, Self>
 {
     N_BUILDER(QPushButton)
@@ -563,8 +596,11 @@ template <typename Self> class nwidget::Builder<QPushButton, Self> : public nwid
 
 N_IMPL_DECLARE_BUILDER(PushButton)
 #endif
+#endif
 
 #ifdef QCOMMANDLINKBUTTON_H
+#ifndef NWIDGET_BUILDERS_COMMANDLINKBUTTON_H
+#define NWIDGET_BUILDERS_COMMANDLINKBUTTON_H
 template <typename Self> class nwidget::Builder<QCommandLinkButton, Self> : public nwidget::Builder<QPushButton, Self>
 {
     N_BUILDER(QCommandLinkButton)
@@ -578,8 +614,11 @@ template <typename Self> class nwidget::Builder<QCommandLinkButton, Self> : publ
 
 N_IMPL_DECLARE_BUILDER(CommandLinkButton)
 #endif
+#endif
 
 #ifdef QRADIOBUTTON_H
+#ifndef NWIDGET_BUILDERS_RADIOBUTTON_H
+#define NWIDGET_BUILDERS_RADIOBUTTON_H
 template <typename Self> class nwidget::Builder<QRadioButton, Self> : public nwidget::Builder<QAbstractButton, Self>
 {
     N_BUILDER(QRadioButton)
@@ -589,8 +628,11 @@ template <typename Self> class nwidget::Builder<QRadioButton, Self> : public nwi
 
 N_IMPL_DECLARE_BUILDER(RadioButton)
 #endif
+#endif
 
 #ifdef QTOOLBUTTON_H
+#ifndef NWIDGET_BUILDERS_TOOLBUTTON_H
+#define NWIDGET_BUILDERS_TOOLBUTTON_H
 template <typename Self> class nwidget::Builder<QToolButton, Self> : public nwidget::Builder<QAbstractButton, Self>
 {
     N_BUILDER(QToolButton)
@@ -611,8 +653,11 @@ template <typename Self> class nwidget::Builder<QToolButton, Self> : public nwid
 
 N_IMPL_DECLARE_BUILDER(ToolButton)
 #endif
+#endif
 
 #ifdef QFRAME_H
+#ifndef NWIDGET_BUILDERS_FRAME_H
+#define NWIDGET_BUILDERS_FRAME_H
 template <typename Self> class nwidget::Builder<QFrame, Self> : public nwidget::Builder<QWidget, Self>
 {
     N_BUILDER(QFrame)
@@ -632,8 +677,11 @@ template <typename Self> class nwidget::Builder<QFrame, Self> : public nwidget::
 
 N_IMPL_DECLARE_BUILDER(Frame)
 #endif
+#endif
 
 #ifdef QABSTRACTSCROLLAREA_H
+#ifndef NWIDGET_BUILDERS_ABSTRACTSCROLLAREA_H
+#define NWIDGET_BUILDERS_ABSTRACTSCROLLAREA_H
 template <typename Self> class nwidget::Builder<QAbstractScrollArea, Self> : public nwidget::Builder<QFrame, Self>
 {
     N_BUILDER(QAbstractScrollArea)
@@ -647,8 +695,11 @@ template <typename Self> class nwidget::Builder<QAbstractScrollArea, Self> : pub
 
 N_IMPL_DECLARE_BUILDER(AbstractScrollArea)
 #endif
+#endif
 
 #ifdef QABSTRACTITEMVIEW_H
+#ifndef NWIDGET_BUILDERS_ABSTRACTITEMVIEW_H
+#define NWIDGET_BUILDERS_ABSTRACTITEMVIEW_H
 template <typename Self>
 class nwidget::Builder<QAbstractItemView, Self> : public nwidget::Builder<QAbstractScrollArea, Self>
 {
@@ -682,8 +733,11 @@ class nwidget::Builder<QAbstractItemView, Self> : public nwidget::Builder<QAbstr
 
 N_IMPL_DECLARE_BUILDER(AbstractItemView)
 #endif
+#endif
 
 #ifdef QHEADERVIEW_H
+#ifndef NWIDGET_BUILDERS_HEADERVIEW_H
+#define NWIDGET_BUILDERS_HEADERVIEW_H
 template <typename Self> class nwidget::Builder<QHeaderView, Self> : public nwidget::Builder<QAbstractItemView, Self>
 {
     N_BUILDER(QHeaderView)
@@ -733,8 +787,11 @@ template <typename Self> class nwidget::Builder<QHeaderView, Self> : public nwid
 
 N_IMPL_DECLARE_BUILDER(HeaderView)
 #endif
+#endif
 
 #ifdef QLISTVIEW_H
+#ifndef NWIDGET_BUILDERS_LISTVIEW_H
+#define NWIDGET_BUILDERS_LISTVIEW_H
 template <typename Self> class nwidget::Builder<QListView, Self> : public nwidget::Builder<QAbstractItemView, Self>
 {
     N_BUILDER(QListView)
@@ -768,8 +825,11 @@ template <typename Self> class nwidget::Builder<QListView, Self> : public nwidge
 
 N_IMPL_DECLARE_BUILDER(ListView)
 #endif
+#endif
 
 #ifdef QLISTWIDGET_H
+#ifndef NWIDGET_BUILDERS_LISTWIDGET_H
+#define NWIDGET_BUILDERS_LISTWIDGET_H
 template <typename Self> class nwidget::Builder<QListWidget, Self> : public nwidget::Builder<QListView, Self>
 {
     N_BUILDER(QListWidget)
@@ -782,8 +842,11 @@ template <typename Self> class nwidget::Builder<QListWidget, Self> : public nwid
 
 N_IMPL_DECLARE_BUILDER(ListWidget)
 #endif
+#endif
 
 #ifdef QTABLEVIEW_H
+#ifndef NWIDGET_BUILDERS_TABLEVIEW_H
+#define NWIDGET_BUILDERS_TABLEVIEW_H
 template <typename Self> class nwidget::Builder<QTableView, Self> : public nwidget::Builder<QAbstractItemView, Self>
 {
     N_BUILDER(QTableView)
@@ -811,8 +874,11 @@ template <typename Self> class nwidget::Builder<QTableView, Self> : public nwidg
 
 N_IMPL_DECLARE_BUILDER(TableView)
 #endif
+#endif
 
 #ifdef QTABLEWIDGET_H
+#ifndef NWIDGET_BUILDERS_TABLEWIDGET_H
+#define NWIDGET_BUILDERS_TABLEWIDGET_H
 template <typename Self> class nwidget::Builder<QTableWidget, Self> : public nwidget::Builder<QAbstractItemView, Self>
 {
     N_BUILDER(QTableWidget)
@@ -858,8 +924,11 @@ template <typename Self> class nwidget::Builder<QTableWidget, Self> : public nwi
 
 N_IMPL_DECLARE_BUILDER(TableWidget)
 #endif
+#endif
 
 #ifdef QTREEVIEW_H
+#ifndef NWIDGET_BUILDERS_TREEVIEW_H
+#define NWIDGET_BUILDERS_TREEVIEW_H
 template <typename Self> class nwidget::Builder<QTreeView, Self> : public nwidget::Builder<QAbstractItemView, Self>
 {
     N_BUILDER(QTreeView)
@@ -897,8 +966,11 @@ template <typename Self> class nwidget::Builder<QTreeView, Self> : public nwidge
 
 N_IMPL_DECLARE_BUILDER(TreeView)
 #endif
+#endif
 
 #ifdef QTREEWIDGET_H
+#ifndef NWIDGET_BUILDERS_TREEWIDGET_H
+#define NWIDGET_BUILDERS_TREEWIDGET_H
 template <typename Self> class nwidget::Builder<QTreeWidget, Self> : public nwidget::Builder<QAbstractItemView, Self>
 {
     N_BUILDER(QTreeWidget)
@@ -909,8 +981,11 @@ template <typename Self> class nwidget::Builder<QTreeWidget, Self> : public nwid
 
 N_IMPL_DECLARE_BUILDER(TreeWidget)
 #endif
+#endif
 
 #ifdef QPLAINTEXTEDIT_H
+#ifndef NWIDGET_BUILDERS_PLAINTEXTEDIT_H
+#define NWIDGET_BUILDERS_PLAINTEXTEDIT_H
 template <typename Self>
 class nwidget::Builder<QPlainTextEdit, Self> : public nwidget::Builder<QAbstractScrollArea, Self>
 {
@@ -939,8 +1014,11 @@ class nwidget::Builder<QPlainTextEdit, Self> : public nwidget::Builder<QAbstract
 
 N_IMPL_DECLARE_BUILDER(PlainTextEdit)
 #endif
+#endif
 
 #ifdef QTEXTEDIT_H
+#ifndef NWIDGET_BUILDERS_TEXTEDIT_H
+#define NWIDGET_BUILDERS_TEXTEDIT_H
 template <typename Self> class nwidget::Builder<QTextEdit, Self> : public nwidget::Builder<QAbstractScrollArea, Self>
 {
     N_BUILDER(QTextEdit)
@@ -981,8 +1059,11 @@ template <typename Self> class nwidget::Builder<QTextEdit, Self> : public nwidge
 
 N_IMPL_DECLARE_BUILDER(TextEdit)
 #endif
+#endif
 
 #ifdef QTEXTBROWSER_H
+#ifndef NWIDGET_BUILDERS_TEXTBROWSER_H
+#define NWIDGET_BUILDERS_TEXTBROWSER_H
 template <typename Self> class nwidget::Builder<QTextBrowser, Self> : public nwidget::Builder<QTextEdit, Self>
 {
     N_BUILDER(QTextBrowser)
@@ -1006,8 +1087,11 @@ template <typename Self> class nwidget::Builder<QTextBrowser, Self> : public nwi
 
 N_IMPL_DECLARE_BUILDER(TextBrowser)
 #endif
+#endif
 
 #ifdef QTOOLBOX_H
+#ifndef NWIDGET_BUILDERS_TOOLBOX_H
+#define NWIDGET_BUILDERS_TOOLBOX_H
 namespace nwidget {
 class ToolBoxItem : public BuilderItem<QToolBox>
 {
@@ -1051,8 +1135,11 @@ template <typename Self> class nwidget::Builder<QToolBox, Self> : public nwidget
 
 N_IMPL_DECLARE_BUILDER(ToolBox)
 #endif
+#endif
 
 #ifdef QSPLITTER_H
+#ifndef NWIDGET_BUILDERS_SPLITTER_H
+#define NWIDGET_BUILDERS_SPLITTER_H
 namespace nwidget {
 class SplitterItem : public BuilderItem<QSplitter>
 {
@@ -1091,8 +1178,11 @@ template <typename Self> class nwidget::Builder<QSplitter, Self> : public nwidge
 
 N_IMPL_DECLARE_BUILDER(Splitter)
 #endif
+#endif
 
 #ifdef QABSTRACTSLIDER_H
+#ifndef NWIDGET_BUILDERS_ABSTRACTSLIDER_H
+#define NWIDGET_BUILDERS_ABSTRACTSLIDER_H
 template <typename Self> class nwidget::Builder<QAbstractSlider, Self> : public nwidget::Builder<QWidget, Self>
 {
     N_BUILDER(QAbstractSlider)
@@ -1125,8 +1215,11 @@ template <typename Self> class nwidget::Builder<QAbstractSlider, Self> : public 
 
 N_IMPL_DECLARE_BUILDER(AbstractSlider)
 #endif
+#endif
 
 #ifdef QDIAL_H
+#ifndef NWIDGET_BUILDERS_DIAL_H
+#define NWIDGET_BUILDERS_DIAL_H
 template <typename Self> class nwidget::Builder<QDial, Self> : public nwidget::Builder<QAbstractSlider, Self>
 {
     N_BUILDER(QDial)
@@ -1144,8 +1237,11 @@ template <typename Self> class nwidget::Builder<QDial, Self> : public nwidget::B
 
 N_IMPL_DECLARE_BUILDER(Dial)
 #endif
+#endif
 
 #ifdef QSLIDER_H
+#ifndef NWIDGET_BUILDERS_SLIDER_H
+#define NWIDGET_BUILDERS_SLIDER_H
 template <typename Self> class nwidget::Builder<QSlider, Self> : public nwidget::Builder<QAbstractSlider, Self>
 {
     N_BUILDER(QSlider)
@@ -1160,8 +1256,11 @@ template <typename Self> class nwidget::Builder<QSlider, Self> : public nwidget:
 
 N_IMPL_DECLARE_BUILDER(Slider)
 #endif
+#endif
 
 #ifdef QSCROLLBAR_H
+#ifndef NWIDGET_BUILDERS_SCROLLBAR_H
+#define NWIDGET_BUILDERS_SCROLLBAR_H
 template <typename Self> class nwidget::Builder<QScrollBar, Self> : public nwidget::Builder<QAbstractSlider, Self>
 {
     N_BUILDER(QScrollBar)
@@ -1171,8 +1270,11 @@ template <typename Self> class nwidget::Builder<QScrollBar, Self> : public nwidg
 
 N_IMPL_DECLARE_BUILDER(ScrollBar)
 #endif
+#endif
 
 #ifdef QABSTRACTSPINBOX_H
+#ifndef NWIDGET_BUILDERS_ABSTRACTSPINBOX_H
+#define NWIDGET_BUILDERS_ABSTRACTSPINBOX_H
 template <typename Self> class nwidget::Builder<QAbstractSpinBox, Self> : public nwidget::Builder<QWidget, Self>
 {
     N_BUILDER(QAbstractSpinBox)
@@ -1193,8 +1295,11 @@ template <typename Self> class nwidget::Builder<QAbstractSpinBox, Self> : public
 
 N_IMPL_DECLARE_BUILDER(AbstractSpinBox)
 #endif
+#endif
 
 #ifdef QDATETIMEEDIT_H
+#ifndef NWIDGET_BUILDERS_DATETIMEEDIT_H
+#define NWIDGET_BUILDERS_DATETIMEEDIT_H
 template <typename Self> class nwidget::Builder<QDateTimeEdit, Self> : public nwidget::Builder<QAbstractSpinBox, Self>
 {
     N_BUILDER(QDateTimeEdit)
@@ -1255,8 +1360,11 @@ N_IMPL_DECLARE_BUILDER(DateTimeEdit)
 N_IMPL_DECLARE_BUILDER(DateEdit)
 N_IMPL_DECLARE_BUILDER(TimeEdit)
 #endif
+#endif
 
 #ifdef QSPINBOX_H
+#ifndef NWIDGET_BUILDERS_SPINBOX_H
+#define NWIDGET_BUILDERS_SPINBOX_H
 template <typename Self> class nwidget::Builder<QSpinBox, Self> : public nwidget::Builder<QAbstractSpinBox, Self>
 {
     N_BUILDER(QSpinBox)
@@ -1310,8 +1418,11 @@ template <typename Self> class nwidget::Builder<QDoubleSpinBox, Self> : public n
 N_IMPL_DECLARE_BUILDER(SpinBox)
 N_IMPL_DECLARE_BUILDER(DoubleSpinBox)
 #endif
+#endif
 
 #ifdef QCOMBOBOX_H
+#ifndef NWIDGET_BUILDERS_COMBOBOX_H
+#define NWIDGET_BUILDERS_COMBOBOX_H
 namespace nwidget {
 class ComboBoxItem : public BuilderItem<QComboBox>
 {
@@ -1378,8 +1489,11 @@ template <typename Self> class nwidget::Builder<QComboBox, Self> : public nwidge
 
 N_IMPL_DECLARE_BUILDER(ComboBox)
 #endif
+#endif
 
 #ifdef QGROUPBOX_H
+#ifndef NWIDGET_BUILDERS_GROUPBOX_H
+#define NWIDGET_BUILDERS_GROUPBOX_H
 template <typename Self> class nwidget::Builder<QGroupBox, Self> : public nwidget::Builder<QWidget, Self>
 {
     N_BUILDER(QGroupBox)
@@ -1401,8 +1515,11 @@ template <typename Self> class nwidget::Builder<QGroupBox, Self> : public nwidge
 
 N_IMPL_DECLARE_BUILDER(GroupBox)
 #endif
+#endif
 
 #ifdef QLABEL_H
+#ifndef NWIDGET_BUILDERS_LABEL_H
+#define NWIDGET_BUILDERS_LABEL_H
 template <typename Self> class nwidget::Builder<QLabel, Self> : public nwidget::Builder<QWidget, Self>
 {
     N_BUILDER(QLabel)
@@ -1425,8 +1542,11 @@ template <typename Self> class nwidget::Builder<QLabel, Self> : public nwidget::
 
 N_IMPL_DECLARE_BUILDER(Label)
 #endif
+#endif
 
 #ifdef QLINEEDIT_H
+#ifndef NWIDGET_BUILDERS_LINEEDIT_H
+#define NWIDGET_BUILDERS_LINEEDIT_H
 template <typename Self> class nwidget::Builder<QLineEdit, Self> : public Builder<QWidget, Self>
 {
     N_BUILDER(QLineEdit)
@@ -1474,8 +1594,11 @@ template <typename Self> class nwidget::Builder<QLineEdit, Self> : public Builde
 
 N_IMPL_DECLARE_BUILDER(LineEdit)
 #endif
+#endif
 
 #ifdef QMENU_H
+#ifndef NWIDGET_BUILDERS_MENU_H
+#define NWIDGET_BUILDERS_MENU_H
 namespace nwidget {
 class MenuItem : public BuilderItem<QMenu>
 {
@@ -1529,8 +1652,11 @@ template <typename Self> class nwidget::Builder<QMenu, Self> : public nwidget::B
 
 N_IMPL_DECLARE_BUILDER(Menu)
 #endif
+#endif
 
 #ifdef QMENUBAR_H
+#ifndef NWIDGET_BUILDERS_MENUBAR_H
+#define NWIDGET_BUILDERS_MENUBAR_H
 namespace nwidget {
 class MenuBarItem : public BuilderItem<QMenuBar>
 {
@@ -1572,8 +1698,11 @@ template <typename Self> class nwidget::Builder<QMenuBar, Self> : public nwidget
 
 N_IMPL_DECLARE_BUILDER(MenuBar)
 #endif
+#endif
 
 #ifdef QPROGRESSBAR_H
+#ifndef NWIDGET_BUILDERS_PROGRESSBAR_H
+#define NWIDGET_BUILDERS_PROGRESSBAR_H
 template <typename Self> class nwidget::Builder<QProgressBar, Self> : public nwidget::Builder<QWidget, Self>
 {
     N_BUILDER(QProgressBar)
@@ -1601,8 +1730,11 @@ template <typename Self> class nwidget::Builder<QProgressBar, Self> : public nwi
 
 N_IMPL_DECLARE_BUILDER(ProgressBar)
 #endif
+#endif
 
 #ifdef QTABBAR_H
+#ifndef NWIDGET_BUILDERS_TABBAR_H
+#define NWIDGET_BUILDERS_TABBAR_H
 namespace nwidget {
 class TabBarItem : public BuilderItem<QTabBar>
 {
@@ -1682,8 +1814,11 @@ template <typename Self> class nwidget::Builder<QTabBar, Self> : public nwidget:
 
 N_IMPL_DECLARE_BUILDER(TabBar)
 #endif
+#endif
 
 #ifdef QTABWIDGET_H
+#ifndef NWIDGET_BUILDERS_TABWIDGET_H
+#define NWIDGET_BUILDERS_TABWIDGET_H
 namespace nwidget {
 class TabWidgetItem : public BuilderItem<QTabWidget>
 {
@@ -1754,5 +1889,4 @@ template <typename Self> class nwidget::Builder<QTabWidget, Self> : public nwidg
 
 N_IMPL_DECLARE_BUILDER(TabWidget)
 #endif
-
-#endif // NWIDGET_BUILDERS_H
+#endif
