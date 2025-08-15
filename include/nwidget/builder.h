@@ -17,7 +17,7 @@
  * Use ForEach(data, generator) to create multiple items:
  *      @code{.cpp}
  *      QLayout* layout = VBoxLayout{
- *          ForEach(1, 4, [](int i) -> QPushButton* { return new QPushButton(QString::number(i)); }),
+ *          ForEach(1, 4, [](int i) { return new QPushButton(QString::number(i)); }),
  *      };
  *      @endcode
  *
@@ -27,10 +27,10 @@
  *        - Number
  *        - Number Range
  *
- *      The generator can be:
- *        - []()                      -> BuilderItem { ... }
- *        - [](const T& e)            -> BuilderItem { ... }
- *        - [](int index, const T& e) -> BuilderItem { ... }
+ *      The generator should have one of the following parameter lists
+ *        - ()
+ *        - (const T& e)
+ *        - (int index, const T& e)
  *
  * To register builder for a class, as for:
  *      @code{.cpp}
@@ -213,7 +213,7 @@ using closest_declared_builder_class_t =
                        Class,
                        std::decay_t<decltype(*nwidget_builder(std::declval<Class*>()))>>;
 
-}; // namespace impl
+} // namespace impl
 
 template <typename Self> class Builder<void, Self>
 {
@@ -269,7 +269,7 @@ template <typename T, typename Fn> auto invokeGeneratorFunc(int  , const T&  , F
 template <typename T, typename Fn> auto invokeGeneratorFunc(int  , const T& e, Fn f) -> decltype(f(   e)) { return f(   e); }
 template <typename T, typename Fn> auto invokeGeneratorFunc(int i, const T& e, Fn f) -> decltype(f(i, e)) { return f(i, e); }
 // clang-format on
-}; // namespace impl
+} // namespace impl
 
 template <typename T> class BuilderItem
 {
@@ -296,7 +296,7 @@ protected:
                 ++it;
             }
         };
-    };
+    }
 
 private:
     Func func;
@@ -330,11 +330,11 @@ template <typename It, typename Fn> auto ForEach(It begin, It end, Fn func, std:
 }
 
 // clang-format off
-template <typename T, typename Fn> auto ForEach(T   n, Fn func, std::true_type  is_integral) { return ForEach(0        , n      , func, is_integral); }
-template <typename T, typename Fn> auto ForEach(T&& c, Fn func, std::false_type is_integral) { return ForEach(c.begin(), c.end(), func, is_integral); }
+template <typename T, typename F> auto ForEach(T   n, F f, std::true_type  is_integral) { return ForEach(0        , n      , f, is_integral); }
+template <typename T, typename F> auto ForEach(T&& c, F f, std::false_type is_integral) { return ForEach(c.begin(), c.end(), f, is_integral); }
 
-template <typename It, typename Fn> auto ForEach(It begin, It end,     Fn func) { return ForEach(begin, end,       func, typename std::is_integral<It>::type{}); }
-template <typename T , typename Fn> auto ForEach(T&& num_or_container, Fn func) { return ForEach(num_or_container, func, typename std::is_integral<T >::type{}); }
+template <typename I, typename F> auto ForEach(I begin, I end,       F f) { return ForEach(begin, end,       f, typename std::is_integral<I>::type{}); }
+template <typename T, typename F> auto ForEach(T&& num_or_container, F f) { return ForEach(num_or_container, f, typename std::is_integral<T>::type{}); }
 
 template <typename T, typename F> auto ForEach(std::initializer_list<T> l, F f) { return ForEach(l.begin(), l.end(), f); }
 // clang-format on

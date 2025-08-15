@@ -287,7 +287,7 @@ using closest_declared_metaobject_class_t =
                        Class,
                        std::decay_t<decltype(*nwidget_metaobject(std::declval<Class*>()))>>;
 
-}; // namespace impl
+} // namespace impl
 
 template <typename C> class MetaObject<C> : public MetaObject<impl::closest_declared_metaobject_class_t<C>>
 {
